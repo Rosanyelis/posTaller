@@ -10,4 +10,15 @@ class Customer extends Model
     use HasFactory;
 
     protected $guarded = [];
+
+    public function store()
+    {
+        return $this->belongsTo(Store::class, 'store_id', 'id');
+    }
+
+
+    public function quotations()
+    {
+        return $this->hasMany(Quotation::class, 'customer_id', 'id');
+    }
 }

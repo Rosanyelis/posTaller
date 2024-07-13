@@ -14,10 +14,17 @@ class StoreSeeder extends Seeder
     public function run(): void
     {
         Store::factory()->create(
-            ['name' => 'Tienda 1',
-            'code' => '001',
-            'phone' => '123456789',
-            'address' => 'Calle 1',],
+            ['name'         => 'Tienda 1',
+            'code'          => '001',
+            'phone'         => '123456789',
+            'address'       => 'Calle 1',
+            'city'          => 'Ciudad 1',
+            'country'       => 'Pais 1',
+            'postal_code'   => '12345',
+            'state'         => 'Estado 1',
+            'email'         => 'test@example.com',
+            'currency_code' => 'USD',
+        ],
         );
     }
 }

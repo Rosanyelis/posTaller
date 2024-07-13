@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('customer_name');
             $table->decimal('total', 10, 2);
             $table->decimal('product_discount', 10, 2)->nullable();
-            $table->string('order_discount')->nullable();
+            $table->string('order_discount_id')->nullable();
             $table->decimal('order_discount', 10, 2)->nullable();
             $table->decimal('total_discount', 10, 2)->nullable();
             $table->decimal('product_tax', 10, 2)->nullable();

@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->foreingId('category_id')->references('id')->on('categories');
+            $table->foreignId('category_id')->references('id')->on('categories');
             $table->string('name');
             $table->string('code');
             $table->string('image')->nullable();
-            $table->string('price');
-            $table->decimal('cost', 10, 2);
+            $table->decimal('price', 10, 2);
+            $table->decimal('cost', 10, 2)->nullable();
             $table->string('type');
             $table->string('barcode_symbology');
             $table->string('description')->nullable();

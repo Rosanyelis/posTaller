@@ -13,8 +13,9 @@
         <link rel="shortcut icon" href="assets/images/favicon.ico">
 
         <!-- plugin css -->
-        <link href="{{ asset('assets/libs/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.css') }}" rel="stylesheet" type="text/css" />
-
+        @yield('css')
+        <!-- Sweet Alert-->
+        <link href="{{ asset('assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
         <!-- preloader css -->
         <link rel="stylesheet" href="{{ asset('assets/css/preloader.min.css') }}" type="text/css" />
 
@@ -61,13 +62,8 @@
                 <footer class="footer">
                     <div class="container-fluid">
                         <div class="row">
-                            <div class="col-sm-6">
-                                <script>document.write(new Date().getFullYear())</script> © Dason.
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="text-sm-end d-none d-sm-block">
-                                    Design & Develop by <a href="#!" class="text-decoration-underline">Themesbrand</a>
-                                </div>
+                            <div class="col-sm-12">
+                                <script>document.write(new Date().getFullYear())</script> © Rey del Neumático.
                             </div>
                         </div>
                     </div>
@@ -86,22 +82,17 @@
         <script src="{{ asset('assets/libs/simplebar/simplebar.min.js') }}"></script>
         <script src="{{ asset('assets/libs/node-waves/waves.min.js') }}"></script>
         <script src="{{ asset('assets/libs/feather-icons/feather.min.js') }}"></script>
-        <!-- pace js -->
-        <script src="{{ asset('assets/libs/pace-js/pace.min.js') }}"></script>
-
-
-        <!-- apexcharts -->
-        <script src="{{ asset('assets/libs/apexcharts/apexcharts.min.js') }}"></script>
 
         <!-- Plugins js-->
-        <script src="{{ asset('assets/libs/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js') }}"></script>
-        <script src="{{ asset('assets/libs/admin-resources/jquery.vectormap/maps/jquery-jvectormap-world-mill-en.js') }}"></script>
-
-        <script src="{{ asset('assets/js/pages/allchart.js') }}"></script>
-        <!-- dashboard init -->
-        <script src="{{ asset('assets/js/pages/dashboard.init.js') }}"></script>
+         <!-- Sweet Alerts js -->
+        <script src="{{ asset('assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
+        @yield('scripts')
 
         <script src="{{ asset('assets/js/app.js') }}"></script>
-
+        <script>
+            $(document).ready(function() {
+                @include('layouts.alerts')
+            })
+        </script>
     </body>
 </html>

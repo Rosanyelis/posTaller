@@ -11,7 +11,7 @@ class UpdateCategoryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,16 @@ class UpdateCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'code' => 'required',
+            'name' => 'required',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'code.required' => 'El campo Código de Categoría es requerido',
+            'name.required' => 'El campo Nombre de Categoría es requerido',
         ];
     }
 }

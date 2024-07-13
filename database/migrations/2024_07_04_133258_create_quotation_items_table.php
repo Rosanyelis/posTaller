@@ -26,7 +26,7 @@ return new class extends Migration
             $table->decimal('item_tax', 10, 2)->nullable();
             $table->decimal('subtotal', 10, 2);
             $table->decimal('real_unit_price', 10, 2)->nullable();
-            $table->decimal('cost', 10, 2);
+            $table->decimal('cost', 10, 2)->nullable();
             $table->timestamps();
         });
     }

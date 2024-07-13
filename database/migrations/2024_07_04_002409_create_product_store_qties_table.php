@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('product_store_qties', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->references('id')->on('products');
-            $table->foreignId('store_id')->references('id')->on('stores');
+            $table->foreignId('product_id')->references('id')->on('products')->onDelete('cascade');
+            $table->foreignId('store_id')->references('id')->on('stores')->onDelete('cascade');
             $table->integer('quantity');
             $table->decimal('price', 10, 2);
             $table->timestamps();

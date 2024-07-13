@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
             $table->foreignId('store_id')->constrained('stores')->onDelete('cascade');
-            $table->foreingId('customer_id')->constrained('customers')->onDelete('cascade');
-            $table->foreingId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('customer_id')->constrained('customers')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('customer_name');
             $table->decimal('total', 10, 2);
             $table->decimal('product_discount', 10, 2)->nullable();
-            $table->string('order_discount')->nullable();
+            $table->string('order_discount_id')->nullable();
             $table->decimal('order_discount', 10, 2)->nullable();
             $table->decimal('total_discount', 10, 2)->nullable();
             $table->decimal('product_tax', 10, 2)->nullable();

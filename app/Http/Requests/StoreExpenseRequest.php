@@ -11,7 +11,7 @@ class StoreExpenseRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,20 @@ class StoreExpenseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'store_id' => ['required'],
+            'name' => ['required'],
+            'amount' => ['required'],
+            'file' => ['max:2048'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'store_id.required' => 'La Tienda es requerida',
+            'name.required' => 'La Referencia es requerida',
+            'amount.required' => 'El Monto es requerido',
+            'file.mimes' => 'El archivo debe ser una imagen, un video, un archivo PDF, un archivo de Word o de Excel',
         ];
     }
 }
