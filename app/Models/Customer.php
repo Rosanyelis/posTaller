@@ -21,4 +21,12 @@ class Customer extends Model
     {
         return $this->hasMany(Quotation::class, 'customer_id', 'id');
     }
+
+
+    public function sales()
+    {
+        return $this->hasMany(Sale::class, 'customer_id', 'id');
+    }
+
+    
 }

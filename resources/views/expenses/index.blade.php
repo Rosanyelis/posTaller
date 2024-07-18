@@ -228,7 +228,7 @@
                 }, 0 );
 
             // Actualizar pie de página
-            $( api.column( 3 ).footer() ).html('<h5>$'+ total.toFixed(2) +'</h5>');
+            $( api.column( 3 ).footer() ).html('<h5>$'+ total.toFixed(0) +'</h5>');
             // $('#total').html('Total: ' + total.toFixed(2));
         }
     });

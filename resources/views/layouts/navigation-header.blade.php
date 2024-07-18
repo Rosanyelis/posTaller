@@ -1,4 +1,4 @@
-<div class="d-flex">
+                    <div class="d-flex">
                         <!-- LOGO -->
                         <div class="navbar-brand-box">
                             <a href="{{ route('dashboard') }}" class="logo logo-dark">
@@ -40,7 +40,7 @@
                             <button type="button" class="btn header-item bg-light-subtle border-start border-end" id="page-header-user-dropdown"
                             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="rounded-circle header-profile-user"> <i class="fas fa-user"></i></span>
-                                
+
                                 <span class="d-none d-xl-inline-block ms-1 fw-medium">{{ Auth::user()->name }}</span>
                                 <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
                             </button>

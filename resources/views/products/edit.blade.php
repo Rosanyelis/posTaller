@@ -121,7 +121,7 @@
                             <div class="mb-3">
                                 <label for="cost" class="form-label">Costo de Producto</label>
                                 <input class="form-control" type="number" name="cost" id="cost" required
-                                    value="{{ $product->cost }}">
+                                    value="{{ number_format($product->cost, 0, '.', '') }}" >
                                 @if($errors->has('cost'))
                                     <div class="invalid-feedback">
                                         {{ $errors->first('cost') }}
@@ -134,7 +134,7 @@
                             <div class="mb-3">
                                 <label for="price" class="form-label">Precio de Producto</label>
                                 <input class="form-control" type="number" name="price" id="price" required
-                                    value="{{ $product->price }}">
+                                    value="{{ number_format($product->price, 0, '.', '') }}">
                                 @if($errors->has('price'))
                                     <div class="invalid-feedback">
                                         {{ $errors->first('price') }}

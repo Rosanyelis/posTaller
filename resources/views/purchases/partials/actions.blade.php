@@ -1,4 +1,4 @@
-<a href="{{ route('cotizaciones.purchasepdf', $id) }}" class="btn btn-warning btn-sm"
+<a href="{{ route('compras.purchasepdf', $id) }}" class="btn btn-warning btn-sm"
     title="Compras PDF" target="_blank">
     <i class="mdi mdi-file-pdf"></i>
 </a>

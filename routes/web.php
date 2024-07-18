@@ -1,12 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PosController;
 use App\Http\Controllers\RolController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\PurchaseController;
@@ -26,6 +28,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    # POS
+    Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
+    Route::post('/pos/guardar-venta', [PosController::class, 'store'])->name('pos.store');
+
+    Route::get('/pos/get-customers', [PosController::class, 'getCustomers'])->name('pos.getCustomers');
+    Route::post('/pos/get-products', [PosController::class, 'getProducts'])->name('pos.getProducts');
+    Route::post('/pos/get-workorders', [PosController::class, 'getWorkorders'])->name('pos.getWorkorders');
+    Route::post('/pos/store-customer', [PosController::class, 'storeCustomer'])->name('pos.storeCustomer');
+
 
     # Roles
     Route::get('/roles', [RolController::class, 'index'])->name('roles.index');
@@ -71,7 +83,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/categorias/{category}/editar', [CategoryController::class, 'edit'])->name('categorias.edit');
     Route::put('/categorias/{category}/actualizar', [CategoryController::class, 'update'])->name('categorias.update');
     Route::get('/categorias/{category}/eliminar', [CategoryController::class, 'destroy'])->name('categorias.destroy');
-
     Route::get('/categorias/importar-categorias', [CategoryController::class, 'view_import'])->name('categorias.viewimport');
     Route::post('/categorias/import-data', [CategoryController::class, 'import'])->name('categorias.import');
     // Route::get('/categorias/todos-las-categorias', [CategoryController::class, 'allcategorypdf'])->name('categories.allcategorypdf');
@@ -79,24 +90,23 @@ Route::middleware('auth')->group(function () {
 
     # Ventas
     Route::get('/ventas', [SaleController::class, 'index'])->name('ventas.index');
-    Route::get('/ventas/create', [SaleController::class, 'create'])->name('ventas.create');
-    Route::post('/ventas', [SaleController::class, 'store'])->name('ventas.store');
+    Route::get('/ventas/datatable', [SaleController::class, 'datatable'])->name('ventas.datatable');
     Route::get('/ventas/{sale}/show', [SaleController::class, 'show'])->name('ventas.show');
-    Route::get('/ventas/{sale}/edit', [SaleController::class, 'edit'])->name('ventas.edit');
-    Route::put('/ventas/{sale}', [SaleController::class, 'update'])->name('ventas.update');
-    Route::get('/ventas/{sale}', [SaleController::class, 'destroy'])->name('ventas.destroy');
+    Route::get('/ventas/{sale}/generar-factura', [SaleController::class, 'generateInvoice'])->name('ventas.generateInvoice');
+    Route::get('/ventas/generar-informe', [SaleController::class, 'generateInforme'])->name('ventas.generateInforme');
 
     # Cotizaciones
     Route::get('/cotizaciones', [QuotationController::class, 'index'])->name('cotizaciones.index');
+    Route::get('/cotizaciones/datatable', [QuotationController::class, 'datatable'])->name('cotizaciones.datatable');
     Route::get('/cotizaciones/create', [QuotationController::class, 'create'])->name('cotizaciones.create');
     Route::post('/cotizaciones', [QuotationController::class, 'store'])->name('cotizaciones.store');
     Route::get('/cotizaciones/{quotation}/show', [QuotationController::class, 'show'])->name('cotizaciones.show');
     Route::get('/cotizaciones/{quotation}/edit', [QuotationController::class, 'edit'])->name('cotizaciones.edit');
     Route::put('/cotizaciones/{quotation}/update', [QuotationController::class, 'update'])->name('cotizaciones.update');
     Route::get('/cotizaciones/{quotation}/delete', [QuotationController::class, 'destroy'])->name('cotizaciones.destroy');
-
     Route::get('/cotizaciones/{quotation}/productjson', [QuotationController::class, 'productjson'])->name('cotizaciones.productjson');
     Route::get('/cotizaciones/{quotation}/quotepdf', [QuotationController::class, 'quotepdf'])->name('cotizaciones.quotepdf');
+    Route::get('/cotizaciones/{quotation}/enviar-cotizacion', [QuotationController::class, 'sendEmailQuotepdf'])->name('cotizaciones.sendEmailQuotepdf');
 
     # proveedores
     Route::get('/proveedores', [SupplierController::class, 'index'])->name('proveedor.index');
@@ -126,14 +136,16 @@ Route::middleware('auth')->group(function () {
 
     # compras
     Route::get('/compras', [PurchaseController::class, 'index'])->name('compras.index');
+    Route::get('/compras/datatable', [PurchaseController::class, 'datatable'])->name('compras.datatable');
     Route::get('/compras/create', [PurchaseController::class, 'create'])->name('compras.create');
     Route::post('/compras', [PurchaseController::class, 'store'])->name('compras.store');
     Route::get('/compras/{compra}/show', [PurchaseController::class, 'show'])->name('compras.show');
     Route::get('/compras/{compra}/edit', [PurchaseController::class, 'edit'])->name('compras.edit');
-    Route::put('/compras/{compra}', [PurchaseController::class, 'update'])->name('compras.update');
-    Route::get('/compras/{compra}', [PurchaseController::class, 'destroy'])->name('compras.destroy');
-
-    Route::get('/compras/{compra}/purchasepdf', [PurchaseController::class, 'purchasepdf'])->name('cotizaciones.purchasepdf');
+    Route::put('/compras/{compra}/update', [PurchaseController::class, 'update'])->name('compras.update');
+    Route::get('/compras/{compra}/delete', [PurchaseController::class, 'destroy'])->name('compras.destroy');
+    Route::get('/compras/{compra}/purchasepdf', [PurchaseController::class, 'purchasepdf'])->name('compras.purchasepdf');
+    Route::get('/compras/generar-informe', [PurchaseController::class, 'generateInforme'])->name('compras.generateInforme');
+    Route::post('/compras/generar-informe-filtrado', [PurchaseController::class, 'generateInformefilter'])->name('compras.generateInformefilter');
 
     # Ordenes de Trabajo
     Route::get('/ordenes-trabajo', [WorkOrderController::class, 'index'])->name('ordenes-trabajo.index');
@@ -141,11 +153,18 @@ Route::middleware('auth')->group(function () {
     Route::post('/ordenes-trabajo', [WorkOrderController::class, 'store'])->name('ordenes-trabajo.store');
     Route::get('/ordenes-trabajo/{workOrder}/show', [WorkOrderController::class, 'show'])->name('ordenes-trabajo.show');
     Route::get('/ordenes-trabajo/{workOrder}/edit', [WorkOrderController::class, 'edit'])->name('ordenes-trabajo.edit');
-    Route::put('/ordenes-trabajo/{workOrder}', [WorkOrderController::class, 'update'])->name('ordenes-trabajo.update');
-    Route::get('/ordenes-trabajo/{workOrder}', [WorkOrderController::class, 'destroy'])->name('ordenes-trabajo.destroy');
-
+    Route::put('/ordenes-trabajo/{workOrder}/update', [WorkOrderController::class, 'update'])->name('ordenes-trabajo.update');
+    Route::post('/ordenes-trabajo/destroy', [WorkOrderController::class, 'destroy'])->name('ordenes-trabajo.destroy');
+    Route::get('/ordenes-trabajo/{workOrder}/workOrder', [WorkOrderController::class, 'workorderpdf'])->name('ordenes-trabajo.workorderpdf');
+    Route::get('/ordenes-trabajo/{workOrder}/enviar-orden-de-trabajo', [WorkOrderController::class, 'sendEmailWorkorderpdf'])->name('ordenes-trabajo.sendEmailWorkorderpdf');
     # Reportes
-    Route::get('/reportes', [App\Http\Controllers\ReporteController::class, 'index'])->name('reportes.index');
+    Route::get('/informe-de-ventas', [ReportsController::class, 'informeventas'])->name('reportes.informeventas');
+    // Route::get('/informe-de-ventas-filtrado', [ReportsController::class, 'informeventasfilter'])->name('reportes.informeventasfilter');
+    Route::get('/informe-de-gastos', [ReportsController::class, 'informegastos'])->name('reportes.informegastos');
+    // Route::get('/informe-de-gastos-filtrado', [ReportsController::class, 'informegastosfilter'])->name('reportes.informegastosfilter');
+    // Route::get('/informe-de-compras', [ReportsController::class, 'informecompras'])->name('reportes.informecompras');
+    // Route::get('/informe-de-compras-filtrado', [ReportsController::class, 'informecomprasfilter'])->name('reportes.informecomprasfilter');
+    // Route::get('/informe-de-ordenes-trabajo', [ReportsController::class, 'informeordenes'])->name('reportes.informeordenes');
 
 });
 Route::get('comandos', function () {

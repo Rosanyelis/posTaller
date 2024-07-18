@@ -11,6 +11,10 @@
     <i class="mdi mdi-square-edit-outline"></i>
 </a>
 
+<a href="{{ route('cotizaciones.sendEmailQuotepdf', $id) }}" class="btn btn-success btn-sm">
+    <i class="mdi mdi-email"></i>
+</a>
+
 <button type="button" class="btn btn-danger btn-sm" onclick="deleteRecord({{ $id }})" >
     <i class="mdi mdi-delete"></i>
 </button>

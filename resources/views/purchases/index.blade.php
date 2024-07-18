@@ -42,6 +42,10 @@
                         <h4 class="card-title">Listado de Compras</h4>
                     </div>
                     <div class="col-md-6 text-end">
+                        <a class="btn btn-success btn-sm" target="_blank"
+                            href="{{ route('compras.generateInforme') }}">
+                            Generar Informe de Compras Totales
+                        </a>
                         <a href="{{ route('compras.create') }}"
                             class="btn btn-primary btn-sm ">
                             <i class="mdi mdi-plus"></i>
@@ -51,6 +55,46 @@
                 </div>
             </div>
             <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>El informe se genera solo si aplica el filtro, sino hay datos no podra generarse
+                            el informe.
+                        </p>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label for="startday">Fecha de Inicio</label>
+                            <input type="date" class="form-control" id="startday" name="startday">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label for="endday">Fecha Final</label>
+                            <input type="date" class="form-control" id="endday" name="endday">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label for="proveedor">Proveedores</label>
+                            <select name="proveedor" id="proveedor" class="form-control">
+                                <option value="">Todos</option>
+                                @foreach ($suppliers as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-primary mt-4" id="filter">Filtrar</button>
+                        <button type="button" class="btn btn-success mt-4" id="informe">Generar Informe</button>
+                        <form id="formfilter" action="{{ route('compras.generateInformefilter') }}" method="post" target="_blank">
+                            @csrf
+                            <input type="hidden" name="supplier_id" id="proveedorfilter">
+                            <input type="hidden" name="desde" id="desdefilter">
+                            <input type="hidden" name="hasta" id="hastafilter">
+                        </form>
+                    </div>
+                </div>
                 <div class="table-responsive">
                     <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
                         <thead>
@@ -176,10 +220,17 @@
 <script>
     const basepath = "{{ asset('assets/images/') }}";
     const baseStorage = "{{ asset('') }}";
-    $('#datatable').DataTable({
+    const table = $('#datatable').DataTable({
         processing: true,
         serverSide: true,
-        ajax: "{{ route('compras.index') }}",
+        ajax: {
+            url: "{{ route('compras.datatable') }}",
+            data: function (d) {
+                d.supplier_id = $('#proveedor').val();
+                d.start = $('#startday').val();
+                d.end = $('#endday').val();
+            }
+        },
         dataType: 'json',
         type: "POST",
         lengthMenu: [
@@ -226,6 +277,66 @@
         }]
     });
 
+    $('#filter').on('click', function() {
+        if ($('#startday').val() > $('#endday').val()) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'La fecha inicial no puede ser mayor que la fecha final',
+                timer: 1500
+            });
+            return false;
+        }
+        table.draw();
+    });
+
+    $('#informe').on('click', function() {
+        if ($('#proveedor').val() != '' && $('#startday').val() == '' && $('#endday').val() == '') {
+            $('#proveedorfilter').val($('#proveedor').val());
+            $('#formfilter').submit();
+        }
+
+        if ($('#startday').val() != '' && $('#endday').val() != '' && $('#proveedor').val() == '') {
+            if ($('#startday').val() > $('#endday').val()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'La fecha inicial no puede ser mayor que la fecha final',
+                    timer: 1500
+                });
+                return false;
+            }
+            $('#desdefilter').val($('#startday').val());
+            $('#hastafilter').val($('#endday').val());
+            $('#formfilter').submit();
+        }
+
+        if ($('#startday').val() != '' && $('#endday').val() != '' && $('#proveedor').val() != '') {
+            if ($('#startday').val() > $('#endday').val()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'La fecha inicial no puede ser mayor que la fecha final',
+                    timer: 1500
+                });
+                return false;
+            }
+            $('#proveedorfilter').val($('#proveedor').val());
+            $('#desdefilter').val($('#startday').val());
+            $('#hastafilter').val($('#endday').val());
+            $('#formfilter').submit();
+        }
+
+        if ($('#startday').val() == '' && $('#endday').val() == '' && $('#proveedor').val() == '') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Por favor selecciona un filtro',
+                timer: 1500
+            });
+        }
+
+    });
 
     function viewRecord(id) {
         $.ajax({

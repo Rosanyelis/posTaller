@@ -1184,7 +1184,7 @@ body[data-bs-theme=dark][data-sidebar=light] .sidebar-alert .alertcard-title {
 @media (min-width: 1200px) {
   body[data-layout=horizontal] .container-fluid,
   body[data-layout=horizontal] .navbar-header {
-    max-width: 85%;
+    max-width: 0% !important;
   }
 }
 @media (min-width: 992px) {
@@ -1496,10 +1496,10 @@ body[data-layout=horizontal][data-layout-size=boxed] .container-fluid, body[data
 
 /*!
  * Waves v0.7.6
- * http://fian.my.id/Waves 
- * 
- * Copyright 2014-2018 Alfiana E. Sibuea and other contributors 
- * Released under the MIT license 
+ * http://fian.my.id/Waves
+ *
+ * Copyright 2014-2018 Alfiana E. Sibuea and other contributors
+ * Released under the MIT license
  * https://github.com/fians/Waves/blob/master/LICENSE */
 .waves-effect {
   position: relative;
@@ -3731,7 +3731,7 @@ a.ck.ck-button:not(.ck-disabled):hover {
   min-height: 262px;
 }
 
-/* 
+/*
 Datatable
 */
 div.dataTables_wrapper div.dataTables_filter {

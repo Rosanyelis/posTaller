@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\Supplier;
@@ -19,22 +20,36 @@ class PurchaseController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
+    {
+        $suppliers = Supplier::all();
+        return view('purchases.index', compact('suppliers'));
+    }
+
+    public function datatable(Request $request)
     {
         if ($request->ajax()) {
             $data = DB::table('purchases')
                 ->join('users', 'purchases.user_id', '=', 'users.id')
                 ->join('suppliers', 'purchases.supplier_id', '=', 'suppliers.id')
-                ->select('purchases.*', 'users.name as user', 'suppliers.name as supplier')
-                ->get();
+                ->select('purchases.*', 'users.name as user', 'suppliers.name as supplier');
             return DataTables::of($data)
+                ->filter(function ($query) use ($request) {
+                    if ($request->has('supplier_id') && $request->get('supplier_id') != '') {
+                        $query->where('purchases.supplier_id', $request->get('supplier_id'));
+                    }
+
+                    if ($request->has('start') && $request->has('end') && $request->get('start') != '' && $request->get('end') != '') {
+                        $query->whereBetween('purchases.created_at', [$request->get('start'), $request->get('end')]);
+                    }
+
+                })
                 ->addColumn('actions', function ($data) {
                     return view('purchases.partials.actions', ['id' => $data->id]);
                 })
                 ->rawColumns(['actions'])
                 ->make(true);
         }
-        return view('purchases.index');
     }
 
     /**
@@ -171,5 +186,66 @@ class PurchaseController extends Controller
         $purchase = Purchase::with('purchaseItems', 'purchaseItems.product', 'supplier')->find($purchase);
         return Pdf::loadView('pdfs.purchase', compact('purchase'))
                 ->stream(''.config('app.name', 'Laravel').' - Compra.pdf');
+    }
+
+    public function generateInforme()
+    {
+        $informe = [];
+        $data = DB::table('purchases')
+                ->join('suppliers', 'purchases.supplier_id', '=', 'suppliers.id')
+                ->select('purchases.*', 'suppliers.name as supplier')
+                ->get();
+        $total = 0;
+        foreach ($data as $sale) {
+            $informe[] = [
+                'id' => $sale->id,
+                'fecha' => Carbon::parse($sale->created_at)->format('d/m/Y'),
+                'proveedor' => $sale->supplier,
+                'factura' => $sale->reference,
+                'total' => $sale->total,
+                'nota' => $sale->note,
+
+            ];
+            $total += $sale->total;
+        }
+
+        return Pdf::loadView('pdfs.informepurchase', compact('informe', 'total'))
+                ->stream(''.config('app.name', 'Laravel').' - Informe de Compras totales - ' . Carbon::now(). '.pdf');
+    }
+
+    public function generateInformefilter(Request $request)
+    {
+        $informe = [];
+
+        $query = DB::table('purchases')
+        ->join('suppliers', 'purchases.supplier_id', '=', 'suppliers.id')
+        ->select('purchases.*', 'suppliers.name as supplier');
+        if ($request->has('desde') && $request->has('hasta') && $request->desde != '' && $request->hasta != '') {
+            $query->whereBetween('purchases.created_at', [$request->desde, $request->hasta]);
+        }
+
+        if ($request->has('supplier_id') &&  $request->supplier_id != '') {
+            $query->where('purchases.supplier_id', $request->supplier_id);
+        }
+
+        $data = $query->get();
+
+
+        $total = 0;
+        foreach ($data as $sale) {
+            $informe[] = [
+                'id' => $sale->id,
+                'fecha' => Carbon::parse($sale->created_at)->format('d/m/Y'),
+                'proveedor' => $sale->supplier,
+                'factura' => $sale->reference,
+                'total' => $sale->total,
+                'nota' => $sale->note,
+
+            ];
+            $total += $sale->total;
+        }
+
+        return Pdf::loadView('pdfs.informepurchase', compact('informe', 'total'))
+                ->stream(''.config('app.name', 'Laravel').' - Informe de Compras totales - ' . Carbon::now(). '.pdf');
     }
 }

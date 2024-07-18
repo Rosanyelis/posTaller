@@ -65,8 +65,20 @@
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="5" style="text-align: right; font-weight: bold">Total:</td>
+                <td colspan="5" style="text-align: right; font-weight: bold">SubTotal:</td>
                 <td style="text-align: center;">{{ $quotation->total }}</td>
+            </tr>
+            <tr>
+                <td colspan="5" style="text-align: right; font-weight: bold">Descuento(%{{ $quotation->order_discount_id }}):</td>
+                <td style="text-align: center;">{{ number_format($quotation->total * ($quotation->order_discount_id / 100), 2) }}</td>
+            </tr>
+            <tr>
+                <td colspan="5" style="text-align: right; font-weight: bold">Impuesto (%{{ $quotation->order_tax_id }}):</td>
+                <td style="text-align: center;">{{ number_format($quotation->total * ($quotation->order_tax_id / 100), 2) }}</td>
+            </tr>
+            <tr>
+                <td colspan="5" style="text-align: right; font-weight: bold">Total:</td>
+                <td style="text-align: center;">{{ $quotation->grand_total }}</td>
             </tr>
         </tfoot>
     </table>

@@ -190,6 +190,18 @@
                         return '<img ="img-responsive" src="' + baseStorage + '' + data + '" width="50px"/>';
                     }
                 }
+        },
+        {
+            targets: [6],
+            render: function (data) {
+                return '$ ' + parseFloat(data).toFixed();
+            }
+        },
+        {
+            targets: [7],
+            render: function (data) {
+                return '$ ' + parseFloat(data).toFixed();
+            }
         }]
     });
 

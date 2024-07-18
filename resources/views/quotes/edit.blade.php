@@ -61,6 +61,22 @@
                             </div>
                         </div>
 
+                        <div class="col-lg-3 col-md-3 col-sm-6">
+                            <div class="mb-3">
+                                <label for="order_discount_id" class="form-label">Descuento (%) (opcional)</label>
+                                <input type="number" class="form-control" name="order_discount_id"
+                                id="order_discount_id" value="{{ $quotation->order_discount_id }}">
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-3 col-sm-6">
+                            <div class="mb-3">
+                                <label for="order_tax_id" class="form-label">Impuesto (%) (opcional)</label>
+                                <input type="number" class="form-control" name="order_tax_id" id="order_tax_id"
+                                value="{{ $quotation->order_tax_id }}" >
+                            </div>
+                        </div>
+
                         <div class="w-100"></div>
 
                         <div class="col-lg-4 col-md-4 col-sm-6">

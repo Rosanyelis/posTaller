@@ -51,6 +51,35 @@
                 </div>
             </div>
             <div class="card-body">
+                <div class="row">
+
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label for="startday">Fecha de Inicio</label>
+                            <input type="date" class="form-control" id="startday" name="startday">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label for="endday">Fecha Final</label>
+                            <input type="date" class="form-control" id="endday" name="endday">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label for="vendedor">Vendedor</label>
+                            <select name="vendedor" id="vendedor" class="form-control">
+                                <option value="">Todos</option>
+                                @foreach ($users as $user)
+                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-primary mt-4" id="filter">Filtrar</button>
+                    </div>
+                </div>
                 <div class="table-responsive">
                     <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
                         <thead>
@@ -113,9 +142,17 @@
                                             <tbody id="details" class="text-center">
                                             </tbody>
                                             <tfoot>
-                                                <tr></tr>
+                                                <tr>
+                                                    <td colspan="5" class="text-end">Descuento (% <span id="discount1"></span>)</td>
+                                                    <td id="discount2" class="text-center"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="5" class="text-end">Impuesto (% <span id="tax1"></span>)</td>
+                                                    <td id="tax2" class="text-center"></td>
+                                                </tr>
+                                                <tr>
                                                     <td colspan="5" class="text-end">Total</td>
-                                                    <td id="total2"></td>
+                                                    <td id="total2" class="text-center"></td>
                                                 </tr>
                                             </tfoot>
                                         </table>
@@ -170,10 +207,18 @@
 <script>
     const basepath = "{{ asset('assets/images/') }}";
     const baseStorage = "{{ asset('') }}";
-    $('#datatable').DataTable({
+    const numberFormat2 = new Intl.NumberFormat('de-DE');
+    const table = $('#datatable').DataTable({
         processing: true,
         serverSide: true,
-        ajax: "{{ route('cotizaciones.index') }}",
+        ajax: {
+            url: "{{ route('cotizaciones.datatable') }}",
+            data: function(d) {
+                d.start = $('#startday').val();
+                d.end = $('#endday').val();
+                d.user_id = $('#vendedor').val();
+            }
+        },
         dataType: 'json',
         type: "POST",
         lengthMenu: [
@@ -221,9 +266,30 @@
             render: function (data) {
                 return moment(data).format('DD/MM/YYYY hh:mm A');
             }
-        }]
+        },
+        {
+            targets: 3,
+            render: function (data) {
+                return '$ ' + numberFormat2.format(data);
+            }
+        },
+        {
+            targets:[3, 4, 5],
+            render: function (data) {
+                return '$ ' + numberFormat2.format(data);
+            }
+        },
+        {
+            targets: 5,
+            render: function (data) {
+                return '$ ' + numberFormat2.format(data);
+            }
+        }],
     });
 
+    $('#filter').on('click', function(){
+        table.draw();
+    });
 
     function viewRecord(id) {
         $.ajax({
@@ -231,12 +297,15 @@
                 .replace(':id', id),
             type: 'GET',
             success: function(res) {
-                console.log(res);
                 $('#name').text(res.customer_name);
                 $('#date').text(moment(res.created_at).format('DD/MM/YYYY hh:mm A'));
                 $('#total').text(res.grand_total);
                 $('#note').text(res.note);
                 $('#total2').text(res.grand_total);
+                $('#discount1').text(res.order_discount_id);
+                $('#discount2').text(res.total_discount);
+                $('#tax1').text(res.order_tax_id);
+                $('#tax2').text(res.total_tax);
 
                 $('#details').empty();
 

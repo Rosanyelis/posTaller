@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Product;
 use App\Models\Customer;
 use App\Models\Quotation;
+use App\Mail\SendQuotation;
 use Illuminate\Http\Request;
 use App\Models\QuotationItems;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\StoreQuotationRequest;
 use App\Http\Requests\UpdateQuotationRequest;
 
@@ -19,22 +23,35 @@ class QuotationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
+    {
+        $users = User::where('rol_id', '!=' ,'1')->get();
+        return view('quotes.index', compact('users'));
+    }
+
+    public function datatable(Request $request)
     {
         if ($request->ajax()) {
             $data = DB::table('quotations')
                 ->join('users', 'quotations.user_id', '=', 'users.id')
                 ->join('customers', 'quotations.customer_id', '=', 'customers.id')
-                ->select('quotations.*', 'users.name as user', 'customers.name as customer', 'customers.rut as rut')
-                ->get();
+                ->select('quotations.*', 'users.name as user', 'customers.name as customer', 'customers.rut as rut');
             return DataTables::of($data)
+                ->filter(function ($query) use ($request) {
+                    if ($request->has('user_id') && $request->get('user_id') != '') {
+                        $query->where('quotations.user_id', $request->get('user_id'));
+                    }
+
+                    if ($request->has('start') && $request->has('end') && $request->get('start') != '' && $request->get('end') != '') {
+                        $query->whereBetween('quotations.created_at', [$request->get('start'), $request->get('end')]);
+                    }
+                })
                 ->addColumn('actions', function ($data) {
                     return view('quotes.partials.actions', ['id' => $data->id]);
                 })
                 ->rawColumns(['actions'])
                 ->make(true);
         }
-        return view('quotes.index');
     }
 
     /**
@@ -54,13 +71,20 @@ class QuotationController extends Controller
     {
         $customer = Customer::where('name', $request->customer)->first();
         $productos = json_decode($request->array_products);
+        $descuento = number_format($request->total * ($request->order_discount_id / 100), 2);
+        $impuesto = number_format($request->total * ($request->order_tax_id / 100), 2);
+        $grandtotal = number_format($request->total - $descuento + $impuesto, 2);
         $quote = Quotation::create([
             'customer_id'    => $customer->id,
             'user_id'        => auth()->user()->id,
             'store_id'       => 1,
             'customer_name'  => $request->customer,
+            'order_discount_id' => $request->order_discount_id,
+            'order_tax_id' => $request->order_tax_id,
+            'total_discount' => $descuento,
+            'total_tax'      => $impuesto,
             'total'          => $request->total,
-            'grand_total'    => $request->total,
+            'grand_total'    => $grandtotal,
             'total_items'    => count($productos),
             'note'           => $request->note
         ]);
@@ -111,14 +135,21 @@ class QuotationController extends Controller
     {
         $customer = Customer::where('name', $request->customer)->first();
         $productos = json_decode($request->array_products);
+        $descuento = $request->total * ($request->order_discount_id / 100);
+        $impuesto = $request->total * ($request->order_tax_id / 100);
+        $grandtotal = $request->total - $descuento + $impuesto;
         $quote = Quotation::find($quotation);
         $quote->update([
             'customer_id'    => $customer->id,
             'user_id'        => auth()->user()->id,
             'store_id'       => 1,
             'customer_name'  => $request->customer,
+            'order_discount_id' => $request->order_discount_id,
+            'order_tax_id' => $request->order_tax_id,
+            'total_discount' => $descuento,
+            'total_tax'      => $impuesto,
             'total'          => $request->total,
-            'grand_total'    => $request->total,
+            'grand_total'    => $grandtotal,
             'total_items'    => count($productos),
             'note'           => $request->note
         ]);
@@ -171,5 +202,33 @@ class QuotationController extends Controller
     {
         $data = Product::find($quotation);
         return response()->json($data);
+    }
+
+    public function sendEmailQuotepdf($quotation)
+    {
+        $quotation = Quotation::with('customer')->find($quotation);
+
+        if ($quotation->customer->email == null) {
+            return redirect()->route('cotizaciones.index')->with('error', 'El Cliente no posee correo para enviar la cotizacion');
+        }
+
+        $publicpath = public_path('storage/cotizaciones/');
+        $namepdf = config('app.name', 'Laravel').' - cotizacion - '.$quotation->customer_name.' - '.date('Y-m-d').'.pdf';
+        $urlpdf = $publicpath.$namepdf;
+
+
+        $pdf = Pdf::loadView('pdfs.quotation', compact('quotation'))
+                ->save($urlpdf);
+
+        try {
+            Mail::to($quotation->customer->email)->send(new SendQuotation($quotation, $urlpdf, $namepdf));
+
+            return redirect()->route('cotizaciones.index')->with('success', 'Cotizacion Enviada Exitosamente');
+        } catch (\Throwable $th) {
+            Log::error("error al enviar cotizacion: ".$th->getMessage());
+
+            return redirect()->route('cotizaciones.index')->with('error', 'Error al enviar la cotizacion, verifique su correo');
+        }
+
     }
 }
