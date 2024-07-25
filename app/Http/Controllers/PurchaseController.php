@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\Kardex;
 use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\Supplier;
 use Illuminate\Support\Str;
 use App\Models\PurchaseItem;
 use Illuminate\Http\Request;
+use App\Models\ProductStoreQty;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
@@ -247,5 +249,35 @@ class PurchaseController extends Controller
 
         return Pdf::loadView('pdfs.informepurchase', compact('informe', 'total'))
                 ->stream(''.config('app.name', 'Laravel').' - Informe de Compras totales - ' . Carbon::now(). '.pdf');
+    }
+
+    public function changeStatus(Request $request)
+    {
+        $purchase = Purchase::with('purchaseItems', 'purchaseItems.product')->find($request->id);
+        $purchase->update([
+            'received' => $request->status
+        ]);
+
+        foreach ($purchase->purchaseItems as $value) {
+            $product = Product::find($value->product_id);
+            $product->update([
+                'cost' => $value->cost,
+            ]);
+            $productqty = ProductStoreQty::where('product_id', $value->product_id)->first();
+            $productqty->quantity = $productqty->quantity + $value->quantity;
+            $productqty->save();
+            # ingresamos informacion en kardex del producto
+            Kardex::create([
+                'product_id'    => $value->product_id,
+                'quantity'      => $value->quantity,
+                'price'         => $value->cost,
+                'total'         => $value->subtotal,
+                'type'          => 1,
+                'description'   => 'Compra de ' . $value->product->name
+            ]);
+        }
+
+
+        return redirect()->route('compras.index')->with('success', 'El estado de Compra se actualizo correctamente');
     }
 }

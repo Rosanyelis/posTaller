@@ -123,8 +123,8 @@
                                     <!-- <li><a href="javascript: void(0);" data-key="t-product-add">Ventas Mensuales</a></li> -->
                                     <li><a href="{{ route('ventas.generateInforme') }}" target="_blank" data-key="t-product-add">Informe de Ventas</a></li>
                                     <li><a href="{{ route('reportes.informegastos') }}" target="_blank" data-key="t-product-add">Informe de Gastos</a></li>
-                                    <li><a href="javascript: void(0);" data-key="t-product-add">Informe de Productos</a></li>
-                                    <li><a href="javascript: void(0);" data-key="t-product-add">Informe de Inventario</a></li>
+                                    <li><a href="{{ route('products.allproductpdf') }}" data-key="t-product-add">Informe de Productos</a></li>
+                                    <!-- <li><a href="javascript: void(0);" data-key="t-product-add">Informe de Inventario</a></li> -->
                                 </ul>
                             </li>
 
@@ -136,8 +136,8 @@
                                 <ul class="sub-menu" aria-expanded="false">
                                     <li><a href="{{ route('tiendas.index') }}" key="t-products">Lista Tiendas</a></li>
                                     <li><a href="{{ route('tiendas.create') }}" data-key="t-product-add">Agregar Tiendas</a></li>
-                                    <li><a href="javascript: void(0);" key="t-products">Lista Usuarios</a></li>
-                                    <li><a href="javascript: void(0);" data-key="t-product-add">Agregar Usuario</a></li>
+                                    <li><a href="{{ route('users.index') }}" key="t-products">Lista Usuarios</a></li>
+                                    <li><a href="{{ route('users.create') }}" data-key="t-product-add">Agregar Usuario</a></li>
                                 </ul>
                             </li>
                         </ul>

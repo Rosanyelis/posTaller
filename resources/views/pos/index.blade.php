@@ -37,7 +37,7 @@
             <div class="card-body">
                 <table style="width:100%;" class="layout-table">
                     <tr>
-                        <td>
+                        <td width="50%">
                             <div id="pos">
                                 <form action="{{ route('pos.store') }}" method="post" id="posForm">
                                     @csrf
@@ -45,7 +45,7 @@
                                         <div id="lefttop" style="margin-bottom:5px;">
                                             <div class="form-group" style="margin-bottom:5px;">
                                                 <div class="input-group">
-                                                    <select class="form-select" name="customer" id="customer" style="width: 96%">
+                                                    <select class="form-select" name="customer" id="customer" style="width: 93%">
                                                         <option selected>Seleccione cliente</option>
                                                     </select>
                                                     <button class="btn btn-secondary" type="button" title="Añadir cliente"
@@ -57,7 +57,7 @@
                                             </div>
                                             <div class="form-group row" style="margin-bottom:5px;">
                                                 <div class="col-md-2">
-                                                    <label for="note_ref" class="col-form-label" >Nota de Referencia</label>
+                                                    <label for="note_ref" class="col-form-label" >Nota Ref.</label>
                                                 </div>
                                                 <div class="col-md-10">
                                                     <input type="text" name="note_ref" value="" id="note_ref"
@@ -70,16 +70,16 @@
                                                 </div>
                                                 <div class="col-md-10">
                                                     <input type="text" name="code" id="productos" class="form-control"
-                                                    placeholder="Buscar articulos por codigo o nombre, tambien puede escanear el codigo de barras" />
+                                                    placeholder="Buscar articulos por codigo o nombre, u escanear el codigo de barras" />
                                                 </div>
                                             </div>
                                             <div class="form-group row" style="margin-bottom:5px;">
                                                 <div class="col-md-2">
-                                                    <label for="workorder" class="col-form-label" >Ordenes de Trabajo</label>
+                                                    <label for="workorder" class="col-form-label" >O. Trabajo</label>
                                                 </div>
                                                 <div class="col-md-10">
                                                     <input type="text" name="workorder" id="workorder" class="form-control"
-                                                    placeholder="Buscar Orden de Trabajo por numero de orden y esta debe tener un estatus de completda" />
+                                                    placeholder="Buscar Orden de Trabajo por numero de orden" />
                                                 </div>
                                             </div>
 
@@ -90,7 +90,7 @@
                                                     style="margin:0px;" data-height="100">
                                                     <thead>
                                                         <tr class="success">
-                                                            <th>Producto u Orden de Trabajo</th>
+                                                            <th>Producto u Ord. de Trabajo</th>
                                                             <th style="width: 12%;text-align:center;">Inventario</th>
                                                             <th style="width: 15%;text-align:center;">Precio</th>
                                                             <th style="width: 15%;text-align:center;">Cantidad</th>
@@ -142,27 +142,20 @@
                                                 </table>
                                             </div>
                                         </div>
-                                        <div id="botbuttons" class=" text-center">
-                                            <div class="row p-0">
-                                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 d-grid gap-2" style="padding: 0;">
-                                                    <div class="btn-group-vertical btn-block" style="height:72px;">
-                                                        <button type="button" class="btn btn-danger"
-                                                        id="salir">Salir de caja</button>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 d-grid gap-2" style="padding: 1;">
-                                                    <div class="btn-group-vertical ">
-                                                        <button type="button" class="btn btn-info" id="print_bill" style="height:72px;">
-                                                            Imprimir Factura
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 d-grid gap-2" style="padding: 0;">
-                                                    <!-- id = $eid ? 'submit-sale' : 'payment'; -->
-                                                    <button type="button" id="paymentmethod" class="btn btn-success" style="height:72px;">
-                                                        Pagar
-                                                    </button>
-                                                </div>
+                                        <div class="row text-center px-3">
+                                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 d-grid" style="padding: 0;">
+                                                <button type="button" class="btn btn-danger" style="height:70px;"
+                                                id="salir">Salir de caja</button>
+                                            </div>
+                                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 d-grid" >
+                                                <button type="button" class="btn btn-info" id="print_bill" style="height:70px;">
+                                                    Imprimir Factura
+                                                </button>
+                                            </div>
+                                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 d-grid" style="padding: 0;">
+                                                <button type="button" id="paymentmethod" class="btn btn-success" style="height:70px;">
+                                                    Pagar
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -182,6 +175,23 @@
                                     <input type="hidden" name="notepayment" id="note_payment">
 
                                 </form>
+                            </div>
+                        </td>
+                        <td width="50%" style="padding: 8px; vertical-align: top">
+                            <div class="row gx-2 gy-0">
+                                <div class="col-12">
+                                    <div class="input-group">
+                                        <select class="form-select" name="category" id="categorys" style="width: 100%">
+                                            <option selected>Seleccione Categoria</option>
+                                            @foreach ($categories as $category)
+                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="productlist" class="row gx-2 gy-1" style="position: relative;overflow: auto;width: auto;height: 610px;margin: 0; padding: 0">
+
                             </div>
                         </td>
                     </tr>
@@ -443,7 +453,13 @@
 <script>
     var dataProduct = [];
     var dataPartial = [];
+    var totalProduct = [];
+    const basepath = "{{ asset('assets/images/') }}";
+    const baseStorage = "{{ asset('') }}";
     $(document).ready(function() {
+        $('#categorys').select2({
+            placeholder: 'Seleccione una categoria',
+        });
         $('#customer').select2({
             placeholder: 'Seleccione un cliente',
             ajax: {
@@ -651,6 +667,124 @@
                 .append( "<div> Orden:" + item.correlativo + " - " + item.rut + " - " + item.name + "</div>" )
                 .appendTo( ul );
         }
+
+        $.ajax({
+            url: '{{ route("pos.getProductPos") }}',
+            dataType: 'json',
+            type: 'GET',
+            success: function(data) {
+                totalProduct = data;
+                $('#productlist').empty();
+                data.forEach(element => {
+                    if (element.image == null) {
+                        element.image = '/no-image.png';
+                    }
+                    $('#productlist').append('<div class="col-3"><a href="javascript:void(0);" data-id="'+element.code+'" id="add-product" ><div class="card" style="width: 100%; height: 104px;"><div class="card-body p-1"><div class="product-img position-relative p-0"><img src="'+basepath + element.image + '" width="70" class="img-fluid mx-auto d-block rounded "></div></div><div class="card-footer py-1 text-center bg-dark-subtle text-uppercase" style="font-size: 11px;"><b>' + element.name + '</b></div></div></a></div>');
+                })
+
+
+            }
+        });
+
+        $('#categorys').on('select2:select', function(e) {
+            var id = $(this).val();
+            console.log(id);
+            $.ajax({
+                type: 'GET',
+                url: "{{ route('pos.getProductPos') }}",
+                data: {
+                    category_id: id
+                },
+                success: function(data) {
+                    if (data.length < 16) {
+                        $("#productlist").css("height", "");
+                    }
+                    $('#productlist').empty();
+                    data.forEach(element => {
+                        if (element.image == null) {
+                            element.image = '/no-image.png';
+                        }
+                        $('#productlist').append('<div class="col-3"><a href="javascript:void(0);" data-id="'+element.code+'" id="add-product" ><div class="card"><div class="card-body p-1"><div class="product-img position-relative p-0"><img src="'+basepath + element.image + '" width="70" class="img-fluid mx-auto d-block rounded "></div></div><div class="card-footer py-1 text-center bg-dark-subtle text-uppercase" style="font-size: 11px;"><b>' + element.name + '</b></div></div></a></div>');
+                    })
+                }
+            });
+        });
+
+        $('#productlist').on('click', '#add-product', function() {
+            let code = $(this).data('id');
+            totalProduct.find(element => {
+                if (element.code == code) {
+                    let select =  element.code + ' - ' + element.name ;
+                    let qtyHtml = '#quantity-' + element.code;
+                    let subtotalHtml = '#subtotal-' + element.code;
+                    let totalComplete = 0;
+
+                    if (dataProduct.length > 0) {
+                        let index = dataProduct.findIndex((item) => item.code == code);
+
+                        if (index == -1) {
+                        let datosFila = {};
+                            datosFila.id = element.id;
+                            datosFila.code = element.code;
+                            datosFila.name = element.name;
+                            datosFila.quantity = 1;
+                            datosFila.price = element.price;
+                            datosFila.subtotal = element.price;
+                            datosFila.type = 'product';
+
+                            dataProduct.push(datosFila);
+
+                            $('#posTable').append(
+                                '<tr id="producto-' + element.code + '">' +
+                                '<td>' + select + '</td>' +
+                                '<td class="text-center">' + element.quantity + '</td>' +
+                                '<td class="text-center">' + element.price + '</td>' +
+                                '<td class="text-center"><input type="number" id="quantity-' + element.code + '" onchange="calculateQuantity(this)" data-id="' + element.code + '" class="form-control form-control-sm" min="1" value="1"></td>' +
+                                '<td class="text-center"><span id="subtotal-' + element.code + '" data-id="' + element.code + '">'+ element.price +'</span></td>' +
+                                '<td><button type="button" class="btn btn-danger btn-sm" onclick="deleteRow(' + element.code + ')"><i class="mdi mdi-delete "></i></button></td>'
+                            );
+
+                        } else if (index != -1) {
+                            dataProduct[index].quantity = parseInt(dataProduct[index].quantity) + 1;
+                            dataProduct[index].price = parseFloat(dataProduct[index].price) + parseFloat(element.price);
+                            dataProduct[index].subtotal = parseFloat(dataProduct[index].subtotal) + parseFloat(element.price);
+
+                            $(qtyHtml).val(dataProduct[index].quantity);
+                            $(subtotalHtml).text(dataProduct[index].subtotal);
+
+                        }
+
+                    } else{
+                        let datosFila = {};
+                        datosFila.id = element.id;
+                        datosFila.code = element.code;
+                        datosFila.name = element.name;
+                        datosFila.quantity = 1;
+                        datosFila.price = element.price;
+                        datosFila.subtotal = element.price;
+                        datosFila.type = 'product';
+
+                        dataProduct.push(datosFila);
+
+                        $('#posTable').append(
+                            '<tr id="producto-' + element.code + '">' +
+                            '<td>' + select + '</td>' +
+                            '<td class="text-center">' + element.quantity + '</td>' +
+                            '<td class="text-center">' + element.price + '</td>' +
+                            '<td class="text-center"><input type="number" id="quantity-' + element.code + '" onchange="calculateQuantity(this)" data-id="' + element.code + '" class="form-control form-control-sm" min="1" value="1"></td>' +
+                            '<td class="text-center"><span id="subtotal-' + element.code + '" data-id="' + element.code + '">'+ element.price +'</span></td>' +
+                            '<td><button type="button" class="btn btn-danger btn-sm" onclick="deleteRow(' + element.code + ')"><i class="mdi mdi-delete "></i></button></td>'
+                        );
+
+
+                    }
+                    calculateTotal();
+                    calculateArticulos();
+                    calculateComplete();
+                    return false;
+                }
+            });
+        });
 
         // agregar clientes
         $('#add_customer').on('click', function() {
@@ -903,7 +1037,6 @@
         calculateArticulos();
         calculateComplete();
     }
-
     function calculateTotal() {
         let total = 0;
         for (let i = 0; i < dataProduct.length; i++) {
@@ -938,7 +1071,6 @@
         $('#totalpay').text(totalWithDiscount);
     }
     function calculateQuantity(dato) {
-        console.log(dato);
         let id = '#' + dato.id;
         let productCode = $(id).data('id');
         let quantity = parseInt($(id).val());
@@ -966,7 +1098,6 @@
         balance = total - totalPartial;
         $('#balance').text(balance);
     }
-
     function deletePartial(payment) {
         dataPartial = dataPartial.filter((item) => item.payment != payment.id);
         let idtr = '#payment-' + payment.id;

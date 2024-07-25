@@ -66,6 +66,34 @@
                 </div>
             </div>
             <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>El informe se genera solo si aplica el filtro, sino hay datos no podra generarse
+                            el informe.
+                        </p>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label for="category_id">Categorias</label>
+                            <select name="category_id" id="category_id" class="form-control">
+                                <option value="">Todos</option>
+                                @foreach ($categorys as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <button type="button" class="btn btn-primary mt-4" id="filter">Filtrar</button>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-success mt-4" id="informe">Generar Informe</button>
+                        <form id="formfilter" action="{{ route('products.generateInformefilter') }}" method="post" target="_blank">
+                            @csrf
+                            <input type="hidden" name="category_id" id="categoryfilter">
+                        </form>
+                    </div>
+                </div>
                 <div class="table-responsive">
                     <table id="datatable" class="table table-bordered nowrap w-100">
                         <thead>
@@ -85,7 +113,6 @@
                         </tbody>
                     </table>
                 </div>
-
             </div>
         </div>
     </div> <!-- end col -->
@@ -127,10 +154,17 @@
 <script>
     const basepath = "{{ asset('assets/images/') }}";
     const baseStorage = "{{ asset('') }}";
-    $('#datatable').DataTable({
+    const numberFormat2 = new Intl.NumberFormat('de-DE');
+    console.log($('#category_id').val());
+    const table = $('#datatable').DataTable({
         processing: true,
         serverSide: true,
-        ajax: "{{ route('productos.index') }}",
+        ajax: {
+            url: "{{ route('productos.datatable') }}",
+            data: function (d) {
+                d.category_id = $('#category_id').val();
+            }
+        },
         dataType: 'json',
         type: "POST",
         lengthMenu: [
@@ -194,13 +228,13 @@
         {
             targets: [6],
             render: function (data) {
-                return '$ ' + parseFloat(data).toFixed();
+                return '$ ' + numberFormat2.format(data);
             }
         },
         {
             targets: [7],
             render: function (data) {
-                return '$ ' + parseFloat(data).toFixed();
+                return '$ ' + numberFormat2.format(data);
             }
         }]
     });
@@ -223,5 +257,16 @@
         })
     }
 
+    $('#filter').on('click', function() {
+        table.draw();
+    });
+
+    $('#informe').on('click', function() {
+        if ($('#category_id').val() != '' ) {
+            console.log($('#category_id').val());
+            $('#categoryfilter').val($('#category_id').val());
+            $('#formfilter').submit();
+        }
+    });
 </script>
 @endSection

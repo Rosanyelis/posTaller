@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\RolController;
 use App\Http\Controllers\SaleController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\ProductController;
@@ -37,7 +38,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/pos/get-products', [PosController::class, 'getProducts'])->name('pos.getProducts');
     Route::post('/pos/get-workorders', [PosController::class, 'getWorkorders'])->name('pos.getWorkorders');
     Route::post('/pos/store-customer', [PosController::class, 'storeCustomer'])->name('pos.storeCustomer');
-
+    Route::get('/pos/get-product-pos', [PosController::class, 'getProductPos'])->name('pos.getProductPos');
+    
 
     # Roles
     Route::get('/roles', [RolController::class, 'index'])->name('roles.index');
@@ -50,31 +52,34 @@ Route::middleware('auth')->group(function () {
     # Usuarios
     Route::get('/usuarios', [UserController::class, 'index'])->name('users.index');
     Route::get('/usuarios/create', [UserController::class, 'create'])->name('users.create');
-    Route::post('/usuarios', [UserController::class, 'store'])->name('users.store');
+    Route::post('/usuarios/store', [UserController::class, 'store'])->name('users.store');
     Route::get('/usuarios/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
-    Route::put('/usuarios/{user}', [UserController::class, 'update'])->name('users.update');
-    Route::get('/usuarios/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+    Route::put('/usuarios/{user}/update', [UserController::class, 'update'])->name('users.update');
+    Route::get('/usuarios/{user}/destroy', [UserController::class, 'destroy'])->name('users.destroy');
 
     # Tiendas
     Route::get('/tiendas', [StoreController::class, 'index'])->name('tiendas.index');
     Route::get('/tiendas/create', [StoreController::class, 'create'])->name('tiendas.create');
-    Route::post('/tiendas', [StoreController::class, 'store'])->name('tiendas.store');
+    Route::post('/tiendas/store', [StoreController::class, 'store'])->name('tiendas.store');
     Route::get('/tiendas/{tienda}/edit', [StoreController::class, 'edit'])->name('tiendas.edit');
-    Route::put('/tiendas/{tienda}', [StoreController::class, 'update'])->name('tiendas.update');
-    Route::get('/tiendas/{tienda}', [StoreController::class, 'destroy'])->name('tiendas.destroy');
+    Route::put('/tiendas/{tienda}/update', [StoreController::class, 'update'])->name('tiendas.update');
+    Route::get('/tiendas/{tienda}/destroy', [StoreController::class, 'destroy'])->name('tiendas.destroy');
 
     # Productos
     Route::get('/productos', [ProductController::class, 'index'])->name('productos.index');
+    Route::get('/productos/datatable', [ProductController::class, 'datatable'])->name('productos.datatable');
     Route::get('/productos/create', [ProductController::class, 'create'])->name('productos.create');
     Route::post('/productos', [ProductController::class, 'store'])->name('productos.store');
     Route::get('/productos/{product}/show', [ProductController::class, 'show'])->name('productos.show');
     Route::get('/productos/{product}/edit', [ProductController::class, 'edit'])->name('productos.edit');
     Route::put('/productos/{product}/update', [ProductController::class, 'update'])->name('productos.update');
     Route::get('/productos/{product}/delete', [ProductController::class, 'destroy'])->name('productos.destroy');
-
     Route::get('/productos/importar-productos', [ProductController::class, 'view_import'])->name('productos.viewimport');
     Route::post('/productos/import-data', [ProductController::class, 'import'])->name('productos.import');
     Route::get('/productos/todos-los-productos', [ProductController::class, 'allproductpdf'])->name('products.allproductpdf');
+    Route::post('/productos/generar-informe-filtrado', [ProductController::class, 'generateInformefilter'])->name('products.generateInformefilter');
+    Route::get('/productos/{product}/kardex', [ProductController::class, 'kardex'])->name('products.kardex');
+    Route::get('/productos/{product}/kardex-pdf', [ProductController::class, 'kardexpdf'])->name('products.kardexpdf');
 
     # Categorias
     Route::get('/categorias', [CategoryController::class, 'index'])->name('categorias.index');
@@ -85,7 +90,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/categorias/{category}/eliminar', [CategoryController::class, 'destroy'])->name('categorias.destroy');
     Route::get('/categorias/importar-categorias', [CategoryController::class, 'view_import'])->name('categorias.viewimport');
     Route::post('/categorias/import-data', [CategoryController::class, 'import'])->name('categorias.import');
-    // Route::get('/categorias/todos-las-categorias', [CategoryController::class, 'allcategorypdf'])->name('categories.allcategorypdf');
     Route::get('/categorias/{category}/productos-por-categoria', [CategoryController::class, 'productcategory'])->name('categories.productcategory');
 
     # Ventas
@@ -122,8 +126,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/clientes', [CustomerController::class, 'store'])->name('clientes.store');
     Route::get('/clientes/{cliente}/show', [CustomerController::class, 'show'])->name('clientes.show');
     Route::get('/clientes/{cliente}/edit', [CustomerController::class, 'edit'])->name('clientes.edit');
-    Route::put('/clientes/{cliente}', [CustomerController::class, 'update'])->name('clientes.update');
-    Route::get('/clientes/{cliente}', [CustomerController::class, 'destroy'])->name('clientes.destroy');
+    Route::put('/clientes/{cliente}/update', [CustomerController::class, 'update'])->name('clientes.update');
+    Route::get('/clientes/{cliente}/delete', [CustomerController::class, 'destroy'])->name('clientes.destroy');
 
     # Gastos
     Route::get('/gastos', [ExpenseController::class, 'index'])->name('gastos.index');
@@ -131,8 +135,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/gastos', [ExpenseController::class, 'store'])->name('gastos.store');
     Route::get('/gastos/{gasto}/show', [ExpenseController::class, 'show'])->name('gastos.show');
     Route::get('/gastos/{gasto}/edit', [ExpenseController::class, 'edit'])->name('gastos.edit');
-    Route::put('/gastos/{gasto}', [ExpenseController::class, 'update'])->name('gastos.update');
-    Route::get('/gastos/{gasto}', [ExpenseController::class, 'destroy'])->name('gastos.destroy');
+    Route::put('/gastos/{gasto}/update', [ExpenseController::class, 'update'])->name('gastos.update');
+    Route::get('/gastos/{gasto}/delete', [ExpenseController::class, 'destroy'])->name('gastos.destroy');
 
     # compras
     Route::get('/compras', [PurchaseController::class, 'index'])->name('compras.index');
@@ -146,6 +150,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/compras/{compra}/purchasepdf', [PurchaseController::class, 'purchasepdf'])->name('compras.purchasepdf');
     Route::get('/compras/generar-informe', [PurchaseController::class, 'generateInforme'])->name('compras.generateInforme');
     Route::post('/compras/generar-informe-filtrado', [PurchaseController::class, 'generateInformefilter'])->name('compras.generateInformefilter');
+    Route::post('/compras/cambio-status', [PurchaseController::class, 'changeStatus'])->name('compras.changeStatus');
 
     # Ordenes de Trabajo
     Route::get('/ordenes-trabajo', [WorkOrderController::class, 'index'])->name('ordenes-trabajo.index');
@@ -157,6 +162,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/ordenes-trabajo/destroy', [WorkOrderController::class, 'destroy'])->name('ordenes-trabajo.destroy');
     Route::get('/ordenes-trabajo/{workOrder}/workOrder', [WorkOrderController::class, 'workorderpdf'])->name('ordenes-trabajo.workorderpdf');
     Route::get('/ordenes-trabajo/{workOrder}/enviar-orden-de-trabajo', [WorkOrderController::class, 'sendEmailWorkorderpdf'])->name('ordenes-trabajo.sendEmailWorkorderpdf');
+    Route::post('/ordenes-trabajo/productjson', [WorkOrderController::class, 'productjson'])->name('ordenes-trabajo.productjson');
+
+
     # Reportes
     Route::get('/informe-de-ventas', [ReportsController::class, 'informeventas'])->name('reportes.informeventas');
     // Route::get('/informe-de-ventas-filtrado', [ReportsController::class, 'informeventasfilter'])->name('reportes.informeventasfilter');

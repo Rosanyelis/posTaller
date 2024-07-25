@@ -54,7 +54,7 @@
                                     Descargar archivo de muestra</a></p>
                             <p class="text-primary">La primera linea en el archivo xlsx descargado debe permanecer como esta. Por favor no
                                 cambie el orden de las columnas.</p>
-                            <p class="text-danger">El orden correcto de la columna es <strong>(Código de producto, nombre del producto, precio de compra, precio de venta, cantidad, codigo de categoria, tipo de producto)</strong> y debes
+                            <p class="text-danger">El orden correcto de la columna es <strong>(Código de producto, nombre del producto, precio de compra, precio de venta, precio de mayoreo, cantidad, inventario minimo, codigo de categoria, tipo de producto)</strong> y debes
                                 seguir esto. </p>
                             <p class="text-danger">No se permiten campos vacíos</p>
                             <p class="text-info">Recordar que los tipos de productos son: Standard, Combo y Servicios</p>

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->decimal('price', 10, 2);
             $table->decimal('cost', 10, 2)->nullable();
+            $table->decimal('wholesale_price', 10, 2)->nullable();
             $table->string('type');
             $table->string('barcode_symbology');
             $table->string('description')->nullable();

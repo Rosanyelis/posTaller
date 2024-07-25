@@ -104,6 +104,7 @@
                                 <th>N° factura</th>
                                 <th>Total</th>
                                 <th>Nota</th>
+                                <th>Estatus</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -179,6 +180,11 @@
                         </div><!-- /.modal-content -->
                     </div><!-- /.modal-dialog -->
                 </div><!-- /.modal -->
+                <form id="my-form" action="{{ route('compras.changeStatus') }}" method="POST">
+                    @csrf
+                    <input type="hidden" id="id" name="id" >
+                    <input type="hidden" id="status" name="status">
+                </form>
             </div>
         </div>
     </div> <!-- end col -->
@@ -220,6 +226,7 @@
 <script>
     const basepath = "{{ asset('assets/images/') }}";
     const baseStorage = "{{ asset('') }}";
+    const numberFormat2 = new Intl.NumberFormat('de-DE');
     const table = $('#datatable').DataTable({
         processing: true,
         serverSide: true,
@@ -263,6 +270,10 @@
                 name: 'note'
             },
             {
+                data: 'received',
+                name: 'received'
+            },
+            {
                 data: 'actions',
                 name: 'actions',
                 orderable: false,
@@ -274,7 +285,37 @@
             render: function (data) {
                 return moment(data).format('DD/MM/YYYY hh:mm A');
             }
-        }]
+        },
+        {
+            targets: 3,
+            render: function (data) {
+                return '$ ' + numberFormat2.format(data);
+            }
+        },
+        {
+            targets:5,
+            render: function (data, type, row) {
+                if (data == 0) {
+                    return `
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false">
+                            No Recibido <i class="mdi mdi-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header noti-title">
+                                <h5 class="font-size-13 text-muted text-truncate mn-0">Cambiar Status</h5>
+                            </div>
+                            <!-- item-->
+                            <a class="dropdown-item" href="#" onclick="changeStatus(1, ${row.id})">Recibido</a>
+                        </div>
+                    </div>
+                    `;
+                } else if (data == 1) {
+                    return '<p class="badge bg-success">Recibido</p>';
+                }
+            }
+        }],
     });
 
     $('#filter').on('click', function() {
@@ -404,6 +445,26 @@
         $('#received').text('');
         $('#nfactura').text('');
         $('#details').empty();
-    })
+    });
+
+    function changeStatus(status, id) {
+        $('#my-form #status').val(status);
+        $('#my-form #id').val(id);
+
+        Swal.fire({
+            title: '¿Esta seguro de cambiar el estado de la compra?',
+            text: "Los productos de la compra seran ingresados al stock al marcarlo como recibido, y el precio de compra sera actualizado en el precio de costo del mismo producto!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, cambiar!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $('#my-form').submit();
+
+            }
+        })
+    }
 </script>
 @endSection

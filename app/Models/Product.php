@@ -20,4 +20,9 @@ class Product extends Model
     {
         return $this->hasOne(ProductStoreQty::class, 'product_id', 'id');
     }
+
+    public function kardex()
+    {
+        return $this->hasMany(Kardex::class, 'product_id', 'id');
+    }
 }

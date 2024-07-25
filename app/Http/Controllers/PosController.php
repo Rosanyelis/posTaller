@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sale;
+use App\Models\Kardex;
 use App\Models\Product;
+use App\Models\Category;
 use App\Models\Customer;
 use App\Models\SaleItems;
 use App\Models\WorkOrder;
 use App\Models\SalePayment;
 use Illuminate\Http\Request;
+use App\Models\WorkOrderItems;
+use App\Models\ProductStoreQty;
 
 class PosController extends Controller
 {
@@ -17,7 +21,8 @@ class PosController extends Controller
      */
     public function index()
     {
-        return view('pos.index');
+        $categories = Category::all();
+        return view('pos.index', compact('categories'));
     }
 
     public function getCustomers()
@@ -58,9 +63,17 @@ class PosController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function getProductPos(Request $request)
     {
-        //
+        $query = Product::join('product_store_qties', 'products.id', '=', 'product_store_qties.product_id')
+                        ->select('products.id', 'products.name', 'products.code', 'products.price', 'product_store_qties.quantity');
+        // Si se proporciona un ID de categoría, se filtra por esa categoría
+        if ($request->has('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+        // Obtener los productos
+        $productos = $query->get();
+        return response()->json($productos);
     }
 
     /**
@@ -68,7 +81,6 @@ class PosController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
         $customer = Customer::find($request->customer);
         $discount = $request->subtotal * ($request->discount / 100);
         $impuesto = $request->subtotal * ($request->tax / 100);
@@ -79,20 +91,20 @@ class PosController extends Controller
             $status = 'partial';
         }
         $sale = Sale::create([
-            'store_id' => 1,
-            'customer_id' => $request->customer,
-            'user_id' => auth()->user()->id,
-            'customer_name' => $customer->name,
-            'total' => $request->subtotal,
-            'order_discount_id' => $request->discount,
-            'total_discount' => $discount,
-            'order_tax_id' => $request->tax,
-            'total_tax' => $impuesto,
-            'grand_total' => $request->grandtotal,
-            'total_items' => $request->total_items,
-            'note' => $request->note_ref,
-            'paid' => $request->amount,
-            'payment_status' => $status
+            'store_id'              => 1,
+            'customer_id'           => $request->customer,
+            'user_id'               => auth()->user()->id,
+            'customer_name'         => $customer->name,
+            'total'                 => $request->subtotal,
+            'order_discount_id'     => $request->discount,
+            'total_discount'        => $discount,
+            'order_tax_id'          => $request->tax,
+            'total_tax'             => $impuesto,
+            'grand_total'           => $request->grandtotal,
+            'total_items'           => $request->total_items,
+            'note'                  => $request->note_ref,
+            'paid'                  => $request->amount,
+            'payment_status'        => $status
         ]);
 
         $products = json_decode($request->productos);
@@ -111,20 +123,62 @@ class PosController extends Controller
                     'subtotal' => $key->subtotal,
                     'cost' => $product->cost
                 ]);
+
+                # disminuimos el stock del producto
+                if ($product->type == 'Standard') {
+                    $productqty = ProductStoreQty::where('product_id', $key->id)->first();
+                    $productqty->quantity = $productqty->quantity - $key->quantity;
+                    $productqty->save();
+                }
+
+                # ingresamos informacion en kardex del producto
+                Kardex::create([
+                    'product_id'    => $key->id,
+                    'quantity'      => $key->quantity,
+                    'price'         => $key->price,
+                    'total'         => $key->subtotal,
+                    'type'          => 2,
+                    'description'   => 'Venta de ' . $product->name
+                ]);
+
             }
 
             if ($key->type == 'workorder') {
+
                 SaleItems::create([
-                    'sale_id' => $sale->id,
-                    'work_order_id' => $key->id,
-                    'product_name' => $key->name,
-                    'product_code' => $key->code,
-                    'quantity' => $key->quantity,
-                    'unit_price' => $key->price,
-                    'net_unit_price' => $key->price,
-                    'subtotal' => $key->subtotal,
-                    'cost' => $key->price
+                    'sale_id'           => $sale->id,
+                    'work_order_id'     => $key->id,
+                    'product_name'      => $key->name,
+                    'product_code'      => $key->code,
+                    'quantity'          => $key->quantity,
+                    'unit_price'        => $key->price,
+                    'net_unit_price'    => $key->price,
+                    'subtotal'          => $key->subtotal,
+                    'cost'              => $key->price
                 ]);
+
+                $workorder = WorkOrderItems::where('work_order_id', $key->id)->get();
+
+                foreach ($workorder as $item) {
+                    $product = Product::where('id', $item->product_id)->first();
+                    # disminuimos el stock del proyecto
+                    if ($product->type == 'Standard') {
+                        $productqty = ProductStoreQty::where('product_id', $item->product_id)->first();
+                        $productqty->quantity = $productqty->quantity - $item->quantity;
+                        $productqty->save();
+
+                        # ingresamos informacion en kardex del producto
+                        Kardex::create([
+                            'product_id'    => $item->product_id,
+                            'quantity'      => $item->quantity,
+                            'price'         => $item->price,
+                            'total'         => $item->total,
+                            'type'          => 2,
+                            'description'   => 'Venta de ' . $product->name.' de la orden de trabajo ' . $key->name
+                        ]);
+                    }
+                }
+
             }
 
         }

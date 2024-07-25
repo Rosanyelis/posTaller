@@ -45,7 +45,7 @@ class WorkOrderController extends Controller
      */
     public function create()
     {
-        $products = Product::where('type', 'Servicios')->get();
+        $products = Product::all();
         $customers = Customer::all();
         return view('workorders.create', compact('products', 'customers'));
 
@@ -197,5 +197,11 @@ class WorkOrderController extends Controller
             return redirect()->route('ordenes-trabajo.index')->with('error', 'Error al enviar la Orden de Trabajo, verifique su correo');
         }
 
+    }
+
+    public function productjson(Request $request)
+    {
+        $data = Product::where('name', $request->name)->first();
+        return response()->json($data);
     }
 }

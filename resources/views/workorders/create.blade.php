@@ -77,13 +77,16 @@
                         </div>
                         <div class="w-100"></div>
                         <hr>
+                        <div class="col-lg-12 col-md-12 col-sm-12">
+                            <p><strong>Nota Importante:</strong> La cantidad indicada en la tabla de abajo, es la cantidad de Servicios que se aplicaran en el vehículo, de igual forma para los productos standard</p>
+                        </div>
                         <div class="col-lg-4 col-md-4 col-sm-6">
                             <div class="mb-3">
                                 <label for="producto" class="form-label">Nombre de Producto</label>
                                 <select class="form-control" name="producto" id="producto" style="width: 100%">
                                     <option value="">-- Seleccione --</option>
                                     @foreach ($products as $item)
-                                    <option value="{{ $item->name }}">{{ $item->name }}</option>
+                                    <option value="{{ $item->name }}">{{ $item->name }}   - ($ {{ number_format($item->price, 0, ',', '.') }})</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -151,52 +154,117 @@
 @section('scripts')
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
-
+    var datosTabla = [];
     $(document).ready(function() {
         $('#producto').select2();
         $('#customer').select2();
-        var datosTabla = [];
+
+        $('#producto').on('select2:select', function(e) {
+            var name = $('#producto').val();
+            $.ajax({
+                type: 'POST',
+                url: "{{ route('ordenes-trabajo.productjson') }}",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    name: name
+                },
+                success: function(data) {
+                    console.log(data);
+                    $('#cost').val(data.price);
+                }
+            });
+        });
 
         $('#add_product').on('click', function() {
             var producto = $('#producto').val();
             var details = $('#details').val();
             let cost = parseFloat($('#cost').val());
-            let quantity = parseFloat($('#quantity').val());
+            let quantity = parseInt($('#quantity').val());
             let subtotal = cost * quantity;
             let total = subtotal;
 
-            let datosFila = {};
-                datosFila.producto = producto;
-                datosFila.details = details;
-                datosFila.quantity = quantity;
-                datosFila.cost = cost;
-                datosFila.total = total;
-                datosTabla.push(datosFila);
+            if (datosTabla.length > 0)
+            {
+                let index = datosTabla.findIndex((item) => item.producto == producto);
 
-            $("#table_products tbody").append(
-                `<tr>
-                    <td>`+producto+`</td>
-                    <td>`+details+`</td>
-                    <td>`+quantity+`</td>
-                    <td>`+cost+`</td>
-                    <td>`+total+`</td>
-                    <td>
-                        <button type="button" class="btn btn-danger btn-sm"
-                            id="delete_product" data-name="`+producto+`">
-                            <i class="mdi mdi-delete"></i>
-                        </button>
-                    </td>
-                </tr>`);
+                if (index == -1)
+                {
+                    let datosFila = {};
+                        datosFila.producto = producto;
+                        datosFila.details = details;
+                        datosFila.quantity = quantity;
+                        datosFila.cost = cost;
+                        datosFila.total = total;
+                        datosTabla.push(datosFila);
 
+                    $("#table_products tbody").append(
+                        `<tr>
+                            <td>`+producto+`</td>
+                            <td>`+details+`</td>
+                            <td id="quantity-`+producto+`">`+quantity+`</td>
+                            <td>`+cost+`</td>
+                            <td id="total-`+producto+`">`+total+`</td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm"
+                                    id="delete_product" data-name="`+producto+`">
+                                    <i class="mdi mdi-delete"></i>
+                                </button>
+                            </td>
+                        </tr>`);
 
-            $("#total").empty();
-            let totalfinal = 0;
-            for (let i = 0; i < datosTabla.length; i++) {
-                totalfinal += parseFloat(datosTabla[i].total);
+                    $("#table_products tfoot #total").empty();
+                    calculateTotal();
+
+                } else if (index != -1)
+                {
+
+                    datosTabla[index].quantity = parseInt(datosTabla[index].quantity) + quantity;
+                    datosTabla[index].cost = parseFloat(cost);
+                    datosTabla[index].total = parseFloat(datosTabla[index].total) + parseFloat(total);
+
+                    $("#table_products tbody").find('tr').each(function() {
+                        if ($(this).find('td').eq(0).text() == producto) {
+                            $(this).find('td').eq(2).text(datosTabla[index].quantity);
+                            $(this).find('td').eq(4).text(datosTabla[index].total);
+
+                            console.log($(this).find('td').eq(2).text());
+                            console.log($(this).find('td').eq(4).text());
+
+                        }
+                    });
+
+                    $("#table_products tfoot #total").empty();
+                    calculateTotal();
+                }
+
+            } else {
+                let datosFila = {};
+                    datosFila.producto = producto;
+                    datosFila.details = details;
+                    datosFila.quantity = quantity;
+                    datosFila.cost = cost;
+                    datosFila.total = total;
+                    datosTabla.push(datosFila);
+
+                $("#table_products tbody").append(
+                    `<tr>
+                        <td>`+producto+`</td>
+                        <td>`+details+`</td>
+                        <td id="quantity-`+producto+`">`+quantity+`</td>
+                        <td>`+cost+`</td>
+                        <td id="total-`+producto+`">`+total+`</td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm"
+                                id="delete_product" data-name="`+producto+`">
+                                <i class="mdi mdi-delete"></i>
+                            </button>
+                        </td>
+                    </tr>`);
+
+                $("#table_products tfoot #total").empty();
+
+                calculateTotal();
             }
-            $("#total").append(totalfinal);
-
-            console.log(datosTabla);
 
             $("#quantity").val('');
             $("#cost").val('');
@@ -216,7 +284,7 @@
                 return item.producto !== product;
             });
             console.log(datosTabla);
-            $("#total").empty();
+            $("#table_products tfoot #total").empty();
             let totalfinal = 0;
             for (let i = 0; i < datosTabla.length; i++) {
                 totalfinal += datosTabla[i].total;
@@ -232,5 +300,13 @@
             $('#formQuotation').submit();
         });
     })
+
+    function calculateTotal() {
+        let totalfinal = 0;
+        for (let i = 0; i < datosTabla.length; i++) {
+            totalfinal += parseFloat(datosTabla[i].total);
+        }
+        $("#table_products tfoot #total").append(totalfinal);
+    }
 </script>
 @endSection

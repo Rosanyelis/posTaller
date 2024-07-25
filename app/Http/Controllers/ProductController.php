@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kardex;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\TypeProduct;
@@ -21,22 +22,31 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
+    {
+        $categorys = Category::all();
+        return view('products.index', compact('categorys'));
+    }
+
+    public function datatable(Request $request)
     {
         if ($request->ajax()) {
             $data = DB::table('products')
                     ->join('categories', 'products.category_id', '=', 'categories.id')
                     ->join('product_store_qties', 'products.id', '=', 'product_store_qties.product_id')
-                    ->select('products.*', 'categories.name as category', 'product_store_qties.quantity as quantity')
-                    ->get();
+                    ->select('products.*', 'categories.name as category', 'product_store_qties.quantity as quantity');
             return DataTables::of($data)
+                ->filter(function ($query) use ($request) {
+                    if ($request->has('category_id') && $request->get('category_id') != '') {
+                        $query->where('products.category_id', $request->get('category_id'));
+                    }
+                })
                 ->addColumn('actions', function ($data) {
                     return view('products.partials.actions', ['id' => $data->id]);
                 })
                 ->rawColumns(['actions'])
                 ->make(true);
         }
-        return view('products.index');
     }
 
     /**
@@ -192,6 +202,43 @@ class ProductController extends Controller
     {
         $products = Product::all();
         return Pdf::loadView('pdfs.allproducts', compact('products'))
+                ->setPaper('letter', 'landscape')
                 ->stream(''.config('app.name', 'Laravel').' - Listado de Productos.pdf');
+    }
+
+    public function generateInformefilter(Request $request)
+    {
+        $products = Product::where('category_id', $request->category_id)->get();
+        return Pdf::loadView('pdfs.porcategoria', compact('products'))
+                ->setPaper('letter', 'landscape')
+                ->stream(''.config('app.name', 'Laravel').' - Listado de Productos.pdf');
+    }
+
+    public function kardex(Request $request, $product)
+    {
+        $producto = Product::find($product);
+        if ($request->ajax()) {
+            $data = DB::table('kardexes')
+                ->join('products', 'kardexes.product_id', '=', 'products.id')
+                ->where('kardexes.product_id', $product)
+                ->select('kardexes.*', 'products.name as product_name')
+                ->get();
+            return DataTables::of($data)
+                ->make(true);
+        }
+        return view('products.kardex', compact('producto'));
+    }
+
+    public function kardexpdf($product)
+    {
+        $producto = Product::find($product);
+        $kardexes = DB::table('kardexes')
+            ->join('products', 'kardexes.product_id', '=', 'products.id')
+            ->where('kardexes.product_id', $producto->id)
+            ->select('kardexes.*', 'products.name as product_name')
+            ->get();
+        return Pdf::loadView('pdfs.kardex', compact('kardexes', 'producto'))
+                ->setPaper('letter', 'landscape')
+                ->stream(''.config('app.name', 'Laravel').' - Listado de Kardex.pdf');
     }
 }

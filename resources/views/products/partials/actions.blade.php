@@ -1,3 +1,6 @@
+<a href="{{ route('products.kardex', $id) }}" class="btn btn-info btn-sm">
+    <i class="mdi mdi-clipboard-list"></i>
+</a>
 
 <a href="{{ route('productos.edit', $id) }}" class="btn btn-primary btn-sm">
     <i class="mdi mdi-square-edit-outline"></i>
