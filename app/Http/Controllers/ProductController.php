@@ -93,7 +93,7 @@ class ProductController extends Controller
             'price'             => $data['price'],
             'image'             => $data['image'],
             'description'       => $data['description'],
-            'barcode_symbology' => $data['barcode_symbology'],
+            'barcode_symbology' => 'code128',
             'alert_quantity'    => $data['alert_quantity'],
             'max_quantity'      => $data['max_quantity'],
             'cellar'            => $data['cellar'],
@@ -161,7 +161,7 @@ class ProductController extends Controller
             'price'             => $data['price'],
             'image'             => $data['image'],
             'description'       => $data['description'],
-            'barcode_symbology' => $data['barcode_symbology'],
+            'barcode_symbology' => 'code128',
             'alert_quantity'    => $data['alert_quantity'],
             'max_quantity'      => $data['max_quantity'],
             'cellar'            => $data['cellar'],
@@ -182,10 +182,12 @@ class ProductController extends Controller
      */
     public function destroy($product)
     {
+        ProductStoreQty::where('product_id', $product)->delete();
+
         $data = Product::find($product);
         $data->delete();
 
-        ProductStoreQty::where('product_id', $product)->delete();
+
         return redirect()->route('productos.index')->with('success', 'Producto eliminado con exito');
     }
 

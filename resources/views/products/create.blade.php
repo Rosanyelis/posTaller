@@ -78,22 +78,6 @@
 
                         <div class="col-lg-4 col-md-4 col-sm-6">
                             <div class="mb-3">
-                                <label class="form-label">Simbología de Código de Barras</label>
-                                <select class="form-control" name="barcode_symbology" required>
-                                    <option value="">-- Seleccionar --</option>
-                                    <option value="code25" {{ old('barcode_symbology') == 'code25' ? 'selected' : '' }} >Code25</option>
-                                    <option value="code39" {{ old('barcode_symbology') == 'code39' ? 'selected' : '' }}>Code39</option>
-                                    <option value="code128" {{ old('barcode_symbology') == 'code128' ? 'selected' : '' }}>Code128</option>
-                                    <option value="ean8" {{ old('barcode_symbology') == 'ean8' ? 'selected' : '' }}>EAN8</option>
-                                    <option value="ean13" {{ old('barcode_symbology') == 'ean13' ? 'selected' : '' }}>EAN13</option>
-                                    <option value="upca" {{ old('barcode_symbology') == 'upca' ? 'selected' : '' }}>UPC-A</option>
-                                    <option value="upce" {{ old('barcode_symbology') == 'upce' ? 'selected' : '' }}>UPC-E</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-md-4 col-sm-6">
-                            <div class="mb-3">
                                 <label class="form-label">Categorías</label>
                                 <select class="form-control" name="category_id">
                                     <option value="">-- Seleccionar --</option>

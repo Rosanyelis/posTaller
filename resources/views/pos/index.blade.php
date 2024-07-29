@@ -502,11 +502,50 @@
                 let subtotalHtml = '#subtotal-' + ui.item.id;
                 let totalComplete = 0;
 
-                if (dataProduct.length > 0) {
-                    let index = dataProduct.findIndex((item) => item.code == ui.item.code);
+                if (ui.item.quantity == 0) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops!, no hay stock',
+                        text: 'El producto no tiene stock disponible, favor de seleccionar otro!',
+                    });
+                } else {
+                    if (dataProduct.length > 0) {
+                        let index = dataProduct.findIndex((item) => item.code == ui.item.code);
 
-                    if (index == -1) {
-                       let datosFila = {};
+                        if (index == -1) {
+                        let datosFila = {};
+                            datosFila.id = ui.item.id;
+                            datosFila.code = ui.item.code;
+                            datosFila.name = ui.item.name;
+                            datosFila.quantity = 1;
+                            datosFila.price = ui.item.price;
+                            datosFila.subtotal = ui.item.price;
+                            datosFila.type = 'product';
+
+                            dataProduct.push(datosFila);
+
+                            $('#posTable').append(
+                                '<tr id="producto-' + ui.item.code + '">' +
+                                '<td>' + select + '</td>' +
+                                '<td class="text-center">' + ui.item.quantity + '</td>' +
+                                '<td class="text-center">' + ui.item.price + '</td>' +
+                                '<td class="text-center"><input type="number" id="quantity-' + ui.item.code + '" onchange="calculateQuantity(this)" data-id="' + ui.item.code + '" class="form-control form-control-sm" min="1" value="1"></td>' +
+                                '<td class="text-center"><span id="subtotal-' + ui.item.code + '" data-id="' + ui.item.code + '">'+ ui.item.price +'</span></td>' +
+                                '<td><button type="button" class="btn btn-danger btn-sm" onclick="deleteRow(' + ui.item.code + ')"><i class="mdi mdi-delete "></i></button></td>'
+                            );
+
+                        } else if (index != -1) {
+                            dataProduct[index].quantity = parseInt(dataProduct[index].quantity) + 1;
+                            dataProduct[index].price = parseFloat(dataProduct[index].price) + parseFloat(ui.item.price);
+                            dataProduct[index].subtotal = parseFloat(dataProduct[index].subtotal) + parseFloat(ui.item.price);
+
+                            $(qtyHtml).val(dataProduct[index].quantity);
+                            $(subtotalHtml).text(dataProduct[index].subtotal);
+
+                        }
+
+                    } else{
+                        let datosFila = {};
                         datosFila.id = ui.item.id;
                         datosFila.code = ui.item.code;
                         datosFila.name = ui.item.name;
@@ -527,45 +566,16 @@
                             '<td><button type="button" class="btn btn-danger btn-sm" onclick="deleteRow(' + ui.item.code + ')"><i class="mdi mdi-delete "></i></button></td>'
                         );
 
-                    } else if (index != -1) {
-                        dataProduct[index].quantity = parseInt(dataProduct[index].quantity) + 1;
-                        dataProduct[index].price = parseFloat(dataProduct[index].price) + parseFloat(ui.item.price);
-                        dataProduct[index].subtotal = parseFloat(dataProduct[index].subtotal) + parseFloat(ui.item.price);
-
-                        $(qtyHtml).val(dataProduct[index].quantity);
-                        $(subtotalHtml).text(dataProduct[index].subtotal);
 
                     }
-
-                } else{
-                    let datosFila = {};
-                    datosFila.id = ui.item.id;
-                    datosFila.code = ui.item.code;
-                    datosFila.name = ui.item.name;
-                    datosFila.quantity = 1;
-                    datosFila.price = ui.item.price;
-                    datosFila.subtotal = ui.item.price;
-                    datosFila.type = 'product';
-
-                    dataProduct.push(datosFila);
-
-                    $('#posTable').append(
-                        '<tr id="producto-' + ui.item.code + '">' +
-                        '<td>' + select + '</td>' +
-                        '<td class="text-center">' + ui.item.quantity + '</td>' +
-                        '<td class="text-center">' + ui.item.price + '</td>' +
-                        '<td class="text-center"><input type="number" id="quantity-' + ui.item.code + '" onchange="calculateQuantity(this)" data-id="' + ui.item.code + '" class="form-control form-control-sm" min="1" value="1"></td>' +
-                        '<td class="text-center"><span id="subtotal-' + ui.item.code + '" data-id="' + ui.item.code + '">'+ ui.item.price +'</span></td>' +
-                        '<td><button type="button" class="btn btn-danger btn-sm" onclick="deleteRow(' + ui.item.code + ')"><i class="mdi mdi-delete "></i></button></td>'
-                    );
-
-
+                    calculateTotal();
+                    calculateArticulos();
+                    calculateComplete();
+                    $('#productos').val('');
+                    return false;
                 }
-                calculateTotal();
-                calculateArticulos();
-                calculateComplete();
-                $('#productos').val('');
-                return false;
+
+
             }
 
         }).data('ui-autocomplete')._renderItem = function(ul, item) {
@@ -713,17 +723,56 @@
         $('#productlist').on('click', '#add-product', function() {
             let code = $(this).data('id');
             totalProduct.find(element => {
-                if (element.code == code) {
-                    let select =  element.code + ' - ' + element.name ;
-                    let qtyHtml = '#quantity-' + element.code;
-                    let subtotalHtml = '#subtotal-' + element.code;
-                    let totalComplete = 0;
+                if (element.quantity == 0) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops!, no hay stock',
+                        text: 'El producto no tiene stock disponible, favor de seleccionar otro!',
+                    })
+                } else {
+                    if (element.code == code) {
+                        let select =  element.code + ' - ' + element.name ;
+                        let qtyHtml = '#quantity-' + element.code;
+                        let subtotalHtml = '#subtotal-' + element.code;
+                        let totalComplete = 0;
 
-                    if (dataProduct.length > 0) {
-                        let index = dataProduct.findIndex((item) => item.code == code);
+                        if (dataProduct.length > 0) {
+                            let index = dataProduct.findIndex((item) => item.code == code);
 
-                        if (index == -1) {
-                        let datosFila = {};
+                            if (index == -1) {
+                            let datosFila = {};
+                                datosFila.id = element.id;
+                                datosFila.code = element.code;
+                                datosFila.name = element.name;
+                                datosFila.quantity = 1;
+                                datosFila.price = element.price;
+                                datosFila.subtotal = element.price;
+                                datosFila.type = 'product';
+
+                                dataProduct.push(datosFila);
+
+                                $('#posTable').append(
+                                    '<tr id="producto-' + element.code + '">' +
+                                    '<td>' + select + '</td>' +
+                                    '<td class="text-center">' + element.quantity + '</td>' +
+                                    '<td class="text-center">' + element.price + '</td>' +
+                                    '<td class="text-center"><input type="number" id="quantity-' + element.code + '" onchange="calculateQuantity(this)" data-id="' + element.code + '" class="form-control form-control-sm" min="1" value="1"></td>' +
+                                    '<td class="text-center"><span id="subtotal-' + element.code + '" data-id="' + element.code + '">'+ element.price +'</span></td>' +
+                                    '<td><button type="button" class="btn btn-danger btn-sm" onclick="deleteRow(' + element.code + ')"><i class="mdi mdi-delete "></i></button></td>'
+                                );
+
+                            } else if (index != -1) {
+                                dataProduct[index].quantity = parseInt(dataProduct[index].quantity) + 1;
+                                dataProduct[index].price = parseFloat(dataProduct[index].price) + parseFloat(element.price);
+                                dataProduct[index].subtotal = parseFloat(dataProduct[index].subtotal) + parseFloat(element.price);
+
+                                $(qtyHtml).val(dataProduct[index].quantity);
+                                $(subtotalHtml).text(dataProduct[index].subtotal);
+
+                            }
+
+                        } else{
+                            let datosFila = {};
                             datosFila.id = element.id;
                             datosFila.code = element.code;
                             datosFila.name = element.name;
@@ -744,45 +793,15 @@
                                 '<td><button type="button" class="btn btn-danger btn-sm" onclick="deleteRow(' + element.code + ')"><i class="mdi mdi-delete "></i></button></td>'
                             );
 
-                        } else if (index != -1) {
-                            dataProduct[index].quantity = parseInt(dataProduct[index].quantity) + 1;
-                            dataProduct[index].price = parseFloat(dataProduct[index].price) + parseFloat(element.price);
-                            dataProduct[index].subtotal = parseFloat(dataProduct[index].subtotal) + parseFloat(element.price);
-
-                            $(qtyHtml).val(dataProduct[index].quantity);
-                            $(subtotalHtml).text(dataProduct[index].subtotal);
 
                         }
-
-                    } else{
-                        let datosFila = {};
-                        datosFila.id = element.id;
-                        datosFila.code = element.code;
-                        datosFila.name = element.name;
-                        datosFila.quantity = 1;
-                        datosFila.price = element.price;
-                        datosFila.subtotal = element.price;
-                        datosFila.type = 'product';
-
-                        dataProduct.push(datosFila);
-
-                        $('#posTable').append(
-                            '<tr id="producto-' + element.code + '">' +
-                            '<td>' + select + '</td>' +
-                            '<td class="text-center">' + element.quantity + '</td>' +
-                            '<td class="text-center">' + element.price + '</td>' +
-                            '<td class="text-center"><input type="number" id="quantity-' + element.code + '" onchange="calculateQuantity(this)" data-id="' + element.code + '" class="form-control form-control-sm" min="1" value="1"></td>' +
-                            '<td class="text-center"><span id="subtotal-' + element.code + '" data-id="' + element.code + '">'+ element.price +'</span></td>' +
-                            '<td><button type="button" class="btn btn-danger btn-sm" onclick="deleteRow(' + element.code + ')"><i class="mdi mdi-delete "></i></button></td>'
-                        );
-
-
+                        calculateTotal();
+                        calculateArticulos();
+                        calculateComplete();
+                        return false;
                     }
-                    calculateTotal();
-                    calculateArticulos();
-                    calculateComplete();
-                    return false;
                 }
+
             });
         });
 

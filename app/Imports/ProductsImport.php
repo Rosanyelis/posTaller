@@ -24,7 +24,7 @@ class ProductsImport implements ToCollection, WithHeadingRow
             if ($count == 0) {
                 $category = Category::create([
                     'name' => $row['codigo_categoria'],
-                    'code' => $row['codigocategoria'],
+                    'code' => $row['codigo_categoria'],
                 ]);
             }
 

@@ -46,7 +46,10 @@ class CustomerController extends Controller
      */
     public function store(StoreCustomerRequest $request)
     {
-        $customer = Customer::create($request->all());
+        $data = $request->all();
+        $data['store_id'] = 1;
+
+        $customer = Customer::create($data);
         return redirect()->route('clientes.index')->with('success', 'Cliente creado con exito');
     }
 

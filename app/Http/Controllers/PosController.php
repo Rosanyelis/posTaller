@@ -34,9 +34,10 @@ class PosController extends Controller
     public function getProducts(Request $request)
     {
         $data = Product::join('product_store_qties', 'products.id', '=', 'product_store_qties.product_id')
+                    ->select('products.id', 'products.name', 'products.code', 'products.price', 'product_store_qties.quantity')
+                    ->where('product_store_qties.quantity', '>', '1')
                     ->where('products.name', 'like', '%' . $request->term . '%')
                     ->orWhere('products.code', 'like', '%' . $request->term . '%')
-                    ->select('products.id', 'products.name', 'products.code', 'products.price', 'product_store_qties.quantity')
                     ->get();
 
         return response()->json($data);
@@ -66,7 +67,8 @@ class PosController extends Controller
     public function getProductPos(Request $request)
     {
         $query = Product::join('product_store_qties', 'products.id', '=', 'product_store_qties.product_id')
-                        ->select('products.id', 'products.name', 'products.code', 'products.price', 'product_store_qties.quantity');
+                        ->select('products.id', 'products.name', 'products.code', 'products.price', 'product_store_qties.quantity')
+                        ->where('product_store_qties.quantity', '>', '1');
         // Si se proporciona un ID de categoría, se filtra por esa categoría
         if ($request->has('category_id')) {
             $query->where('category_id', $request->category_id);

@@ -80,9 +80,9 @@ class QuotationController extends Controller
     {
         $customer = Customer::where('name', $request->customer)->first();
         $productos = json_decode($request->array_products);
-        $descuento = number_format($request->total * ($request->order_discount_id / 100), 2);
-        $impuesto = number_format($request->total * ($request->order_tax_id / 100), 2);
-        $grandtotal = number_format($request->total - $descuento + $impuesto, 2);
+        $descuento = $request->total * ($request->order_discount_id / 100);
+        $impuesto = $request->total * ($request->order_tax_id / 100);
+        $grandtotal = $request->total - $descuento + $impuesto;
         $quote = Quotation::create([
             'customer_id'    => $customer->id,
             'user_id'        => auth()->user()->id,
