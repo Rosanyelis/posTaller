@@ -39,7 +39,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/pos/get-workorders', [PosController::class, 'getWorkorders'])->name('pos.getWorkorders');
     Route::post('/pos/store-customer', [PosController::class, 'storeCustomer'])->name('pos.storeCustomer');
     Route::get('/pos/get-product-pos', [PosController::class, 'getProductPos'])->name('pos.getProductPos');
-    
+
 
     # Roles
     Route::get('/roles', [RolController::class, 'index'])->name('roles.index');
@@ -80,6 +80,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/productos/generar-informe-filtrado', [ProductController::class, 'generateInformefilter'])->name('products.generateInformefilter');
     Route::get('/productos/{product}/kardex', [ProductController::class, 'kardex'])->name('products.kardex');
     Route::get('/productos/{product}/kardex-pdf', [ProductController::class, 'kardexpdf'])->name('products.kardexpdf');
+    Route::post('/productos/{product}/kardex-pdf-filter', [ProductController::class, 'kardexpdffilter'])->name('products.kardexpdffilter');
+    // Route::get('/productos/todos-los-productos-con-barras', [ProductController::class, 'allproductbarspdf'])->name('products.allproductbarspdf');
 
     # Categorias
     Route::get('/categorias', [CategoryController::class, 'index'])->name('categorias.index');

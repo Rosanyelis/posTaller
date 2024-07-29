@@ -77,8 +77,23 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <button type="button" class="btn btn-primary mt-4" id="filter">Filtrar</button>
+                    <div class="col-md-4">
+                        <button type="button" class="btn btn-primary mt-4" id="filter">
+                            <i class="mdi mdi-filter"></i> Filtrar
+                        </button>
+                        <button type="button" class="btn btn-danger mt-4" id="removefilter"
+                            title="Eliminar filtro">
+                            <i class="mdi mdi-filter-remove"></i>
+                        </button>
+                        <button type="button" class="btn btn-success mt-4" id="informe">
+                            <i class="mdi mdi-file-pdf"></i>
+                            Generar Informe
+                        </button>
+                        <form id="formfilter" action="" method="post" target="_blank">
+                            @csrf
+                            <input type="hidden" name="start" id="startfilter">
+                            <input type="hidden" name="end" id="endfilter">
+                        </form>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -401,6 +416,14 @@
 
             table.draw();
         }
+    });
+
+    $('#removefilter').on('click', function() {
+        $('#dateday').val('').trigger('change');
+        $('#startday').val('').trigger('change');
+        $('#endday').val('').trigger('change');
+        $('#vendedor').val('').trigger('change');
+        table.draw();
     });
 
     function viewRecord(id) {

@@ -26,9 +26,17 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
-        $request->session()->regenerate();
+        if (Auth::user()->rol_id == 1 || Auth::user()->rol_id == 2) {
+            $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+            return redirect()->intended(route('dashboard', absolute: false));
+        } else {
+
+            $request->session()->regenerate();
+
+            return redirect()->intended(route('pos.index', absolute: false));
+        }
+
     }
 
     /**

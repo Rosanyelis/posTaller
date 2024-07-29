@@ -82,9 +82,29 @@
         <script>
 
             $(document).ready(function() {
-
                 @include('layouts.alerts')
-            })
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 5000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
+                });
+                @if (count($productsQty) > 0)
+                Toast.fire({
+                    icon: "error",
+                    title: "Tienes Productos sin Stock",
+                    text: "No podras usarlos en las ventas, notifica al administrador"
+                });
+                @endif
+
+            });
+
         </script>
+
     </body>
 </html>

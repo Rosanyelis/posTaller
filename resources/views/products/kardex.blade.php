@@ -52,17 +52,54 @@
                 </div>
             </div>
             <div class="card-body">
+            <div class="row">
+                    <div class="col-md-12">
+                        <p>El informe se genera solo si aplica el filtro, sino hay datos no podra generarse
+                            el informe.
+                        </p>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label for="startday">Fecha de Inicio</label>
+                            <input type="date" class="form-control" id="startday" name="startday">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label for="endday">Fecha Final</label>
+                            <input type="date" class="form-control" id="endday" name="endday">
+                        </div>
+                    </div>
+                    <div class="col-md-5 col-lg-5 col-sm-6 p-0 text-center">
+                        <button type="button" class="btn btn-primary mt-4" id="filter">
+                            <i class="mdi mdi-filter"></i> Filtrar
+                        </button>
+                        <button type="button" class="btn btn-danger mt-4" id="removefilter"
+                            title="Eliminar filtro">
+                            <i class="mdi mdi-filter-remove"></i>
+                        </button>
+                        <button type="button" class="btn btn-success mt-4" id="informe">
+                            <i class="mdi mdi-file-pdf"></i>
+                            Generar Informe
+                        </button>
+                        <form id="formfilter" action="{{ route('products.kardexpdffilter', $producto->id) }}" method="post" target="_blank">
+                            @csrf
+                            <input type="hidden" name="start" id="startfilter">
+                            <input type="hidden" name="end" id="endfilter">
+                        </form>
+                    </div>
+                </div>
                 <div class="table-responsive">
                     <table id="datatable" class="table table-bordered nowrap w-100">
                         <thead>
                             <tr>
                                 <th>Producto</th>
+                                <th>Fecha</th>
                                 <th>Ingreso/Salida</th>
                                 <th>Detalles</th>
                                 <th>Cantidad</th>
                                 <th>Precio</th>
                                 <th>Total</th>
-
                             </tr>
                         </thead>
                         <tbody>
@@ -105,14 +142,20 @@
 <script
     src="{{ asset('assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js') }}">
 </script>
-
+<script src="{{ asset('assets/js/moment.min.js') }}"></script>
 <!-- Datatable init js -->
 <script>
     const numberFormat2 = new Intl.NumberFormat('de-DE');
     const table = $('#datatable').DataTable({
         processing: true,
         serverSide: true,
-        ajax: "{{ route('products.kardex', $producto->id) }}",
+        ajax: {
+            url: "{{ route('products.kardex', $producto->id) }}",
+            data: function (d) {
+                d.start = $('#startday').val();
+                d.end = $('#endday').val();
+            }
+        },
         dataType: 'json',
         type: "POST",
         lengthMenu: [
@@ -127,6 +170,10 @@
             {
                 data: 'product_name',
                 name: 'product_name'
+            },
+            {
+                data: 'created_at',
+                name: 'created_at'
             },
             {
                 data: 'type',
@@ -151,12 +198,18 @@
 
         ],
         columnDefs: [
-            {targets: 1,
+            {
+                targets: 1,
+                render: function (data) {
+                    return moment(data).format('DD/MM/YYYY hh:mm A');
+                }
+            },
+            {targets: 2,
                 render: function (data, type, row) {
                     if (data == 1) {
-                        return '<h4 class="badge bg-success">Ingreso</h4>';
+                        return '<h5 class="text-success">Ingreso</h5>';
                     } else {
-                        return '<h4 class="badge bg-danger">Salida</h4>';
+                        return '<h5 class="text-danger">Salida</h5>';
                     }
                 }
             },
@@ -169,7 +222,41 @@
         ]
 
     });
+    $('#filter').on('click', function() {
+        if ($('#startday').val() > $('#endday').val()) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'La fecha inicial no puede ser mayor que la fecha final',
+                timer: 1500
+            });
+            return false;
+        }
+        table.draw();
+    });
+    $('#removefilter').on('click', function() {
+        $('#startday').val('').trigger('change');
+        $('#endday').val('').trigger('change');
+        table.draw();
+    });
+    $('#informe').on('click', function() {
+        if ($('#startday').val() != '' && $('#endday').val() != '' ) {
 
+            if ($('#startday').val() > $('#endday').val()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'La fecha inicial no puede ser mayor que la fecha final',
+                    timer: 2500
+                });
+                return false;
+            } else {
+                $('#startfilter').val($('#startday').val());
+                $('#endfilter').val($('#endday').val());
+                $('#formfilter').submit();
+            }
 
+        }
+    });
 </script>
 @endSection

@@ -2,13 +2,14 @@
                         <!-- Left Menu Start -->
                         <ul class="metismenu list-unstyled" id="side-menu">
                             <li class="menu-title" data-key="t-menu">Menu</li>
-
+                            @if (Auth::user()->rol_id == 1 || Auth::user()->rol_id == 2)
                             <li>
                                 <a href="{{ route('dashboard') }}">
                                     <i data-feather="home"></i>
                                     <span data-key="t-dashboard">Dashboard</span>
                                 </a>
                             </li>
+
                             <li>
                                 <a href="{{ route('pos.index') }}">
                                     <i data-feather="airplay"></i>
@@ -27,7 +28,7 @@
                                     <li><a href="{{ route('productos.index') }}" key="t-products">Lista Productos</a></li>
                                     <li><a href="{{ route('productos.create') }}" data-key="t-product-add">Agregar producto</a></li>
                                     <li><a href="{{ route('productos.viewimport') }}" data-key="t-orders">Importar Productos</a></li>
-                                    <li><a href="javascript: void(0);" data-key="t-customers">Imprimir Codigo de Barras</a></li>
+
                                 </ul>
                             </li>
                             <li>
@@ -140,5 +141,7 @@
                                     <li><a href="{{ route('users.create') }}" data-key="t-product-add">Agregar Usuario</a></li>
                                 </ul>
                             </li>
+                            @endif
+
                         </ul>
                     </div>

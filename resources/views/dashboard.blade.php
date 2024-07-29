@@ -101,3 +101,28 @@
 
 
 @endsection
+@section('scripts')
+<script>
+    $(document).ready(function() {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 5000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+        @if (count($productsQty) > 0)
+        Toast.fire({
+            icon: "error",
+            title: "Tienes Productos sin Stock",
+            text: "Por favor revisa las notificaciones y reponga el inventario"
+        });
+        @endif
+
+    });
+</script>
+@endSection

@@ -31,14 +31,20 @@ class ProductController extends Controller
     public function datatable(Request $request)
     {
         if ($request->ajax()) {
-            $data = DB::table('products')
-                    ->join('categories', 'products.category_id', '=', 'categories.id')
-                    ->join('product_store_qties', 'products.id', '=', 'product_store_qties.product_id')
-                    ->select('products.*', 'categories.name as category', 'product_store_qties.quantity as quantity');
+            $data = Product::with('category', 'storeqty');
             return DataTables::of($data)
                 ->filter(function ($query) use ($request) {
                     if ($request->has('category_id') && $request->get('category_id') != '') {
-                        $query->where('products.category_id', $request->get('category_id'));
+                        $query->where('category_id', $request->get('category_id'));
+                    }
+
+                    if ($request->has('search') && $request->get('search')['value'] != '') {
+                        $searchValue = $request->get('search')['value'];
+                        $query->where(function ($subQuery) use ($searchValue) {
+                            $subQuery->where('name', 'like', "%{$searchValue}%")
+                                     ->orWhere('code', 'like', "%{$searchValue}%")
+                                     ->orWhere('type', 'like', "%{$searchValue}%");
+                        });
                     }
                 })
                 ->addColumn('actions', function ($data) {
@@ -221,9 +227,23 @@ class ProductController extends Controller
             $data = DB::table('kardexes')
                 ->join('products', 'kardexes.product_id', '=', 'products.id')
                 ->where('kardexes.product_id', $product)
-                ->select('kardexes.*', 'products.name as product_name')
-                ->get();
+                ->select('kardexes.*', 'products.name as product_name');
             return DataTables::of($data)
+                ->filter(function ($query) use ($request) {
+                    if ($request->has('start') && $request->has('end') && $request->get('start') != '' && $request->get('end') != '') {
+                        $query->whereBetween('kardexes.created_at', [$request->get('start'), $request->get('end')]);
+                    }
+
+                    if ($request->has('search') && $request->get('search')['value'] != '') {
+                        $searchValue = $request->get('search')['value'];
+                        $query->where(function ($subQuery) use ($searchValue) {
+                            $subQuery->where('products.name', 'like', "%{$searchValue}%")
+                                     ->orWhere('kardexes.description', 'like', "%{$searchValue}%")
+                                     ->orWhere('kardexes.type', 'like', "%{$searchValue}%");
+                        });
+                    }
+
+                })
                 ->make(true);
         }
         return view('products.kardex', compact('producto'));
@@ -235,6 +255,28 @@ class ProductController extends Controller
         $kardexes = DB::table('kardexes')
             ->join('products', 'kardexes.product_id', '=', 'products.id')
             ->where('kardexes.product_id', $producto->id)
+            ->select('kardexes.*', 'products.name as product_name')
+            ->get();
+        return Pdf::loadView('pdfs.kardex', compact('kardexes', 'producto'))
+                ->setPaper('letter', 'landscape')
+                ->stream(''.config('app.name', 'Laravel').' - Listado de Kardex.pdf');
+    }
+
+    public function allproductbarspdf()
+    {
+        $products = Product::all();
+        return Pdf::loadView('pdfs.productsbars', compact('products'))
+                ->setPaper('letter', 'landscape')
+                ->stream(''.config('app.name', 'Laravel').' - Listado de Productos con codigo de barrras.pdf');
+    }
+
+    public function kardexpdffilter(Request $request, $product)
+    {
+        $producto = Product::find($product);
+        $kardexes = DB::table('kardexes')
+            ->join('products', 'kardexes.product_id', '=', 'products.id')
+            ->where('kardexes.product_id', $producto->id)
+            ->whereBetween('kardexes.created_at', [$request->start, $request->end])
             ->select('kardexes.*', 'products.name as product_name')
             ->get();
         return Pdf::loadView('pdfs.kardex', compact('kardexes', 'producto'))

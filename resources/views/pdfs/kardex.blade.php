@@ -10,13 +10,14 @@
         <thead>
             <tr>
                 <th colspan="3"><img src="{{ asset('assets/images/logo-official.png') }}" alt="logo" height="60"></th>
-                <th colspan="2" style="text-align: center"><h3>{{ config('app.name', 'Laravel') }}</h3></th>
+                <th colspan="3" style="text-align: center"><h3>{{ config('app.name', 'Laravel') }}</h3></th>
             </tr>
             <tr>
-                <th colspan="5" style="text-align: center"><h4>Kardex del Producto {{ $producto->name }}</h4></th>
+                <th colspan="6" style="text-align: center"><h4>Kardex del Producto {{ $producto->name }}</h4></th>
             </tr>
             <tr>
                 <th>Movimiento</th>
+                <th>Fecha</th>
                 <th>Detalles</th>
                 <th>Cantidad</th>
                 <th>Precio</th>
@@ -27,6 +28,7 @@
             @foreach ($kardexes as $kardex)
                 <tr style="text-align: center; font-size: 14px;@if ($kardex->type == 2) background-color: #e3cbcb; @elseif($kardex->type == 1) background-color: #c1dbd2; @endif">
                     <td>{{ $kardex->type == 1 ? 'Ingreso' : 'Salida' }}</td>
+                    <td>{{ \Carbon\Carbon::parse($kardex->created_at)->format('d/m/Y H:i A' ) }}</td>
                     <td>{{ $kardex->description }}</td>
                     <td>{{ $kardex->quantity }}</td>
                     <td>{{ number_format($kardex->price, 0, '', '.') }}</td>

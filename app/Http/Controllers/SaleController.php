@@ -44,6 +44,15 @@ class SaleController extends Controller
                     if ($request->has('day') && $request->get('day') != '') {
                         $query->whereDate('sales.created_at', '=', $request->get('day'));
                     }
+
+                    if ($request->has('search') && $request->get('search')['value'] != '') {
+                        $searchValue = $request->get('search')['value'];
+                        $query->where(function ($subQuery) use ($searchValue) {
+                            $subQuery->where('users.name', 'like', "%{$searchValue}%")
+                                     ->orWhere('sales.customer_name', 'like', "%{$searchValue}%")
+                                     ->orWhere('sales.payment_status', 'like', "%{$searchValue}%");
+                        });
+                    }
                 })
                 ->addColumn('actions', function ($data) {
                     return view('sales.partials.actions', ['id' => $data->id]);
@@ -115,4 +124,5 @@ class SaleController extends Controller
         return Pdf::loadView('pdfs.informesales', compact('informe', 'total', 'totalefectivo', 'totalcredito', 'totalcheque', 'totaltransferencia'))
                 ->stream(''.config('app.name', 'Laravel').' - Informe de ventas totales - ' . Carbon::now(). '.pdf');
     }
+
 }

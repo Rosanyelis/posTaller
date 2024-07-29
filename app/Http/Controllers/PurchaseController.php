@@ -45,6 +45,14 @@ class PurchaseController extends Controller
                         $query->whereBetween('purchases.created_at', [$request->get('start'), $request->get('end')]);
                     }
 
+                    if ($request->has('search') && $request->get('search')['value'] != '') {
+                        $searchValue = $request->get('search')['value'];
+                        $query->where(function ($subQuery) use ($searchValue) {
+                            $subQuery->where('suppliers.name', 'like', "%{$searchValue}%")
+                                     ->orWhere('users.name', 'like', "%{$searchValue}%")
+                                     ->orWhere('purchases.reference', 'like', "%{$searchValue}%");
+                        });
+                    }
                 })
                 ->addColumn('actions', function ($data) {
                     return view('purchases.partials.actions', ['id' => $data->id]);

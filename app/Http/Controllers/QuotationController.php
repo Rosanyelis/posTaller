@@ -45,6 +45,15 @@ class QuotationController extends Controller
                     if ($request->has('start') && $request->has('end') && $request->get('start') != '' && $request->get('end') != '') {
                         $query->whereBetween('quotations.created_at', [$request->get('start'), $request->get('end')]);
                     }
+
+                    if ($request->has('search') && $request->get('search')['value'] != '') {
+                        $searchValue = $request->get('search')['value'];
+                        $query->where(function ($subQuery) use ($searchValue) {
+                            $subQuery->where('customers.name', 'like', "%{$searchValue}%")
+                                     ->orWhere('users.name', 'like', "%{$searchValue}%")
+                                     ->orWhere('customers.rut', 'like', "%{$searchValue}%");
+                        });
+                    }
                 })
                 ->addColumn('actions', function ($data) {
                     return view('quotes.partials.actions', ['id' => $data->id]);

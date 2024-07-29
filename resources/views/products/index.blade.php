@@ -13,6 +13,7 @@
 <link
     href="{{ asset('assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css') }}"
     rel="stylesheet" type="text/css" />
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 @endsection
 
 @section('content')
@@ -66,16 +67,17 @@
                 </div>
             </div>
             <div class="card-body">
-                <div class="row">
+                <div class="row gy-1">
                     <div class="col-md-12">
                         <p>El informe se genera solo si aplica el filtro, sino hay datos no podra generarse
                             el informe.
                         </p>
                     </div>
-                    <div class="col-md-3">
-                        <div class="mb-3">
+                    <div class="col-lg-3 col-md-3 col-sm-6">
+                        <div class="">
                             <label for="category_id">Categorias</label>
-                            <select name="category_id" id="category_id" class="form-control">
+                            <select name="category_id" id="category_id" class="form-control "
+                                style="width: 100%;">
                                 <option value="">Todos</option>
                                 @foreach ($categorys as $item)
                                     <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -83,10 +85,14 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-1">
-                        <button type="button" class="btn btn-primary mt-4" id="filter">Filtrar</button>
-                    </div>
-                    <div class="col-md-3">
+                    <div class="col-md-5 col-lg-5 col-sm-6 p-0 text-center">
+                        <button type="button" class="btn btn-primary mt-4" id="filter">
+                            <i class="mdi mdi-filter"></i> Filtrar
+                        </button>
+                        <button type="button" class="btn btn-danger mt-4" id="removefilter"
+                            title="Eliminar filtro">
+                            <i class="mdi mdi-filter-remove"></i>
+                        </button>
                         <button type="button" class="btn btn-success mt-4" id="informe">Generar Informe</button>
                         <form id="formfilter" action="{{ route('products.generateInformefilter') }}" method="post" target="_blank">
                             @csrf
@@ -94,7 +100,8 @@
                         </form>
                     </div>
                 </div>
-                <div class="table-responsive">
+
+                <div class="table-responsive mt-3">
                     <table id="datatable" class="table table-bordered nowrap w-100">
                         <thead>
                             <tr>
@@ -149,14 +156,17 @@
 <script
     src="{{ asset('assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js') }}">
 </script>
-
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <!-- Datatable init js -->
 <script>
     const basepath = "{{ asset('assets/images/') }}";
     const baseStorage = "{{ asset('') }}";
     const numberFormat2 = new Intl.NumberFormat('de-DE');
-    console.log($('#category_id').val());
+    $('#category_id').select2({
+        placeholder: 'Seleccione una categoria',
+    });
     const table = $('#datatable').DataTable({
+
         processing: true,
         serverSide: true,
         ajax: {
@@ -186,19 +196,21 @@
             },
             {
                 data: 'name',
-                name: 'name'
+                name: 'name',
+                orderable: true,
+                searchable: true
             },
             {
-                data: 'category',
-                name: 'category'
+                data: 'category.name',
+                name: 'category.name'
             },
             {
                 data: 'type',
                 name: 'type'
             },
             {
-                data: 'quantity',
-                name: 'quantity'
+                data: 'storeqty.quantity',
+                name: 'storeqty.quantity'
             },
             {
                 data: 'cost',
@@ -258,6 +270,11 @@
     }
 
     $('#filter').on('click', function() {
+        table.draw();
+    });
+
+    $('#removefilter').on('click', function() {
+        $('#category_id').val('').trigger('change');
         table.draw();
     });
 
