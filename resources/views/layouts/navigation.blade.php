@@ -9,14 +9,6 @@
                                     <span data-key="t-dashboard">Dashboard</span>
                                 </a>
                             </li>
-
-                            <li>
-                                <a href="{{ route('pos.index') }}">
-                                    <i data-feather="airplay"></i>
-                                    <span data-key="t-pos">POS</span>
-                                </a>
-                            </li>
-
                             <li class="menu-title" data-key="t-apps">Admin</li>
 
                             <li>
@@ -114,20 +106,6 @@
                                 </ul>
                             </li>
 
-                            <li>
-                                <a href="javascript: void(0);" class="has-arrow">
-                                    <i data-feather="file"></i>
-                                    <span data-key="reportes">Reportes</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <!-- <li><a href="javascript: void(0);" key="t-products">Ventas Diarias</a></li> -->
-                                    <!-- <li><a href="javascript: void(0);" data-key="t-product-add">Ventas Mensuales</a></li> -->
-                                    <li><a href="{{ route('ventas.generateInforme') }}" target="_blank" data-key="t-product-add">Informe de Ventas</a></li>
-                                    <li><a href="{{ route('reportes.informegastos') }}" target="_blank" data-key="t-product-add">Informe de Gastos</a></li>
-                                    <li><a href="{{ route('products.allproductpdf') }}" data-key="t-product-add">Informe de Productos</a></li>
-                                    <!-- <li><a href="javascript: void(0);" data-key="t-product-add">Informe de Inventario</a></li> -->
-                                </ul>
-                            </li>
 
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow">
@@ -135,8 +113,6 @@
                                     <span data-key="Configuraciones">Configuraciones</span>
                                 </a>
                                 <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="{{ route('tiendas.index') }}" key="t-products">Lista Tiendas</a></li>
-                                    <li><a href="{{ route('tiendas.create') }}" data-key="t-product-add">Agregar Tiendas</a></li>
                                     <li><a href="{{ route('users.index') }}" key="t-products">Lista Usuarios</a></li>
                                     <li><a href="{{ route('users.create') }}" data-key="t-product-add">Agregar Usuario</a></li>
                                 </ul>

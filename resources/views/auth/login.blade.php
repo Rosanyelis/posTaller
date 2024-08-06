@@ -10,9 +10,7 @@
                                 <div class="d-flex flex-column h-100">
                                     <div class="mb-md-0 text-center">
                                         <a href="{{ route('home') }}" class="d-block auth-logo">
-                                            <img src="{{ asset('assets/images/logo-official.png') }}" alt="logo" height="100">
-                                            <br>
-                                            <span class="logo-txt">POS</span>
+                                            <img src="{{ asset('assets/images/TIGroup.png') }}" alt="logo" height="100">
                                         </a>
                                     </div>
                                     <div class="auth-content my-auto">
@@ -73,7 +71,7 @@
 
                                     </div>
                                     <div class="mt-4 mt-md-5 text-center">
-                                        <p class="mb-0">© <script>document.write(new Date().getFullYear())</script> Rey del Neumático.</p>
+                                        <p class="mb-0">© <script>document.write(new Date().getFullYear())</script> {{ config('app.name', 'Laravel') }}.</p>
                                     </div>
                                 </div>
                             </div>

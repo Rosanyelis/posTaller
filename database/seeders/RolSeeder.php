@@ -16,6 +16,5 @@ class RolSeeder extends Seeder
         Rol::create(['name' => 'Desarrollador']);
         Rol::create(['name' => 'Administrador']);
         Rol::create(['name' => 'Tecnico']);
-        Rol::create(['name' => 'Cajero']);
     }
 }

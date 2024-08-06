@@ -29,7 +29,6 @@
         <div class="auth-page">
             <div class="container-fluid p-0">
                 @yield('content')
-
                 <!-- end row -->
             </div>
             <!-- end container fluid -->

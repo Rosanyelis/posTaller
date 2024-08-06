@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('customer_id')->constrained('customers')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('store_id')->constrained('stores')->onDelete('cascade');
             $table->string('customer_name');
             $table->decimal('total', 10, 2);
             $table->decimal('product_discount', 10, 2)->nullable();
@@ -29,7 +28,7 @@ return new class extends Migration
             $table->decimal('grand_total', 10, 2);
             $table->integer('total_items')->nullable();
             $table->integer('total_quantity')->nullable();
-            $table->text('note');
+            $table->text('note')->nullable();
             $table->timestamps();
         });
     }

@@ -19,16 +19,10 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->decimal('price', 10, 2);
             $table->decimal('cost', 10, 2)->nullable();
-            $table->decimal('wholesale_price', 10, 2)->nullable();
+            $table->integer('quantity');
             $table->string('type');
-            $table->string('barcode_symbology');
             $table->string('description')->nullable();
-            $table->integer('alert_quantity')->nullable();
-            $table->integer('max_quantity')->nullable();
-            $table->string('cellar')->nullable();
-            $table->string('hail')->nullable();
-            $table->string('rack')->nullable();
-            $table->string('position')->nullable();
+
             $table->timestamps();
         });
     }
