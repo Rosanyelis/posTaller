@@ -142,6 +142,33 @@
                                 </ul>
                             </li>
                             @endif
-
+                            @if (Auth::user()->rol_id == 4)
+                            <li>
+                                <a href="{{ route('dashboard') }}">
+                                    <i data-feather="home"></i>
+                                    <span data-key="t-dashboard">Dashboard</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript: void(0);" class="has-arrow">
+                                    <i data-feather="file-text"></i>
+                                    <span data-key="cotizacion">Cotización</span>
+                                </a>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    <li><a href="{{ route('cotizaciones.index') }}" key="t-Cotizacion">Lista Cotización</a></li>
+                                    <li><a href="{{ route('cotizaciones.create') }}" data-key="t-Cotizacion-add">Agregar Cotización</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="javascript: void(0);" class="has-arrow">
+                                    <i data-feather="briefcase"></i>
+                                    <span data-key="Ordenes de Trabajo">Ordenes de Trabajo</span>
+                                </a>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    <li><a href="{{ route('ordenes-trabajo.index') }}" key="t-work-orders">Lista Ordenes de Trabajo</a></li>
+                                    <li><a href="{{ route('ordenes-trabajo.create') }}" data-key="t-work-orders-add">Agregar OT</a></li>
+                                </ul>
+                            </li>
+                            @endif
                         </ul>
                     </div>

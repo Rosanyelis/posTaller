@@ -80,25 +80,39 @@
 
         <script src="{{ asset('assets/js/app.js') }}"></script>
         <script>
-
             $(document).ready(function() {
-                @include('layouts.alerts')
+
                 const Toast = Swal.mixin({
                     toast: true,
                     position: "top-end",
                     showConfirmButton: false,
-                    timer: 3000,
+                    timer: 2500,
                     timerProgressBar: true,
                     didOpen: (toast) => {
                         toast.onmouseenter = Swal.stopTimer;
                         toast.onmouseleave = Swal.resumeTimer;
                     }
                 });
+
                 @if (count($productsQty) > 0)
                 Toast.fire({
                     icon: "error",
                     title: "Tienes Productos sin Stock",
-                    text: "No podras usarlos en las ventas, notifica al administrador"
+                    text: "Por favor revisa las notificaciones y reponga el inventario"
+                });
+                @endif
+
+                @if (session('success'))
+                Toast.fire({
+                    icon: "success",
+                    title: "{{ session('success') }}",
+                });
+                @endif
+
+                @if (session('error'))
+                Toast.fire({
+                    icon: "error",
+                    title: "{{ session('error') }}"
                 });
                 @endif
 

@@ -1,9 +1,6 @@
 
                     <div class="d-flex">
                         <div class="navbar-brand-box">
-                            @if (Auth::user()->rol_id == 1 || Auth::user()->rol_id == 2)
-
-
                             <a href="{{ route('dashboard') }}" class="logo logo-dark">
                                 <img src="{{ asset('assets/images/rey-neumatico-.png') }}" alt="logo" height="73"> <span class="logo-txt"></span>
                             </a>
@@ -11,15 +8,6 @@
                             <a href="{{ route('dashboard') }}" class="logo logo-light">
                                 <img src="{{ asset('assets/images/rey-neumatico-.png') }}" alt="logo" height="73"> <span class="logo-txt"></span>
                             </a>
-                            @else
-                            <a href="{{ route('pos.index') }}" class="logo logo-dark">
-                                <img src="{{ asset('assets/images/rey-neumatico-.png') }}" alt="logo" height="73"> <span class="logo-txt"></span>
-                            </a>
-
-                            <a href="{{ route('pos.index') }}" class="logo logo-light">
-                                <img src="{{ asset('assets/images/rey-neumatico-.png') }}" alt="logo" height="73"> <span class="logo-txt"></span>
-                            </a>
-                            @endif
                         </div>
                     </div>
 

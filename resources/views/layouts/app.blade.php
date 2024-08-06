@@ -86,13 +86,14 @@
         <!-- Plugins js-->
          <!-- Sweet Alerts js -->
         <script src="{{ asset('assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
-        @yield('scripts')
-
-        <script src="{{ asset('assets/js/app.js') }}"></script>
         <script>
             $(document).ready(function() {
                 @include('layouts.alerts')
             })
         </script>
+        @yield('scripts')
+
+        <script src="{{ asset('assets/js/app.js') }}"></script>
+
     </body>
 </html>

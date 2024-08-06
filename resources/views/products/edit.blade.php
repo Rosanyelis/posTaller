@@ -169,7 +169,7 @@
                         <div class="col-lg-4 col-md-4 col-sm-6">
                             <div class="mb-3">
                                 <label for="description" class="form-label">Detalles</label>
-                                <input class="form-control" type="text" name="description" id="description" required
+                                <input class="form-control" type="text" name="description" id="description"
                                     value="{{ $product->description }}">
                                 @if($errors->has('description'))
                                     <div class="invalid-feedback">

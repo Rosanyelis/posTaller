@@ -138,7 +138,9 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, $product)
     {
         $data = $request->all();
-        $data['image'] = null;
+
+        $product = Product::find($product);
+        $data['image'] = $product->image;
         if ($request->hasFile('image')) {
             $uploadPath = public_path('/storage/productos/');
             $file = $request->file('image');
@@ -150,8 +152,6 @@ class ProductController extends Controller
             $foto = $url;
             $data['image'] = $url;
         }
-
-        $product = Product::find($product);
         $product->update([
             'code'              => $data['code'],
             'name'              => $data['name'],
