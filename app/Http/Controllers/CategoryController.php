@@ -47,20 +47,7 @@ class CategoryController extends Controller
     public function store(StoreCategoryRequest $request)
     {
 
-        $data = $request->all();
-        if ($request->hasFile('image')) {
-            $uploadPath = public_path('/storage/categorias/');
-            $file = $request->file('image');
-            $extension = $file->getClientOriginalExtension();
-            $uuid = Str::uuid(4);
-            $fileName = $uuid . '.' . $extension;
-            $file->move($uploadPath, $fileName);
-            $url = '/storage/categorias/'.$fileName;
-            $foto = $url;
-            $data['image'] = $url;
-        }
-
-        Category::create($data);
+        Category::create($request->all());
         return redirect()->route('categorias.index')->with('success', 'Categoría creada con exito');
 
     }
@@ -80,21 +67,9 @@ class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request, $category)
     {
-        $data = $request->all();
-        if ($request->hasFile('image')) {
-            $uploadPath = public_path('/storage/categorias/');
-            $file = $request->file('image');
-            $extension = $file->getClientOriginalExtension();
-            $uuid = Str::uuid(4);
-            $fileName = $uuid . '.' . $extension;
-            $file->move($uploadPath, $fileName);
-            $url = '/storage/categorias/'.$fileName;
-            $foto = $url;
-            $data['image'] = $url;
-        }
 
         $category = Category::find($category);
-        $category->update($data);
+        $category->update($request->all());
         return redirect()->route('categorias.index')->with('success', 'Categoría actualizada con exito');
     }
 

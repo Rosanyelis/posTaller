@@ -31,7 +31,7 @@ class ProductController extends Controller
     public function datatable(Request $request)
     {
         if ($request->ajax()) {
-            $data = Product::with('category', 'storeqty');
+            $data = Product::with('category');
             return DataTables::of($data)
                 ->filter(function ($query) use ($request) {
                     if ($request->has('category_id') && $request->get('category_id') != '') {
@@ -84,30 +84,7 @@ class ProductController extends Controller
             $data['image'] = $url;
         }
 
-        $producto = Product::create([
-            'code'              => $data['code'],
-            'name'              => $data['name'],
-            'category_id'       => $data['category_id'],
-            'type'              => $data['type'],
-            'cost'              => $data['cost'],
-            'price'             => $data['price'],
-            'image'             => $data['image'],
-            'description'       => $data['description'],
-            'barcode_symbology' => 'code128',
-            'alert_quantity'    => $data['alert_quantity'],
-            'max_quantity'      => $data['max_quantity'],
-            'cellar'            => $data['cellar'],
-            'hail'              => $data['hail'],
-            'rack'              => $data['rack'],
-            'position'          => $data['position'],
-        ]);
-
-        ProductStoreQty::create([
-            'store_id'   => 1,
-            'product_id' => $producto->id,
-            'quantity'   => $data['quantity'],
-            'price'      => $data['price'],
-        ]);
+        $producto = Product::create($data);
 
         return redirect()->route('productos.index')->with('success', 'Producto creado con exito');
 
@@ -152,28 +129,8 @@ class ProductController extends Controller
             $foto = $url;
             $data['image'] = $url;
         }
-        $product->update([
-            'code'              => $data['code'],
-            'name'              => $data['name'],
-            'category_id'       => $data['category_id'],
-            'type'              => $data['type'],
-            'cost'              => $data['cost'],
-            'price'             => $data['price'],
-            'image'             => $data['image'],
-            'description'       => $data['description'],
-            'barcode_symbology' => 'code128',
-            'alert_quantity'    => $data['alert_quantity'],
-            'max_quantity'      => $data['max_quantity'],
-            'cellar'            => $data['cellar'],
-            'hail'              => $data['hail'],
-            'rack'              => $data['rack'],
-            'position'          => $data['position'],
-        ]);
+        $product->update($data);
 
-        ProductStoreQty::where('product_id', $product->id)->update([
-            'quantity'   => $data['quantity'],
-            'price'      => $data['price'],
-        ]);
         return redirect()->route('productos.index')->with('success', 'Producto actualizado con exito');
     }
 
@@ -182,11 +139,9 @@ class ProductController extends Controller
      */
     public function destroy($product)
     {
-        ProductStoreQty::where('product_id', $product)->delete();
 
         $data = Product::find($product);
         $data->delete();
-
 
         return redirect()->route('productos.index')->with('success', 'Producto eliminado con exito');
     }

@@ -64,17 +64,6 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-4 col-md-4 col-sm-6">
-                            <div class="mb-3">
-                                <label for="image" class="form-label">Imagen</label>
-                                <input class="form-control" type="file" name="image" id="image">
-                                @if($errors->has('image'))
-                                    <div class="invalid-feedback">
-                                        {{ $errors->first('image') }}
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
                     </div>
                     <button type="submit" class="btn btn-primary w-md float-end">Guardar Categoría</button>
                 </form>

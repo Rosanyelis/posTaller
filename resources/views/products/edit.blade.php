@@ -131,7 +131,7 @@
                             <div class="mb-3">
                                 <label for="quantity" class="form-label">Cantidad de Producto</label>
                                 <input class="form-control" type="number" name="quantity" id="quantity" required
-                                    value="{{ $product->storeqty->quantity }}">
+                                    value="{{ $product->quantity }}">
                                 @if($errors->has('quantity'))
                                     <div class="invalid-feedback">
                                         {{ $errors->first('quantity') }}
@@ -140,31 +140,6 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-4 col-md-4 col-sm-6">
-                            <div class="mb-3">
-                                <label for="alert_quantity" class="form-label">Cantidad Mínima de Producto</label>
-                                <input class="form-control" type="number" name="alert_quantity" id="alert_quantity" required
-                                    value="{{ $product->alert_quantity }}">
-                                @if($errors->has('alert_quantity'))
-                                    <div class="invalid-feedback">
-                                        {{ $errors->first('alert_quantity') }}
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-md-4 col-sm-6">
-                            <div class="mb-3">
-                                <label for="max_quantity" class="form-label">Cantidad Máxima de Producto</label>
-                                <input class="form-control" type="number" name="max_quantity" id="max_quantity" required
-                                    value="{{ $product->max_quantity }}">
-                                @if($errors->has('max_quantity'))
-                                    <div class="invalid-feedback">
-                                        {{ $errors->first('max_quantity') }}
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
 
                         <div class="col-lg-4 col-md-4 col-sm-6">
                             <div class="mb-3">
@@ -179,43 +154,6 @@
                             </div>
                         </div>
 
-                        <div class="w-100"></div>
-
-                        <hr>
-                        <div class="col-lg-12 col-md-12 col-sm-12">
-                            <div class="mb-3">
-                                <h4>Ubicación en Bodega (Opcional)</h4>
-                            </div>
-                        </div>
-
-                        <hr>
-                        <div class="col-lg-3 col-md-3 col-sm-6">
-                            <div class="mb-3">
-                                <label for="cellar" class="form-label">Bodega</label>
-                                <input type="text" class="form-control" name="cellar" id="cellar" value="{{ $product->cellar }}">
-                            </div>
-                        </div>
-
-                        <div class="col-lg-3 col-md-3 col-sm-6">
-                            <div class="mb-3">
-                                <label for="hail" class="form-label">Pasillo</label>
-                                <input type="text" class="form-control" name="hail" id="hail" value="{{ $product->hail }}">
-                            </div>
-                        </div>
-
-                        <div class="col-lg-3 col-md-3 col-sm-6">
-                            <div class="mb-3">
-                                <label for="rack" class="form-label">Estante o rack</label>
-                                <input type="text" class="form-control" name="rack" id="rack" value="{{ $product->rack }}">
-                            </div>
-                        </div>
-
-                        <div class="col-lg-3 col-md-3 col-sm-6">
-                            <div class="mb-3">
-                                <label for="position" class="form-label">Posicion</label>
-                                <input type="text" class="form-control" name="position" id="position" value="{{ $product->position }}">
-                            </div>
-                        </div>
                     </div>
                     <button type="submit" class="btn btn-primary w-md float-end">Actualizar Producto</button>
                 </form>

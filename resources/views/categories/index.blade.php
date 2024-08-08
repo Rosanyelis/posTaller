@@ -60,7 +60,6 @@
                     <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
                         <thead>
                             <tr>
-                                <th width="100px">Imagen</th>
                                 <th>Código</th>
                                 <th>Categoria</th>
                                 <th width="100px">Acciones</th>
@@ -128,10 +127,6 @@
         },
         columns: [
             {
-                data: 'image',
-                name: 'image'
-            },
-            {
                 data: 'code',
                 name: 'code'
             },
@@ -145,17 +140,7 @@
                 orderable: false,
                 searchable: false
             },
-        ],
-        columnDefs: [{
-            targets: 0,
-            render: function (data) {
-                    if (data == null) {
-                        return '<img class="img-responsive" src="' + basepath + '/no-image.png" width="30px"/>';
-                    }else{
-                        return '<img ="img-responsive" src="' + baseStorage + '' + data + '" width="50px"/>';
-                    }
-                }
-        }]
+        ]
     });
 
     function deleteRecord(id) {

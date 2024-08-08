@@ -31,7 +31,6 @@
                                 <ul class="sub-menu" aria-expanded="false">
                                     <li><a href="{{ route('categorias.index') }}" key="t-categories">Lista Categorías</a></li>
                                     <li><a href="{{ route('categorias.create') }}" data-key="t-categories-add">Agregar Categoría</a></li>
-                                    <li><a href="{{ route('categorias.viewimport') }}" data-key="t-categories-viewimport">Importar Categorías</a></li>
                                 </ul>
                             </li>
                             <li>

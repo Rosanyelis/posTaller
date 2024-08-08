@@ -209,8 +209,8 @@
                 name: 'type'
             },
             {
-                data: 'storeqty.quantity',
-                name: 'storeqty.quantity'
+                data: 'quantity',
+                name: 'quantity'
             },
             {
                 data: 'cost',

@@ -139,31 +139,6 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-4 col-md-4 col-sm-6">
-                            <div class="mb-3">
-                                <label for="alert_quantity" class="form-label">Cantidad Mínima de Producto</label>
-                                <input class="form-control" type="number" name="alert_quantity" id="alert_quantity" required
-                                    value="{{ old('alert_quantity') }}">
-                                @if($errors->has('alert_quantity'))
-                                    <div class="invalid-feedback">
-                                        {{ $errors->first('alert_quantity') }}
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-md-4 col-sm-6">
-                            <div class="mb-3">
-                                <label for="max_quantity" class="form-label">Cantidad Máxima de Producto</label>
-                                <input class="form-control" type="number" name="max_quantity" id="max_quantity" required
-                                    value="{{ old('max_quantity') }}">
-                                @if($errors->has('max_quantity'))
-                                    <div class="invalid-feedback">
-                                        {{ $errors->first('max_quantity') }}
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
 
                         <div class="col-lg-4 col-md-4 col-sm-6">
                             <div class="mb-3">
@@ -178,43 +153,6 @@
                             </div>
                         </div>
 
-                        <div class="w-100"></div>
-
-                        <hr>
-                        <div class="col-lg-12 col-md-12 col-sm-12">
-                            <div class="mb-3">
-                                <h4>Ubicación en Bodega (Opcional)</h4>
-                            </div>
-                        </div>
-
-                        <hr>
-                        <div class="col-lg-3 col-md-3 col-sm-6">
-                            <div class="mb-3">
-                                <label for="cellar" class="form-label">Bodega</label>
-                                <input type="text" class="form-control" name="cellar" id="cellar" value="{{ old('cellar') }}">
-                            </div>
-                        </div>
-
-                        <div class="col-lg-3 col-md-3 col-sm-6">
-                            <div class="mb-3">
-                                <label for="hail" class="form-label">Pasillo</label>
-                                <input type="text" class="form-control" name="hail" id="hail" value="{{ old('hail') }}">
-                            </div>
-                        </div>
-
-                        <div class="col-lg-3 col-md-3 col-sm-6">
-                            <div class="mb-3">
-                                <label for="rack" class="form-label">Estante o rack</label>
-                                <input type="text" class="form-control" name="rack" id="rack" value="{{ old('rack') }}">
-                            </div>
-                        </div>
-
-                        <div class="col-lg-3 col-md-3 col-sm-6">
-                            <div class="mb-3">
-                                <label for="position" class="form-label">Posicion</label>
-                                <input type="text" class="form-control" name="position" id="position" value="{{ old('position') }}">
-                            </div>
-                        </div>
                     </div>
                     <button type="submit" class="btn btn-primary w-md float-end">Guardar Producto</button>
                 </form>

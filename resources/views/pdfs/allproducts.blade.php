@@ -10,7 +10,7 @@
     <table border="1" cellspacing="0" style="width: 100%; border-collapse: collapse; font-family: Arial, Helvetica, sans-serif">
         <thead>
             <tr>
-                <th colspan="2"><img src="{{ asset('assets/images/logo-official.png') }}" alt="logo" height="60"></th>
+                <th colspan="2"><img src="{{ asset('assets/images/TIGroup.png') }}" alt="logo" height="60"></th>
                 <th colspan="5" style="text-align: center"><h3>{{ config('app.name', 'Laravel') }}</h3></th>
             </tr>
             <tr>
@@ -33,9 +33,9 @@
                     <td>{{ $product->name }}</td>
                     <td>{{ $product->category->name }}</td>
                     <td>{{ $product->type }}</td>
-                    <td>{{ $product->storeqty->quantity }}</td>
-                    <td>{{ $product->cost }}</td>
-                    <td>{{ $product->price }}</td>
+                    <td>{{ number_format($product->quantity, 0, ',', '.') }}</td>
+                    <td>{{ number_format($product->cost, 0, ',', '.') }}</td>
+                    <td>{{ number_format($product->price, 0, ',', '.') }}</td>
                 </tr>
             @endforeach
         </tbody>

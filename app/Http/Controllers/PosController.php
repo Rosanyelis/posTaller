@@ -67,7 +67,7 @@ class PosController extends Controller
     public function getProductPos(Request $request)
     {
         $query = Product::join('product_store_qties', 'products.id', '=', 'product_store_qties.product_id')
-                        ->select('products.id', 'products.name', 'products.code', 'products.price', 'product_store_qties.quantity')
+                        ->select('products.id', 'products.name', 'products.image', 'products.code', 'products.price', 'product_store_qties.quantity')
                         ->where('product_store_qties.quantity', '>', '1');
         // Si se proporciona un ID de categoría, se filtra por esa categoría
         if ($request->has('category_id')) {
