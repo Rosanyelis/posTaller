@@ -97,7 +97,8 @@ class PurchaseController extends Controller
             'reference'      => $request->reference,
             'files'          => $urlfile,
             'note'           => $request->note,
-            'received'       => $request->received
+            'received'       => $request->received,
+            'type_purchase'  => $request->type_purchase
         ]);
 
         foreach ($productos as $key) {
@@ -160,7 +161,8 @@ class PurchaseController extends Controller
             'reference'      => $request->reference,
             'files'          => $urlfile,
             'note'           => $request->note,
-            'received'       => $request->received
+            'received'       => $request->received,
+            'type_purchase'  => $request->type_purchase
         ]);
         PurchaseItem::where('purchase_id', $purchase->id)->delete();
         foreach ($productos as $key) {

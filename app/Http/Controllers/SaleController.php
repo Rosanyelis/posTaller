@@ -78,6 +78,14 @@ class SaleController extends Controller
                 ->stream(''.config('app.name', 'Laravel').' - Factura - ' . $sale->customer_name. '.pdf');
     }
 
+    public function generateTicket($sale)
+    {
+        $sale = Sale::with('user', 'saleitems', 'customer', 'payments')->find($sale);
+        return Pdf::loadView('pdfs.factura', compact('sale'))
+                ->setPaper([0,0,220,1000])
+                ->stream(''.config('app.name', 'Laravel').' - Factura - ticket -' . $sale->customer_name. '.pdf');
+    }
+
     public function generateInforme()
     {
         $informe = [];

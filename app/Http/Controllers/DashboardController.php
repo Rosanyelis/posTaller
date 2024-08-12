@@ -18,10 +18,17 @@ class DashboardController extends Controller
     {
         $mes = Carbon::now()->format('m');
         $totalMes = Sale::wheremonth('created_at', $mes)->sum('grand_total');
-        $totalProductos = ProductStoreQty::sum('quantity');
+        $totalProductos = DB::table('products')
+                            ->join('product_store_qties', 'products.id', '=', 'product_store_qties.product_id')
+                            ->where('type', '!=', 'SERVICIOS')
+                            ->select(DB::raw('SUM(product_store_qties.quantity) as total_products'))
+                            ->first()
+                            ->total_products;
+
         $totalMontoProductos = DB::table('products')
                                 ->join('product_store_qties', 'products.id', '=', 'product_store_qties.product_id')
-                                ->select(DB::raw('SUM(products.price * product_store_qties.quantity) as total'))
+                                ->where('type', '!=', 'SERVICIOS')
+                                ->select(DB::raw('SUM(products.cost * product_store_qties.quantity) as total'))
                                 ->first()
                                 ->total;
         $totalQuote = Quotation::wheremonth('created_at', $mes)->count();
@@ -35,7 +42,7 @@ class DashboardController extends Controller
         $totalventasanuales = $this->totalSalesYear();
         $compras = $this->totalPurchase();
         $statuWorkorders = $this->workordersStatus();
-        
+
         return view('dashboard', compact('totalMes', 'totalProductos', 'totalMontoProductos',
             'totalxdia', 'totalQuote', 'totalMontoQuote', 'totaldiaventas', 'totalot', 'totalMontoot',
             'totalservices', 'topservices', 'compras', 'totalventasanuales', 'statuWorkorders'));

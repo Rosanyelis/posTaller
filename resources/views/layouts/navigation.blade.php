@@ -124,7 +124,7 @@
                                     <!-- <li><a href="javascript: void(0);" data-key="t-product-add">Ventas Mensuales</a></li> -->
                                     <li><a href="{{ route('ventas.generateInforme') }}" target="_blank" data-key="t-product-add">Informe de Ventas</a></li>
                                     <li><a href="{{ route('reportes.informegastos') }}" target="_blank" data-key="t-product-add">Informe de Gastos</a></li>
-                                    <li><a href="{{ route('products.allproductpdf') }}" data-key="t-product-add">Informe de Productos</a></li>
+                                    <li><a href="{{ route('products.allproductpdf') }}" target="_blank" data-key="t-product-add">Informe de Productos</a></li>
                                     <!-- <li><a href="javascript: void(0);" data-key="t-product-add">Informe de Inventario</a></li> -->
                                 </ul>
                             </li>
@@ -149,6 +149,13 @@
                                     <span data-key="t-dashboard">Dashboard</span>
                                 </a>
                             </li>
+                            <li>
+                                <a href="{{ route('pos.index') }}">
+                                    <i data-feather="airplay"></i>
+                                    <span data-key="t-pos">POS</span>
+                                </a>
+                            </li>
+                            <li class="menu-title" data-key="t-apps">Admin</li>
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow">
                                     <i data-feather="file-text"></i>

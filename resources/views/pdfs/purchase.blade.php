@@ -9,38 +9,63 @@
     <table cellspacing="0" style="width: 100%; border-collapse: collapse; font-family: Arial, Helvetica, sans-serif">
         <thead>
             <tr>
-                <th colspan="8" style="text-align: left; ">
-                    <img src="{{ asset('assets/images/logo-official.png') }}" alt="logo" height="80"></th>
+                <th colspan="4">
+                    <img src="{{ asset('assets/images/logo-official.png') }}" alt="logo" height="150">
+                    <br>
+                    <h4>
+                        Jose Joaquin Prieto 5780 - San Miguel
+                        <br>
+                        Santiago - vulca_david@hotmail.com
+                        <br>
+                        56 6 5275 9029 - 56 4 1324 3313 - 56 2 3207 5270
+                    </h4>
+                </th>
+                <th colspan="4" style="text-align: center; font-weight: bold; ">
+                    <h1>
+                        Compra
+                        <br>
+                        {{ \Carbon\Carbon::parse($purchase->created_at)->format('d - m - Y') }}
+                    </h1>
+                </th>
             </tr>
         </thead>
+    </table>
+    <table border="1" cellspacing="0" style="width: 100%; margin-top: 40px;
+        border-collapse: collapse; font-family: Arial, Helvetica, sans-serif; border-radius: 20px;">
         <tbody>
             <tr>
-                <td colspan="8" style="text-align: center"><h2>Compra</h2></td>
+                <td colspan="9"><strong>Datos de Compra</strong></td>
             </tr>
             <tr>
-                <td colspan="8" style="text-align: right"><strong>Fecha:</strong> {{ \Carbon\Carbon::parse($purchase->created_at)->format('d/m/Y') }}</td>
+                <td colspan="3">
+                    <strong>N° de Factura:</strong> {{ $purchase->reference }} </td>
+                <td colspan="3">
+                    <strong>¿Recibido?:</strong> {{ ($purchase->received == 1 ? 'Recibido' : 'No Recibido') }} </td>
+                <td colspan="3">
+                    <strong>Tipo de Compra:</strong> {{ $purchase->type_purchase }} </td>
             </tr>
             <tr>
-                <td colspan="8" style="text-align: right"><strong>N° de Factura:</strong> {{ $purchase->reference }}</td>
+                <td colspan="9">
+                    <strong>Notas:</strong> {{ $purchase->note }}
+                </td>
+        </tbody>
+    </table>
+    <table border="1" cellspacing="0" style="width: 100%; margin-top: 20px;
+        border-collapse: collapse; font-family: Arial, Helvetica, sans-serif; border-radius: 20px;">
+        <tbody>
+            <tr>
+                <td colspan="8"><strong>Datos de Proveedor</strong></td>
             </tr>
             <tr>
-                <td colspan="8" style="text-align: right"><strong>¿Recibido?:</strong> {{ ($purchase->received == 1 ? 'Recibido' : 'No Recibido') }}</td>
-            </tr>
-            <tr style="margin-top: 40px;">
-                <td colspan="8" ><strong>Proveedor:</strong> {{ $purchase->supplier->name }} </td>
+                <td colspan="4" ><strong>Proveedor:</strong> {{ $purchase->supplier->name }} </td>
+                <td colspan="4" ><strong>Teléfono:</strong> {{ $purchase->supplier->phone }} </td>
             </tr>
             <tr>
                 <td colspan="8" ><strong>Correo:</strong> {{ $purchase->supplier->email }} </td>
             </tr>
-            <tr>
-                <td colspan="8" ><strong>Teléfono:</strong> {{ $purchase->supplier->phone }} </td>
-            </tr>
-            <tr>
-                <td colspan="8" ><strong>Notas:</strong> {{ $purchase->note }} </td>
-            </tr>
         </tbody>
     </table>
-    <table border="1" cellspacing="0" style="width: 100%; margin-top: 40px; border-collapse: collapse; font-family: Arial, Helvetica, sans-serif">
+    <table border="1" cellspacing="0" style="width: 100%; margin-top: 20px; border-collapse: collapse; font-family: Arial, Helvetica, sans-serif">
         <thead>
             <tr>
                 <th colspan="4" style="text-align: center; font-weight: bold">Productos</th>
@@ -57,15 +82,15 @@
                 <tr style="text-align: center; font-size: 14px">
                     <td>{{ $item->product->name }}</td>
                     <td>{{ $item->quantity }}</td>
-                    <td>{{ $item->cost }}</td>
-                    <td>{{ $item->subtotal }}</td>
+                    <td>{{ number_format($item->cost, 0, ',', '.') }}</td>
+                    <td>{{ number_format($item->subtotal, 0, ',', '.') }}</td>
                 </tr>
             @endforeach
         </tbody>
         <tfoot>
             <tr>
                 <td colspan="3" style="text-align: right; font-weight: bold">Total:</td>
-                <td style="text-align: center;">{{ $purchase->total }}</td>
+                <td style="text-align: center;">{{ number_format($purchase->total, 0, ',', '.') }}</td>
             </tr>
         </tfoot>
     </table>

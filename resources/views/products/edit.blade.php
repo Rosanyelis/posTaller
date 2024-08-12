@@ -179,6 +179,30 @@
                             </div>
                         </div>
 
+                        <div class="col-lg-4 col-md-4 col-sm-6">
+                            <div class="mb-3">
+                                <label for="weight" class="form-label">Peso de Neumático (opcional)</label>
+                                <input class="form-control" type="text" name="weight" id="weight"
+                                    value="{{ $product->weight }}">
+                                @if($errors->has('weight'))
+                                    <div class="invalid-feedback">
+                                        {{ $errors->first('weight') }}
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-4 col-sm-6">
+                            <div class="mb-3">
+                                <label for="nacionality" class="form-label">Nacionalidad de Producto</label>
+                                <select class="form-control" name="nacionality" id="nacionality" style="width: 100%">
+                                    <option value="">-- Seleccione --</option>
+                                    <option value="Nacional" {{ $product->nacionality == 'Nacional' ? 'selected' : '' }}>Nacional</option>
+                                    <option value="Internacional" {{ $product->nacionality == 'Internacional' ? 'selected' : '' }}>Internacional</option>
+                                </select>
+                            </div>
+                        </div>
+
                         <div class="w-100"></div>
 
                         <hr>

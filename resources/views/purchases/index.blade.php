@@ -102,6 +102,7 @@
                                 <th>Fecha</th>
                                 <th>Proveedor</th>
                                 <th>N° factura</th>
+                                <th>Tipo</th>
                                 <th>Total</th>
                                 <th>Nota</th>
                                 <th>Estatus</th>
@@ -139,6 +140,9 @@
                                     </div>
                                     <div class="col-md-6">
                                         <strong>¿Recibido? :</strong> <span id="recibido"></span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong>Tipo de compra :</strong> <span id="type"></span>
                                     </div>
                                     <div class="col-md-12">
                                         <strong>Notas:</strong> <span id="note"></span>
@@ -262,6 +266,10 @@
                 name: 'reference'
             },
             {
+                data: 'type_purchase',
+                name: 'type_purchase'
+            },
+            {
                 data: 'total',
                 name: 'total'
             },
@@ -287,13 +295,13 @@
             }
         },
         {
-            targets: 3,
+            targets: 4,
             render: function (data) {
                 return '$ ' + numberFormat2.format(data);
             }
         },
         {
-            targets:5,
+            targets:6,
             render: function (data, type, row) {
                 if (data == 0) {
                     return `
@@ -395,6 +403,7 @@
                 } else {
                     $('#recibido').text('No Recibido');
                 }
+                $('#type').text(res.type_purchase);
                 $('#nfactura').text(res.reference);
                 if (res.files != '') {
                     $('#files').append('<a href="' + baseStorage + res.files + '" class="btn btn-info" download target="_blank">Descargar Archivo</a>');

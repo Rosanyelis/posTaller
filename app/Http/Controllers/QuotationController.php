@@ -78,6 +78,15 @@ class QuotationController extends Controller
      */
     public function store(StoreQuotationRequest $request)
     {
+        $correlativoInicial = 1001;
+        $nroOrden = 0;
+        $count = Quotation::count();
+        if ($count > 0) {
+            $data = Quotation::latest()->first();
+            $nroOrden = $data->correlativo + 1;
+        } else {
+            $nroOrden = 1001;
+        }
         $customer = Customer::where('name', $request->customer)->first();
         $productos = json_decode($request->array_products);
         $descuento = $request->total * ($request->order_discount_id / 100);
@@ -87,6 +96,7 @@ class QuotationController extends Controller
             'customer_id'    => $customer->id,
             'user_id'        => auth()->user()->id,
             'store_id'       => 1,
+            'correlativo'    => $nroOrden,
             'customer_name'  => $request->customer,
             'order_discount_id' => $request->order_discount_id,
             'order_tax_id' => $request->order_tax_id,
@@ -230,7 +240,9 @@ class QuotationController extends Controller
                 ->save($urlpdf);
 
         try {
-            Mail::to($quotation->customer->email)->send(new SendQuotation($quotation, $urlpdf, $namepdf));
+            Mail::to($quotation->customer->email)
+            ->cc('ventas@reydelneumatico.cl')
+            ->send(new SendQuotation($quotation, $urlpdf, $namepdf));
 
             return redirect()->route('cotizaciones.index')->with('success', 'Cotizacion Enviada Exitosamente');
         } catch (\Throwable $th) {

@@ -84,8 +84,11 @@ class ProductController extends Controller
             $data['image'] = $url;
         }
 
+        $code = trim($data['code']);
+        $codeclean = str_replace(' ', '', $code);
+
         $producto = Product::create([
-            'code'              => $data['code'],
+            'code'              => $codeclean,
             'name'              => $data['name'],
             'category_id'       => $data['category_id'],
             'type'              => $data['type'],
@@ -96,6 +99,8 @@ class ProductController extends Controller
             'barcode_symbology' => 'code128',
             'alert_quantity'    => $data['alert_quantity'],
             'max_quantity'      => $data['max_quantity'],
+            'weight'            => $data['weight'],
+            'nacionality'       => $data['nacionality'],
             'cellar'            => $data['cellar'],
             'hail'              => $data['hail'],
             'rack'              => $data['rack'],
@@ -107,6 +112,15 @@ class ProductController extends Controller
             'product_id' => $producto->id,
             'quantity'   => $data['quantity'],
             'price'      => $data['price'],
+        ]);
+
+        Kardex::create([
+            'product_id'    => $producto->id,
+            'quantity'      => $data['quantity'],
+            'price'         => $data['cost'],
+            'total'         => $data['cost'],
+            'type'          => 1,
+            'description'   => 'Registro del producto ' . $data['name']
         ]);
 
         return redirect()->route('productos.index')->with('success', 'Producto creado con exito');
@@ -152,8 +166,10 @@ class ProductController extends Controller
             $foto = $url;
             $data['image'] = $url;
         }
+        $code = trim($data['code']);
+        $codeclean = str_replace(' ', '', $code);
         $product->update([
-            'code'              => $data['code'],
+            'code'              => $codeclean,
             'name'              => $data['name'],
             'category_id'       => $data['category_id'],
             'type'              => $data['type'],
@@ -164,6 +180,8 @@ class ProductController extends Controller
             'barcode_symbology' => 'code128',
             'alert_quantity'    => $data['alert_quantity'],
             'max_quantity'      => $data['max_quantity'],
+            'weight'            => $data['weight'],
+            'nacionality'       => $data['nacionality'],
             'cellar'            => $data['cellar'],
             'hail'              => $data['hail'],
             'rack'              => $data['rack'],

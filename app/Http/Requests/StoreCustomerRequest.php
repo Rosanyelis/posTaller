@@ -23,10 +23,10 @@ class StoreCustomerRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'lowercase', 'email', 'unique:customers,email'],
+            'email' => ['lowercase', 'email', 'unique:customers,email'],
             'rut' => ['required', 'string', 'max:255', 'unique:customers,rut'],
-            'phone' => ['required', 'string', 'max:255'],
-            'address' => ['required', 'string', 'max:255'],
+            'phone' => ['string', 'max:255'],
+            'address' => ['string', 'max:255'],
         ];
     }
 
@@ -36,12 +36,9 @@ class StoreCustomerRequest extends FormRequest
             'name.required' => 'El Nombre del Cliente es requerido',
             'email.unique' => 'El Correo ya existe',
             'email.lowercase' => 'El Correo debe estar en minúsculas',
-            'email.required' => 'El Correo es requerido',
             'email.email' => 'El Correo debe ser válido',
             'rut.unique' => 'El Rut ya existe',
             'rut.required' => 'El Rut es requerido',
-            'phone.required' => 'El Teléfono es requerido',
-            'address.required' => 'La Dirección es requerida',
         ];
     }
 }

@@ -9,31 +9,44 @@
     <table cellspacing="0" style="width: 100%; border-collapse: collapse; font-family: Arial, Helvetica, sans-serif">
         <thead>
             <tr>
-                <th colspan="8" style="text-align: left; ">
-                    <img src="{{ asset('assets/images/logo-official.png') }}" alt="logo" height="80"></th>
+                <th colspan="4">
+                    <img src="{{ asset('assets/images/logo-official.png') }}" alt="logo" height="150">
+                    <br>
+                    <h4>
+                        Jose Joaquin Prieto 5780 - San Miguel
+                        <br>
+                        Santiago - vulca_david@hotmail.com
+                        <br>
+                        56 6 5275 9029 - 56 4 1324 3313 - 56 2 3207 5270
+                    </h4>
+                </th>
+                <th colspan="4" style="text-align: center; font-weight: bold; ">
+                    <h1>
+                        Cotización
+                        <br>
+                        N° {{ $quotation->correlativo }}
+                        <br>
+                        {{ \Carbon\Carbon::parse($quotation->created_at)->format('d - m - Y') }}
+                    </h1>
+                </th>
             </tr>
         </thead>
-        <tbody>
+        <tbody style="border: 1px solid black">
             <tr>
-                <td colspan="8" style="text-align: center"><h2>Cotización</h2></td>
+                <td colspan="8" style="border: 1px solid black"><strong>Datos de Cliente</strong></td>
             </tr>
             <tr>
-                <td colspan="8" style="text-align: right"><strong>Fecha:</strong> {{ \Carbon\Carbon::parse($quotation->created_at)->format('d/m/Y') }}</td>
-            </tr>
-            <tr style="margin-top: 40px;">
-                <td colspan="8" ><strong>Cliente:</strong> {{ $quotation->customer->name }} </td>
+                <td colspan="8" style="border: 1px solid black"><strong>Cliente:</strong> {{ $quotation->customer->name }} </td>
             </tr>
             <tr>
-                <td colspan="8" ><strong>Rut:</strong> {{ $quotation->customer->rut }} </td>
+                <td colspan="4" style="border: 1px solid black"><strong>Rut:</strong> {{ $quotation->customer->rut }} </td>
+                <td colspan="4" style="border: 1px solid black"><strong>Teléfono:</strong> {{ $quotation->customer->phone }} </td>
             </tr>
             <tr>
-                <td colspan="8" ><strong>Correo:</strong> {{ $quotation->customer->email }} </td>
+                <td colspan="8" style="border: 1px solid black"><strong>Dirección:</strong> {{ $quotation->customer->address }} </td>
             </tr>
             <tr>
-                <td colspan="8" ><strong>Teléfono:</strong> {{ $quotation->customer->phone }} </td>
-            </tr>
-            <tr>
-                <td colspan="8" ><strong>Notas:</strong> {{ $quotation->note }} </td>
+                <td colspan="8" style="border: 1px solid black"><strong>Notas:</strong> {{ $quotation->note }} </td>
             </tr>
         </tbody>
     </table>
@@ -56,29 +69,29 @@
                 <tr style="text-align: center; font-size: 14px">
                     <td>{{ $item->product_code }}</td>
                     <td>{{ $item->product_name }}</td>
-                    <td>{{ $item->quantity }}</td>
-                    <td>{{ $item->unit_price }}</td>
-                    <td>{{ $item->discount }}</td>
-                    <td>{{ $item->subtotal }}</td>
+                    <td>{{ number_format($item->quantity, 0, ',', '.') }}</td>
+                    <td>{{ number_format($item->unit_price, 0, ',', '.') }}</td>
+                    <td>{{ number_format($item->discount, 0, ',', '.') }}</td>
+                    <td>{{ number_format($item->subtotal, 0, ',', '.') }}</td>
                 </tr>
             @endforeach
         </tbody>
         <tfoot>
             <tr>
                 <td colspan="5" style="text-align: right; font-weight: bold">SubTotal:</td>
-                <td style="text-align: center;">{{ $quotation->total }}</td>
+                <td style="text-align: center;">{{ number_format($quotation->subtotal, 0, ',', '.') }}</td>
             </tr>
             <tr>
-                <td colspan="5" style="text-align: right; font-weight: bold">Descuento(%{{ $quotation->order_discount_id }}):</td>
-                <td style="text-align: center;">{{ number_format($quotation->total * ($quotation->order_discount_id / 100), 2) }}</td>
+                <td colspan="5" style="text-align: right; font-weight: bold">Descuento (%{{ $quotation->order_discount_id }}):</td>
+                <td style="text-align: center;">{{ number_format($quotation->total * ($quotation->order_discount_id / 100), 0, ',', '.') }}</td>
             </tr>
             <tr>
                 <td colspan="5" style="text-align: right; font-weight: bold">Impuesto (%{{ $quotation->order_tax_id }}):</td>
-                <td style="text-align: center;">{{ number_format($quotation->total * ($quotation->order_tax_id / 100), 2) }}</td>
+                <td style="text-align: center;">{{ number_format($quotation->total * ($quotation->order_tax_id / 100), 0, ',', '.') }}</td>
             </tr>
             <tr>
                 <td colspan="5" style="text-align: right; font-weight: bold">Total:</td>
-                <td style="text-align: center;">{{ $quotation->grand_total }}</td>
+                <td style="text-align: center;">{{ number_format($quotation->grand_total, 0, ',', '.') }}</td>
             </tr>
         </tfoot>
     </table>

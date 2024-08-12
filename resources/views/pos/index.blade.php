@@ -5,7 +5,7 @@
 @section('css')
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
-
+<link rel="stylesheet" href="https://printjs-4de6.kxcdn.com/print.min.css">
  <style>
     ::-webkit-scrollbar {
         width: 5px; /* Ancho del scrollbar */
@@ -24,7 +24,19 @@
         background-color: #f1f1f1; /* Color del track */
     }
 
+    @media print {
+        @page {
+            size: portrait;
+            margin: 0;
+            padding: 0;
+            width: 250px;
+            max-width: 250px;
+        }
+        #lefttop, #botones, #products {
+            display: none !important;
 
+        }
+    }
  </style>
 @endsection
 
@@ -90,15 +102,15 @@
                                                     style="margin:0px;" data-height="100">
                                                     <thead>
                                                         <tr class="success">
-                                                            <th>Producto u Ord. de Trabajo</th>
-                                                            <th style="width: 12%;text-align:center;">Inventario</th>
+                                                            <th>Producto</th>
+                                                            <th class="oculto" style="width: 12%;text-align:center;">Inventario</th>
                                                             <th style="width: 15%;text-align:center;">Precio</th>
                                                             <th style="width: 15%;text-align:center;">Cantidad</th>
                                                             <th style="width: 20%;text-align:center;">Subtotal</th>
                                                             <th style="width: 20px;" class="satu"><i class="fa fa-trash-o"></i></th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody ></tbody>
+                                                    <tbody></tbody>
                                                 </table>
                                             </div>
                                             <div style="clear:both;"></div>
@@ -127,6 +139,22 @@
                                                                 <span id="tax">0</span>%
                                                             </td>
                                                         </tr>
+                                                        <tr class="info">
+                                                            <td width="25%">
+                                                                <!-- <a href="#" data-bs-toggle="modal"
+                                                                data-bs-target="#discountModal">Descuento</a> -->
+                                                            </td>
+                                                            <td class="text-center" style="padding-right:10px;">
+                                                                <!-- <span id="discount">0</span>% -->
+                                                            </td>
+                                                            <td width="25%">
+                                                                <a href="javascript:void(0);"
+                                                                data-bs-toggle="modal" data-bs-target="#propinaModal">Propina</a>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <span id="propina">0</span>
+                                                            </td>
+                                                        </tr>
                                                         <tr class="success">
                                                             <td colspan="3" style="font-weight:bold;">
                                                                 Total a pagar
@@ -142,17 +170,25 @@
                                                 </table>
                                             </div>
                                         </div>
-                                        <div class="row text-center px-3">
-                                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 d-grid" style="padding: 0;">
+                                        <div id="botones" class="row text-center px-3 g-1">
+                                            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 d-grid" style="padding: 0;">
                                                 <button type="button" class="btn btn-danger" style="height:70px;"
                                                 id="salir">Salir de caja</button>
                                             </div>
-                                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 d-grid" >
-                                                <button type="button" class="btn btn-info" id="print_bill" style="height:70px;">
-                                                    Imprimir Factura
+                                            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 d-grid" style="">
+                                                <a href="{{ route('ventas.generateTicket', $saleLast) }}" target="_blank"
+                                                class="btn btn-secondary"
+                                                style="height:70px;">
+                                                    Imprimir Ultima Factura
+                                                </a>
+                                            </div>
+                                            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 d-grid" >
+                                                <button type="button" class="btn btn-info" id="print_bill" style="height:70px;"
+                                                onclick="imprimir();">
+                                                    Imprimir Factura Actual
                                                 </button>
                                             </div>
-                                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 d-grid" style="padding: 0;">
+                                            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 d-grid" style="padding: 0;">
                                                 <button type="button" id="paymentmethod" class="btn btn-success" style="height:70px;">
                                                     Pagar
                                                 </button>
@@ -162,6 +198,7 @@
                                     <input type="hidden" name="productos" id="productosarray">
                                     <input type="hidden" name="tax" id="taxh">
                                     <input type="hidden" name="discount" id="discounth">
+                                    <input type="hidden" name="perquisite" id="propinah">
                                     <input type="hidden" name="subtotal" id="subtotal">
                                     <input type="hidden" name="grandtotal" id="total">
                                     <input type="hidden" name="total_items" id="total_items">
@@ -177,7 +214,7 @@
                                 </form>
                             </div>
                         </td>
-                        <td width="50%" style="padding: 8px; vertical-align: top">
+                        <td id="products" width="50%" style="padding: 8px; vertical-align: top">
                             <div class="row gx-2 gy-0">
                                 <div class="col-12">
                                     <div class="input-group">
@@ -296,6 +333,32 @@
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary pull-left" data-bs-dismiss="modal"> Cancelar </button>
                                 <button type="button" class="btn btn-primary" id="save_discount"> Guardar Descuento </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal Propina -->
+                <div class="modal fade" id="propinaModal" data-bs-backdrop="static" data-bs-keyboard="false"
+                    tabindex="-1" aria-labelledby="propinaModal" aria-modal="true" role="dialog">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="staticBackdropLabel">Agregar Propina</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body" >
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12">
+                                        <div class="mb-3">
+                                            <label for="tax" class="form-label">Por favor indique la propina en números enteros</label>
+                                            <input class="form-control" type="number" name="perquisite" id="perquisite" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary pull-left" data-bs-dismiss="modal"> Cancelar </button>
+                                <button type="button" class="btn btn-primary" id="save_perquisite"> Guardar Propina </button>
                             </div>
                         </div>
                     </div>
@@ -440,6 +503,56 @@
                         </div><!-- /.modal-content -->
                     </div><!-- /.modal-dialog -->
                 </div>
+
+                <table id="printFactura" class="table table-bordered table-condensed w-100 d-none">
+                    <thead>
+                        <tr>
+                            <th colspan="4" class="text-center">
+                            <img src="{{ asset('assets/images/logo-official.png') }}" alt="logo" height="60">
+                                <h1>Rey del Neumatico</h1>
+                                <h3>Jose Joaquin Prieto 5780 - <br>San Miguel - Santiago<br>
+                                    vulca_david@hotmail.com <br>
+                                    56652759029 - 56413243313 - 56232075270
+                                </h3>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cant.</th>
+                            <th>Precio</th>
+                            <th>SubTotal</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="3" class="text-end">Subtotal</th>
+                            <th><span id="subtotalf"></span></th>
+                        </tr>
+                        <tr>
+                            <th colspan="3" class="text-end">Descuento (%<span id="discountpercentf"></span>)</th>
+                            <th><span id="discountf"></span></th>
+                        </tr>
+                        <tr>
+                            <th colspan="3" class="text-end">Impuesto (%<span id="taxpercentf"></span>)</th></th>
+                            <th ><span id="taxf"></span></th>
+                        </tr>
+                        <tr>
+                            <th colspan="3" class="text-end">Propina</th>
+                            <th><span id="perquisitef"></span></th>
+                        </tr>
+                        <tr>
+                            <th colspan="3" class="text-end">Total</th>
+                            <th><span id="totalf"></span></th>
+                        </tr>
+                        <tr>
+                            <th colspan="4" class="text-center pt-5 pb-5">
+                                <h3>¡GRACIAS POR SU COMPRA!</h3>
+                                <h3>¡HASTA PRONTO!</h3>
+                            </th>
+                        </tr>
+                    </tfoot>
+                </table>
             </div>
         </div>
     </div>
@@ -448,7 +561,7 @@
 @section('scripts')
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script>
-
+<script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
 
 <script>
     var dataProduct = [];
@@ -457,9 +570,12 @@
     const basepath = "{{ asset('assets/images/') }}";
     const baseStorage = "{{ asset('') }}";
     $(document).ready(function() {
+
+        // Inicializa el select2 de categorias
         $('#categorys').select2({
             placeholder: 'Seleccione una categoria',
         });
+        // Inicializa el select2 de clientes y carga la data
         $('#customer').select2({
             placeholder: 'Seleccione un cliente',
             ajax: {
@@ -479,7 +595,7 @@
                 cache: true
             }
         });
-
+        // Inicializa el autocomplete de productos para ser seleccionados
         $('#productos').autocomplete({
             minLength: 1,
             source: function(request, response) {
@@ -510,28 +626,31 @@
                     });
                 } else {
                     if (dataProduct.length > 0) {
-                        let index = dataProduct.findIndex((item) => item.code == ui.item.code);
+                        let code = ui.item.code;
+                            code = code.trim();
+                        let index = dataProduct.findIndex((item) => item.code == code);
 
                         if (index == -1) {
-                        let datosFila = {};
-                            datosFila.id = ui.item.id;
-                            datosFila.code = ui.item.code;
-                            datosFila.name = ui.item.name;
-                            datosFila.quantity = 1;
-                            datosFila.price = ui.item.price;
-                            datosFila.subtotal = ui.item.price;
-                            datosFila.type = 'product';
 
-                            dataProduct.push(datosFila);
+                            let datosFila = {};
+                                datosFila.id = ui.item.id;
+                                datosFila.code = code;
+                                datosFila.name = ui.item.name;
+                                datosFila.quantity = 1;
+                                datosFila.price = ui.item.price;
+                                datosFila.subtotal = ui.item.price;
+                                datosFila.type = 'product';
+
+                                dataProduct.push(datosFila);
 
                             $('#posTable').append(
-                                '<tr id="producto-' + ui.item.code + '">' +
+                                '<tr id="producto-' + code + '">' +
                                 '<td>' + select + '</td>' +
                                 '<td class="text-center">' + ui.item.quantity + '</td>' +
                                 '<td class="text-center">' + ui.item.price + '</td>' +
-                                '<td class="text-center"><input type="number" id="quantity-' + ui.item.code + '" onchange="calculateQuantity(this)" data-id="' + ui.item.code + '" class="form-control form-control-sm" min="1" value="1"></td>' +
-                                '<td class="text-center"><span id="subtotal-' + ui.item.code + '" data-id="' + ui.item.code + '">'+ ui.item.price +'</span></td>' +
-                                '<td><button type="button" class="btn btn-danger btn-sm" onclick="deleteRow(' + ui.item.code + ')"><i class="mdi mdi-delete "></i></button></td>'
+                                '<td class="text-center"><input type="number" id="quantity-' + code + '" onchange="calculateQuantity(this)" data-id="' + code + '" class="form-control form-control-sm" min="1" value="1"></td>' +
+                                '<td class="text-center"><span id="subtotal-' + code + '" data-id="' + code + '">'+ ui.item.price +'</span></td>' +
+                                '<td><button type="button" id="btnDelete-' + code + '" class="btn btn-danger btn-sm" data-id="' + code + '" onclick="deleteRow(this)"><i class="mdi mdi-delete "></i></button></td>'
                             );
 
                         } else if (index != -1) {
@@ -545,9 +664,11 @@
                         }
 
                     } else{
+                        let code = ui.item.code;
+                        code = code.trim();
                         let datosFila = {};
                         datosFila.id = ui.item.id;
-                        datosFila.code = ui.item.code;
+                        datosFila.code = code;
                         datosFila.name = ui.item.name;
                         datosFila.quantity = 1;
                         datosFila.price = ui.item.price;
@@ -557,17 +678,18 @@
                         dataProduct.push(datosFila);
 
                         $('#posTable').append(
-                            '<tr id="producto-' + ui.item.code + '">' +
+                            '<tr id="producto-' + code + '">' +
                             '<td>' + select + '</td>' +
                             '<td class="text-center">' + ui.item.quantity + '</td>' +
                             '<td class="text-center">' + ui.item.price + '</td>' +
-                            '<td class="text-center"><input type="number" id="quantity-' + ui.item.code + '" onchange="calculateQuantity(this)" data-id="' + ui.item.code + '" class="form-control form-control-sm" min="1" value="1"></td>' +
-                            '<td class="text-center"><span id="subtotal-' + ui.item.code + '" data-id="' + ui.item.code + '">'+ ui.item.price +'</span></td>' +
-                            '<td><button type="button" class="btn btn-danger btn-sm" onclick="deleteRow(' + ui.item.code + ')"><i class="mdi mdi-delete "></i></button></td>'
+                            '<td class="text-center"><input type="number" id="quantity-' + code + '" onchange="calculateQuantity(this)" data-id="' + code + '" class="form-control form-control-sm" min="1" value="1"></td>' +
+                            '<td class="text-center"><span id="subtotal-' + code + '" data-id="' + code + '">'+ ui.item.price +'</span></td>' +
+                            '<td><button type="button" id="btnDelete-' + code + '" class="btn btn-danger btn-sm" data-id="' + code + '" onclick="deleteRow(this)"><i class="mdi mdi-delete "></i></button></td>'
                         );
 
 
                     }
+                    console.log(dataProduct);
                     calculateTotal();
                     calculateArticulos();
                     calculateComplete();
@@ -583,7 +705,7 @@
                 .append( "<div>" + item.code + " - " + item.name + " (" + item.quantity + ") - " + item.price + "</div>" )
                 .appendTo( ul );
         };
-
+        // Inicializa el autocomplete de Ordenes de trabajo
         $('#workorder').autocomplete({
             minLength: 1,
             source: function(request, response) {
@@ -636,7 +758,7 @@
                             '<td class="text-center">' + ui.item.total + '</td>' +
                             '<td class="text-center">' + quantity + '</td>' +
                             '<td class="text-center">' + ui.item.total + '</td>' +
-                            '<td><button type="button" class="btn btn-danger btn-sm" onclick="deleteRow(' + ui.item.correlativo + ')" ><i class="mdi mdi-delete "></i></button></td>'
+                            '<td><button type="button" id="btnDelete-' + ui.item.correlativo + '" class="btn btn-danger btn-sm" data-id="' + ui.item.correlativo + '"  onclick="deleteRow(this)"><i class="mdi mdi-delete "></i></button></td>'
                         );
 
                     }
@@ -661,7 +783,7 @@
                         '<td class="text-center">' + ui.item.total + '</td>' +
                         '<td class="text-center">' + quantity + '</td>' +
                         '<td class="text-center">' + ui.item.total + '</td>' +
-                        '<td><button type="button" class="btn btn-danger btn-sm"  onclick="deleteRow(' + ui.item.correlativo + ')"><i class="mdi mdi-delete "></i></button></td>'
+                        '<td><button type="button" id="btnDelete-' + ui.item.correlativo + '" class="btn btn-danger btn-sm"  data-id="' + ui.item.correlativo + '"  onclick="deleteRow(this)"><i class="mdi mdi-delete "></i></button></td>'
                     );
 
                 }
@@ -677,7 +799,7 @@
                 .append( "<div> Orden:" + item.correlativo + " - " + item.rut + " - " + item.name + "</div>" )
                 .appendTo( ul );
         }
-
+        // carga los productos del lado derecho con imagenes
         $.ajax({
             url: '{{ route("pos.getProductPos") }}',
             dataType: 'json',
@@ -686,16 +808,21 @@
                 totalProduct = data;
                 $('#productlist').empty();
                 data.forEach(element => {
+                    let code = element.code;
+                    code = code.trim();
                     if (element.image == null) {
-                        element.image = '/no-image.png';
+                        element.image = basepath + '/no-image.png';
+                    } else {
+                        element.image = baseStorage + element.image;
                     }
-                    $('#productlist').append('<div class="col-3"><a href="javascript:void(0);" data-id="'+element.code+'" id="add-product" ><div class="card" style="width: 100%; height: 104px;"><div class="card-body p-1"><div class="product-img position-relative p-0"><img src="'+basepath + element.image + '" width="70" class="img-fluid mx-auto d-block rounded "></div></div><div class="card-footer py-1 text-center bg-dark-subtle text-uppercase" style="font-size: 11px;"><b>' + element.name + '</b></div></div></a></div>');
+
+                    $('#productlist').append('<div class="col-3"><a href="javascript:void(0);" data-id="'+code+'" id="add-product" ><div class="card" style="width: 100%; height: 104px;"><div class="card-body p-1"><div class="product-img position-relative p-0"><img src="'+ element.image + '" width="70" class="img-fluid mx-auto d-block rounded "></div></div><div class="card-footer py-1 text-center bg-dark-subtle text-uppercase" style="font-size: 11px;"><b>' + element.name + '</b></div></div></a></div>');
                 })
 
 
             }
         });
-
+        // filtra los productos segun su categoria
         $('#categorys').on('select2:select', function(e) {
             var id = $(this).val();
             console.log(id);
@@ -711,15 +838,19 @@
                     }
                     $('#productlist').empty();
                     data.forEach(element => {
+                        let code = element.code;
+                        code = code.trim();
                         if (element.image == null) {
-                            element.image = '/no-image.png';
+                            element.image = basepath + '/no-image.png';
+                        } else {
+                            element.image = baseStorage + element.image;
                         }
-                        $('#productlist').append('<div class="col-3"><a href="javascript:void(0);" data-id="'+element.code+'" id="add-product" ><div class="card"><div class="card-body p-1"><div class="product-img position-relative p-0"><img src="'+basepath + element.image + '" width="70" class="img-fluid mx-auto d-block rounded "></div></div><div class="card-footer py-1 text-center bg-dark-subtle text-uppercase" style="font-size: 11px;"><b>' + element.name + '</b></div></div></a></div>');
+                        $('#productlist').append('<div class="col-3"><a href="javascript:void(0);" data-id="'+code+'" id="add-product" ><div class="card"><div class="card-body p-1"><div class="product-img position-relative p-0"><img src="'+ element.image + '" width="70" class="img-fluid mx-auto d-block rounded "></div></div><div class="card-footer py-1 text-center bg-dark-subtle text-uppercase" style="font-size: 11px;"><b>' + element.name + '</b></div></div></a></div>');
                     })
                 }
             });
         });
-
+        // agrega los productos en el pos para procesarlos
         $('#productlist').on('click', '#add-product', function() {
             let code = $(this).data('id');
             totalProduct.find(element => {
@@ -740,9 +871,11 @@
                             let index = dataProduct.findIndex((item) => item.code == code);
 
                             if (index == -1) {
+                            let code = element.code;
+                            code = code.trim();
                             let datosFila = {};
                                 datosFila.id = element.id;
-                                datosFila.code = element.code;
+                                datosFila.code = code;
                                 datosFila.name = element.name;
                                 datosFila.quantity = 1;
                                 datosFila.price = element.price;
@@ -752,13 +885,13 @@
                                 dataProduct.push(datosFila);
 
                                 $('#posTable').append(
-                                    '<tr id="producto-' + element.code + '">' +
+                                    '<tr id="producto-' + code + '">' +
                                     '<td>' + select + '</td>' +
                                     '<td class="text-center">' + element.quantity + '</td>' +
                                     '<td class="text-center">' + element.price + '</td>' +
-                                    '<td class="text-center"><input type="number" id="quantity-' + element.code + '" onchange="calculateQuantity(this)" data-id="' + element.code + '" class="form-control form-control-sm" min="1" value="1"></td>' +
-                                    '<td class="text-center"><span id="subtotal-' + element.code + '" data-id="' + element.code + '">'+ element.price +'</span></td>' +
-                                    '<td><button type="button" class="btn btn-danger btn-sm" onclick="deleteRow(' + element.code + ')"><i class="mdi mdi-delete "></i></button></td>'
+                                    '<td class="text-center"><input type="number" id="quantity-' + code + '" onchange="calculateQuantity(this)" data-id="' + code + '" class="form-control form-control-sm" min="1" value="1"></td>' +
+                                    '<td class="text-center"><span id="subtotal-' + code + '" data-id="' + code + '">'+ element.price +'</span></td>' +
+                                    '<td><button type="button" id="btnDelete-' + code + '" class="btn btn-danger btn-sm" data-id="' + code + '" onclick="deleteRow(this)"><i class="mdi mdi-delete "></i></button></td>'
                                 );
 
                             } else if (index != -1) {
@@ -772,9 +905,11 @@
                             }
 
                         } else{
+                            let code = element.code;
+                            code = code.trim();
                             let datosFila = {};
                             datosFila.id = element.id;
-                            datosFila.code = element.code;
+                            datosFila.code = code;
                             datosFila.name = element.name;
                             datosFila.quantity = 1;
                             datosFila.price = element.price;
@@ -784,17 +919,19 @@
                             dataProduct.push(datosFila);
 
                             $('#posTable').append(
-                                '<tr id="producto-' + element.code + '">' +
+                                '<tr id="producto-' + code + '">' +
                                 '<td>' + select + '</td>' +
                                 '<td class="text-center">' + element.quantity + '</td>' +
                                 '<td class="text-center">' + element.price + '</td>' +
-                                '<td class="text-center"><input type="number" id="quantity-' + element.code + '" onchange="calculateQuantity(this)" data-id="' + element.code + '" class="form-control form-control-sm" min="1" value="1"></td>' +
-                                '<td class="text-center"><span id="subtotal-' + element.code + '" data-id="' + element.code + '">'+ element.price +'</span></td>' +
-                                '<td><button type="button" class="btn btn-danger btn-sm" onclick="deleteRow(' + element.code + ')"><i class="mdi mdi-delete "></i></button></td>'
+                                '<td class="text-center"><input type="number" id="quantity-' + code + '" onchange="calculateQuantity(this)" data-id="' + code + '" class="form-control form-control-sm" min="1" value="1"></td>' +
+                                '<td class="text-center"><span id="subtotal-' + code + '" data-id="' + code + '">'+ element.price +'</span></td>' +
+                                '<td><button id="btnDelete-' + code + '" type="button" class="btn btn-danger btn-sm" data-id="' + code + '" onclick="deleteRow(this)"><i class="mdi mdi-delete "></i></button></td>'
                             );
 
 
                         }
+                        console.log(dataProduct);
+
                         calculateTotal();
                         calculateArticulos();
                         calculateComplete();
@@ -813,7 +950,7 @@
             let phone = $('#phone').val();
             let address = $('#address').val();
 
-            if (name == '' || rut == '' || email == '' || phone == '' || address == '') {
+            if (name == '' || rut == '' ) {
                 alert('Por favor rellene todos los campos');
             } else {
                 $.ajax({
@@ -872,7 +1009,7 @@
             }
             calculateComplete();
         });
-
+        // agrega descuento
         $('#save_discount').on('click', function() {
             let discount = parseFloat($('#order_discount').val());
             let total = parseFloat($('#totalComplete').text());
@@ -895,6 +1032,25 @@
             calculateComplete();
         });
 
+        $('#save_perquisite').on('click', function() {
+            let propina = parseFloat($('#perquisite').val());
+            let total = parseFloat($('#propina').text());
+            if (propina == '') {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'Por favor rellene el campo de propina',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            } else {
+                $('#propina').text(propina);
+                $('#perquisite').val('');
+                $('#propinaModal').modal('hide');
+            }
+
+            calculateComplete();
+        });
         $('#paymentmethod').on('click', function() {
             $('#modalPayment').modal('show');
             $('#total_amount').text($('#totalpay').text());
@@ -987,12 +1143,12 @@
 
         });
         $('#save_payment').on('click', function() {
-            console.log('procesando');
             // cliente
             var customer = $('#customer').val();
             var noteRef = $('#note_ref').val();
             var tax = $('#tax').text();
             var discount = $('#discount').text();
+            var propina = $('#propina').text();
             var subtotal = parseFloat($('#totalComplete').text());
             var total = parseFloat($('#totalpay').text());
             var totalItems = parseInt($('#totalItems').text());
@@ -1016,6 +1172,7 @@
             $('#productosarray').val(JSON.stringify(dataProduct));
             $('#taxh').val(tax);
             $('#discounth').val(discount);
+            $('#propinah').val(propina);
             $('#subtotal').val(subtotal);
             $('#total').val(total);
             $('#total_items').val(totalItems);
@@ -1049,9 +1206,21 @@
         });
     });
     function deleteRow(dato) {
-        let id = '#producto-' + dato;
+        console.log(dato.id);
+        let btnId = "#"+dato.id;
+        let codeProduct = $(btnId).data('id');
+
+        let id = '#producto-' + codeProduct;
         $(id).closest('tr').remove();
-        calculateQuantity(dato);
+        // eliminamos el producto del array
+        for (let i = 0; i < dataProduct.length; i++) {
+            if (dataProduct[i].code == codeProduct) {
+                dataProduct.splice(i, 1);
+                break;
+            }
+        }
+
+        console.log(dataProduct);
         calculateTotal();
         calculateArticulos();
         calculateComplete();
@@ -1074,6 +1243,7 @@
         let total = 0;
         let tax = parseFloat($('#tax').text());
         let discount = parseFloat($('#discount').text());
+        let propina = parseFloat($('#propina').text());
 
         for (let i = 0; i < dataProduct.length; i++) {
             total += parseFloat(dataProduct[i].subtotal);
@@ -1085,7 +1255,7 @@
         // suma el impuesto
         let totalWithTax = total + totalTax;
         // resta el descuento
-        let totalWithDiscount = totalWithTax - totalDiscount;
+        let totalWithDiscount = totalWithTax - totalDiscount + propina;
 
         $('#totalpay').text(totalWithDiscount);
     }
@@ -1125,5 +1295,41 @@
         calculateBalance();
     }
 
+    function imprimir() {
+        $('#printFactura tbody').empty();
+        $('#discountpercentf').text();
+        $('#taxpercentf').text();
+        $('#taxf').text();
+        $('#discountf').text();
+        $('#perquisitef').text();
+        $('#subtotalf').text();
+        $('#totalf').text();
+
+        dataProduct.forEach((item) => {
+            $('#printFactura tbody').append('<tr id="payment-' + item.id + '"><td>' + item.name + '</td><td>' + item.quantity + '</td><td>' + item.price + '</td><td>' + item.subtotal + '</td></tr>');
+        });
+        
+        var tax = parseFloat($('#tax').text());
+        var discount = parseFloat($('#discount').text());
+        var propina = $('#propina').text();
+        var subtotal = parseFloat($('#totalComplete').text());
+        var total = parseFloat($('#totalpay').text());
+        var taxtotal = subtotal * (tax / 100);
+        var discounttotal = subtotal * (discount / 100);
+        $('#discountpercentf').text(discount);
+        $('#taxpercentf').text(tax);
+        $('#taxf').text(taxtotal);
+        $('#discountf').text(discounttotal);
+        $('#perquisitef').text(propina);
+        $('#subtotalf').text(subtotal);
+        $('#totalf').text(total);
+
+        printJS({
+            printable: 'printFactura',
+            type: 'html',
+            documentTitle: 'Factura',
+            style: '*{font-size: 12px;font-family: Arial, Helvetica, sans-serif; text-align: center;}'
+        });
+    }
 </script>
 @endSection

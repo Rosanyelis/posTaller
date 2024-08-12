@@ -188,7 +188,9 @@ class WorkOrderController extends Controller
                 ->save($urlpdf);
 
         try {
-            Mail::to($workOrder->customer->email)->send(new SendWorkorder($workOrder, $urlpdf, $namepdf));
+            Mail::to($workOrder->customer->email)
+            ->cc('ventas@reydelneumatico.cl')
+            ->send(new SendWorkorder($workOrder, $urlpdf, $namepdf));
 
             return redirect()->route('ordenes-trabajo.index')->with('success', 'Orden de Trabajo Enviada Exitosamente');
         } catch (\Throwable $th) {

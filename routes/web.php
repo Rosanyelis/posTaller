@@ -42,6 +42,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/pos/get-workorders', [PosController::class, 'getWorkorders'])->name('pos.getWorkorders');
     Route::post('/pos/store-customer', [PosController::class, 'storeCustomer'])->name('pos.storeCustomer');
     Route::get('/pos/get-product-pos', [PosController::class, 'getProductPos'])->name('pos.getProductPos');
+    Route::get('/pos/get-invoice', [PosController::class, 'show'])->name('pos.show');
 
 
     # Roles
@@ -102,6 +103,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/ventas/datatable', [SaleController::class, 'datatable'])->name('ventas.datatable');
     Route::get('/ventas/{sale}/show', [SaleController::class, 'show'])->name('ventas.show');
     Route::get('/ventas/{sale}/generar-factura', [SaleController::class, 'generateInvoice'])->name('ventas.generateInvoice');
+    Route::get('/ventas/{sale}/generar-factura-ticket', [SaleController::class, 'generateTicket'])->name('ventas.generateTicket');
     Route::get('/ventas/generar-informe', [SaleController::class, 'generateInforme'])->name('ventas.generateInforme');
 
     # Cotizaciones

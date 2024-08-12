@@ -85,8 +85,10 @@
                         <thead>
                             <tr>
                                 <th>Fecha</th>
+
                                 <th>Cliente</th>
                                 <th>Rut Cliente</th>
+                                <th>Nro. Cot.</th>
                                 <th>Total</th>
                                 <th>Descuento</th>
                                 <th>Gran Total</th>
@@ -243,6 +245,10 @@
                 name: 'rut'
             },
             {
+                data: 'correlativo',
+                name: 'correlativo'
+            },
+            {
                 data: 'total',
                 name: 'total'
             },
@@ -268,19 +274,7 @@
             }
         },
         {
-            targets: 3,
-            render: function (data) {
-                return '$ ' + numberFormat2.format(data);
-            }
-        },
-        {
-            targets:[3, 4, 5],
-            render: function (data) {
-                return '$ ' + numberFormat2.format(data);
-            }
-        },
-        {
-            targets: 5,
+            targets:[4, 5, 6],
             render: function (data) {
                 return '$ ' + numberFormat2.format(data);
             }

@@ -276,8 +276,16 @@
 
 @if (Auth::user()->rol_id == 4)
 <div class="row">
+
     <div class="col-xl-12 col-md-12 col-sm-12">
-        <img src="{{ asset('assets/images/rey-neumatico-.png') }}" alt="rey del neumatico">
+        <!-- card -->
+        <div class="card card-h-100">
+            <!-- card body -->
+            <div class="card-body text-center">
+                <img src="{{ asset('assets/images/logo-official.png') }}" alt="rey del neumatico">
+            </div>
+        </div>
+        <!-- end card -->
     </div>
 </div>
 @endif

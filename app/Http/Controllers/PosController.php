@@ -22,7 +22,8 @@ class PosController extends Controller
     public function index()
     {
         $categories = Category::all();
-        return view('pos.index', compact('categories'));
+        $saleLast = Sale::orderBy('id', 'desc')->first()->id;
+        return view('pos.index', compact('categories', 'saleLast'));
     }
 
     public function getCustomers()
@@ -67,7 +68,7 @@ class PosController extends Controller
     public function getProductPos(Request $request)
     {
         $query = Product::join('product_store_qties', 'products.id', '=', 'product_store_qties.product_id')
-                        ->select('products.id', 'products.name', 'products.code', 'products.price', 'product_store_qties.quantity')
+                        ->select('products.id', 'products.name', 'products.image', 'products.code', 'products.price', 'product_store_qties.quantity')
                         ->where('product_store_qties.quantity', '>', '1');
         // Si se proporciona un ID de categoría, se filtra por esa categoría
         if ($request->has('category_id')) {
@@ -102,6 +103,7 @@ class PosController extends Controller
             'total_discount'        => $discount,
             'order_tax_id'          => $request->tax,
             'total_tax'             => $impuesto,
+            'perquisite'            => $request->perquisite,
             'grand_total'           => $request->grandtotal,
             'total_items'           => $request->total_items,
             'note'                  => $request->note_ref,
@@ -216,15 +218,16 @@ class PosController extends Controller
 
         }
 
-        return redirect()->route('pos.index')->with('success', 'Se ha guardado la venta satisfactoriamente');
+        return redirect()->route('pos.index')->with('success', 'Venta registrada con exito');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show()
     {
-        //
+        $data = Sale::last()->get();
+        return response()->json($data);
     }
 
     /**

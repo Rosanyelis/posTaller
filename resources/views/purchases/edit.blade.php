@@ -61,14 +61,14 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-4 col-md-4 col-sm-6">
+                        <div class="col-lg-3 col-md-3 col-sm-6">
                             <div class="mb-3">
                                 <label for="reference" class="form-label">N° de Factura</label>
                                 <input type="text" class="form-control" name="reference" id="reference" value="{{ $purchase->reference }}" >
                             </div>
                         </div>
 
-                        <div class="col-lg-4 col-md-4 col-sm-6">
+                        <div class="col-lg-3 col-md-3 col-sm-6">
                             <div class="mb-3">
                                 <label for="received" class="form-label">¿Recibido?</label>
                                 <select class="form-control" name="received" id="received" style="width: 100%">
@@ -79,7 +79,18 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-4 col-md-4 col-sm-6">
+                        <div class="col-lg-3 col-md-3 col-sm-6">
+                            <div class="mb-3">
+                                <label for="type_purchase" class="form-label">Tipo de Compra</label>
+                                <select class="form-control" name="type_purchase" id="type_purchase" style="width: 100%">
+                                    <option value="">-- Seleccione --</option>
+                                    <option value="Nacional" {{ $purchase->type_purchase == 'Nacional' ? 'selected' : '' }}>Nacional</option>
+                                    <option value="Internacional" {{ $purchase->type_purchase == 'Internacional' ? 'selected' : '' }}>Internacional</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-3 col-sm-6">
                             <div class="mb-3">
                                 <label for="archivo" class="form-label">Archivo</label>
                                 <input type="file" class="form-control" name="archivo" id="archivo" >
@@ -214,7 +225,7 @@
                     </td>
                 </tr>`);
         });
-        
+
         $('#add_product').on('click', function() {
             var producto = $('#product_name').val();
             let cost = parseFloat($('#cost').val());

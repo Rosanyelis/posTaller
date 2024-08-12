@@ -28,13 +28,6 @@
 
                     <div class="d-flex">
 
-                        <div class="dropdown d-none d-sm-inline-block">
-                            <button type="button" class="btn header-item" id="mode-setting-btn">
-                                <i data-feather="moon" class="icon-lg layout-mode-dark"></i>
-                                <i data-feather="sun" class="icon-lg layout-mode-light"></i>
-                            </button>
-                        </div>
-
                         <div class="dropdown d-inline-block">
                             <button type="button" class="btn header-item noti-icon position-relative" id="page-header-notifications-dropdown"
                             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -73,9 +66,11 @@
 
                                 </div>
                                 <div class="p-2 border-top d-grid">
+                                    @if (Auth::user()->rol_id == 1 || Auth::user()->rol_id == 2)
                                     <a class="btn btn-sm btn-link font-size-14 text-center" href="{{ route('productos.index') }}">
                                         <i class="mdi mdi-arrow-right-circle me-1"></i> <span>Ver Productos</span>
                                     </a>
+                                    @endif
                                 </div>
                             </div>
                         </div>

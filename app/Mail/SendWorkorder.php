@@ -33,6 +33,10 @@ class SendWorkorder extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: new Address('ventas@reydelneumatico.cl', 'Rey del Neumatico'),
+            replyTo: [
+                new Address('ventas@reydelneumatico.cl', 'Ventas'),
+            ],
             subject: 'Rey del Neumático - Orden de Trabajo',
         );
     }
