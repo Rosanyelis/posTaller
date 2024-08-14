@@ -13,6 +13,7 @@ use App\Models\SalePayment;
 use Illuminate\Http\Request;
 use App\Models\WorkOrderItems;
 use App\Models\ProductStoreQty;
+use Illuminate\Support\Facades\DB;
 
 class PosController extends Controller
 {
@@ -26,9 +27,12 @@ class PosController extends Controller
         return view('pos.index', compact('categories', 'saleLast'));
     }
 
-    public function getCustomers()
+    public function getCustomers(Request $request)
     {
-        $data = Customer::all();
+        $data = Customer::select('id', DB::raw('CONCAT(rut, " - ", name) AS text'))
+        ->where('rut', 'like', '%' . $request->term . '%')
+        ->orWhere('name', 'like', '%' . $request->term . '%')
+        ->get();
         return response()->json($data);
     }
 
@@ -69,7 +73,7 @@ class PosController extends Controller
     {
         $query = Product::join('product_store_qties', 'products.id', '=', 'product_store_qties.product_id')
                         ->select('products.id', 'products.name', 'products.image', 'products.code', 'products.price', 'product_store_qties.quantity')
-                        ->where('product_store_qties.quantity', '>', '1');
+                        ->where('product_store_qties.quantity', '>', '0');
         // Si se proporciona un ID de categoría, se filtra por esa categoría
         if ($request->has('category_id')) {
             $query->where('category_id', $request->category_id);
@@ -230,27 +234,5 @@ class PosController extends Controller
         return response()->json($data);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
 }

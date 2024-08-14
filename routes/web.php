@@ -155,6 +155,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/compras/{compra}/update', [PurchaseController::class, 'update'])->name('compras.update');
     Route::get('/compras/{compra}/delete', [PurchaseController::class, 'destroy'])->name('compras.destroy');
     Route::get('/compras/{compra}/purchasepdf', [PurchaseController::class, 'purchasepdf'])->name('compras.purchasepdf');
+    Route::get('/compras/{compra}/purchasepos', [PurchaseController::class, 'purchasefactura'])->name('compras.purchasefactura');
     Route::get('/compras/generar-informe', [PurchaseController::class, 'generateInforme'])->name('compras.generateInforme');
     Route::post('/compras/generar-informe-filtrado', [PurchaseController::class, 'generateInformefilter'])->name('compras.generateInformefilter');
     Route::post('/compras/cambio-status', [PurchaseController::class, 'changeStatus'])->name('compras.changeStatus');
@@ -168,12 +169,16 @@ Route::middleware('auth')->group(function () {
     Route::put('/ordenes-trabajo/{workOrder}/update', [WorkOrderController::class, 'update'])->name('ordenes-trabajo.update');
     Route::post('/ordenes-trabajo/destroy', [WorkOrderController::class, 'destroy'])->name('ordenes-trabajo.destroy');
     Route::get('/ordenes-trabajo/{workOrder}/workOrder', [WorkOrderController::class, 'workorderpdf'])->name('ordenes-trabajo.workorderpdf');
+    Route::get('/ordenes-trabajo/{workOrder}/workOrderpos', [WorkOrderController::class, 'workorderpos'])->name('ordenes-trabajo.workorderpos');
     Route::get('/ordenes-trabajo/{workOrder}/enviar-orden-de-trabajo', [WorkOrderController::class, 'sendEmailWorkorderpdf'])->name('ordenes-trabajo.sendEmailWorkorderpdf');
     Route::post('/ordenes-trabajo/productjson', [WorkOrderController::class, 'productjson'])->name('ordenes-trabajo.productjson');
 
 
     # Reportes
     Route::get('/informe-de-ventas', [ReportsController::class, 'informeventas'])->name('reportes.informeventas');
+    Route::get('/informe-de-ventas-por-dia-con-propina', [ReportsController::class, 'informeVentasxdia'])->name('reportes.informeVentasxdia');
+    Route::get('/datatable-ventas-por-dia-con-propina', [ReportsController::class, 'datatableVentasxDia'])->name('reportes.datatableVentasxDia');
+    Route::post('/informe-de-ventas-por-dia', [ReportsController::class, 'informeVentasxdiaPdf'])->name('reportes.informeVentasxdiaPdf');
     // Route::get('/informe-de-ventas-filtrado', [ReportsController::class, 'informeventasfilter'])->name('reportes.informeventasfilter');
     Route::get('/informe-de-gastos', [ReportsController::class, 'informegastos'])->name('reportes.informegastos');
     // Route::get('/informe-de-gastos-filtrado', [ReportsController::class, 'informegastosfilter'])->name('reportes.informegastosfilter');

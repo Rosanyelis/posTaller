@@ -65,6 +65,8 @@ class WorkOrderController extends Controller
         } else {
             $nroOrden = 1001;
         }
+        $impuesto = $request->total * (19 / 100);
+        $total = $request->total + $impuesto;
         $productos = json_decode($request->array_products);
         $workorder = WorkOrder::create([
             'store_id'       => 1,
@@ -74,7 +76,10 @@ class WorkOrderController extends Controller
             'marca'          => $request->marca,
             'modelo'         => $request->modelo,
             'patente_vehiculo' => $request->patente_vehiculo,
-            'total'          => $request->total,
+            'subtotal'       => $request->total,
+            'tax'            => 19,
+            'taxamount'     => $impuesto,
+            'total'          => $total,
         ]);
 
         foreach ($productos as $key) {
@@ -120,13 +125,19 @@ class WorkOrderController extends Controller
     {
         $productos = json_decode($request->array_products);
         $workorder = WorkOrder::find($workOrder);
+        $impuesto = $request->total * (19 / 100);
+        $total = $request->total + $impuesto;
         $workorder->update([
             'customer_id'    => $request->customer,
             'user_id'        => auth()->user()->id,
             'marca'          => $request->marca,
             'modelo'         => $request->modelo,
             'patente_vehiculo' => $request->patente_vehiculo,
-            'total'          => $request->total,
+            'subtotal'       => $request->total,
+            'tax'            => 19,
+            'taxamount'     => $impuesto,
+            'total'          => $total,
+            'total'          => $total,
         ]);
 
         foreach ($productos as $key) {
@@ -169,6 +180,14 @@ class WorkOrderController extends Controller
     {
         $workOrder = WorkOrder::with('items', 'customer', 'items.product', 'user')->find($workOrder);
         return Pdf::loadView('pdfs.workOrder', compact('workOrder'))
+                ->stream(''.config('app.name', 'Laravel').' - Orden-de-Trabajo-' . $workOrder->correlativo. '.pdf');
+    }
+
+    public function workorderpos($workOrder)
+    {
+        $workOrder = WorkOrder::with('items', 'customer', 'items.product', 'user')->find($workOrder);
+        return Pdf::loadView('pdfs.workorderpos', compact('workOrder'))
+                ->setPaper([0,0,220,1000])
                 ->stream(''.config('app.name', 'Laravel').' - Orden-de-Trabajo-' . $workOrder->correlativo. '.pdf');
     }
 

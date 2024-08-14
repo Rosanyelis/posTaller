@@ -83,28 +83,28 @@
                 <tr style="text-align: center; font-size: 14px">
                     <td>{{ $item->product_code }}</td>
                     <td>{{ $item->product_name }}</td>
-                    <td>{{ $item->quantity }}</td>
-                    <td>{{ $item->unit_price }}</td>
-                    <td>{{ $item->subtotal }}</td>
+                    <td>{{ number_format($item->quantity, 0, ',', '.') }}</td>
+                    <td>{{ number_format($item->unit_price, 0, ',', '.') }}</td>
+                    <td>{{ number_format($item->subtotal, 0, ',', '.') }}</td>
                 </tr>
             @endforeach
         </tbody>
         <tfoot>
             <tr>
                 <td colspan="4" style="text-align: right; font-weight: bold">SubTotal:</td>
-                <td style="text-align: center;">{{ $sale->total }}</td>
+                <td style="text-align: center;">{{ number_format($sale->total, 0, ',', '.') }}</td>
             </tr>
             <tr>
                 <td colspan="4" style="text-align: right; font-weight: bold">Descuento(%{{ $sale->order_discount_id }}):</td>
-                <td style="text-align: center;">{{ number_format($sale->total * ($sale->order_discount_id / 100), 2) }}</td>
+                <td style="text-align: center;">{{ number_format($sale->total * ($sale->order_discount_id / 100), 0, ',', '.') }}</td>
             </tr>
             <tr>
                 <td colspan="4" style="text-align: right; font-weight: bold">Impuesto (%{{ $sale->order_tax_id }}):</td>
-                <td style="text-align: center;">{{ number_format($sale->total * ($sale->order_tax_id / 100), 2) }}</td>
+                <td style="text-align: center;">{{ number_format($sale->total * ($sale->order_tax_id / 100), 0, ',', '.') }}</td>
             </tr>
             <tr>
                 <td colspan="4" style="text-align: right; font-weight: bold">Total:</td>
-                <td style="text-align: center;">{{ $sale->grand_total }}</td>
+                <td style="text-align: center;">{{ number_format($sale->grand_total, 0, ',', '.') }}</td>
             </tr>
         </tfoot>
     </table>

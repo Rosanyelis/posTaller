@@ -122,10 +122,10 @@
                                 <ul class="sub-menu" aria-expanded="false">
                                     <!-- <li><a href="javascript: void(0);" key="t-products">Ventas Diarias</a></li> -->
                                     <!-- <li><a href="javascript: void(0);" data-key="t-product-add">Ventas Mensuales</a></li> -->
-                                    <li><a href="{{ route('ventas.generateInforme') }}" target="_blank" data-key="t-product-add">Informe de Ventas</a></li>
-                                    <li><a href="{{ route('reportes.informegastos') }}" target="_blank" data-key="t-product-add">Informe de Gastos</a></li>
-                                    <li><a href="{{ route('products.allproductpdf') }}" target="_blank" data-key="t-product-add">Informe de Productos</a></li>
-                                    <!-- <li><a href="javascript: void(0);" data-key="t-product-add">Informe de Inventario</a></li> -->
+                                    <li><a href="{{ route('ventas.generateInforme') }}" target="_blank">Informe de Ventas</a></li>
+                                    <li><a href="{{ route('reportes.informegastos') }}" target="_blank">Informe de Gastos</a></li>
+                                    <li><a href="{{ route('products.allproductpdf') }}" target="_blank">Informe de Productos</a></li>
+                                    <li><a href="{{ route('reportes.informeVentasxdia') }}">Ventas con Propina</a></li>
                                 </ul>
                             </li>
 

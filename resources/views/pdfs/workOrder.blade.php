@@ -72,17 +72,21 @@
             @foreach ($workOrder->items as $service)
                 <tr style="text-align: center; font-size: 14px">
                     <td>{{ $service->product->name }}</td>
-                    <td>{{ $service->quantity }}</td>
+                    <td>{{ number_format($service->quantity, 0, ',', '.') }}</td>
                     <td>{{ $service->details }}</td>
-                    <td>{{ $service->price }}</td>
-                    <td>{{ $service->total }}</td>
+                    <td>{{ number_format($service->price, 0, ',', '.') }}</td>
+                    <td>{{ number_format($service->total, 0, ',', '.') }}</td>
                 </tr>
             @endforeach
         </tbody>
         <tfoot>
             <tr>
+                <td colspan="4" style="text-align: right; font-weight: bold">Impuesto:</td>
+                <td style="text-align: center;">{{ number_format($workOrder->taxamount, 0, ',', '.') }}</td>
+            </tr>
+            <tr>
                 <td colspan="4" style="text-align: right; font-weight: bold">Total:</td>
-                <td style="text-align: center;">{{ $workOrder->total }}</td>
+                <td style="text-align: center;">{{ number_format($workOrder->total, 0, ',', '.') }}</td>
             </tr>
         </tfoot>
     </table>

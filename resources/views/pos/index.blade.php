@@ -24,19 +24,7 @@
         background-color: #f1f1f1; /* Color del track */
     }
 
-    @media print {
-        @page {
-            size: portrait;
-            margin: 0;
-            padding: 0;
-            width: 250px;
-            max-width: 250px;
-        }
-        #lefttop, #botones, #products {
-            display: none !important;
 
-        }
-    }
  </style>
 @endsection
 
@@ -136,7 +124,7 @@
                                                                 data-bs-toggle="modal" data-bs-target="#taxModal">Impuesto</a>
                                                             </td>
                                                             <td class="text-center">
-                                                                <span id="tax">0</span>%
+                                                                <span id="tax">19</span>%
                                                             </td>
                                                         </tr>
                                                         <tr class="info">
@@ -534,7 +522,7 @@
                             <th><span id="discountf"></span></th>
                         </tr>
                         <tr>
-                            <th colspan="3" class="text-end">Impuesto (%<span id="taxpercentf"></span>)</th></th>
+                            <th colspan="3" class="text-end">Impuesto (%<span id="taxpercentf">19</span>)</th></th>
                             <th ><span id="taxf"></span></th>
                         </tr>
                         <tr>
@@ -580,20 +568,26 @@
             placeholder: 'Seleccione un cliente',
             ajax: {
                 url: '{{ route("pos.getCustomers") }}',
+                type: 'GET',
                 dataType: 'json',
                 delay: 250,
                 processResults: function (data) {
+                    console.log(data);
+
                     return {
                         results:  $.map(data, function (item) {
+
                             return {
-                                text: item.rut  + ' - ' + item.name,
+                                text: item.text,
                                 id: item.id
                             }
                         })
                     };
                 },
-                cache: true
-            }
+                cache: true,
+
+            },
+
         });
         // Inicializa el autocomplete de productos para ser seleccionados
         $('#productos').autocomplete({
@@ -1306,9 +1300,9 @@
         $('#totalf').text();
 
         dataProduct.forEach((item) => {
-            $('#printFactura tbody').append('<tr id="payment-' + item.id + '"><td>' + item.name + '</td><td>' + item.quantity + '</td><td>' + item.price + '</td><td>' + item.subtotal + '</td></tr>');
+            $('#printFactura tbody').append('<tr class="text-center" id="payment-' + item.id + '"><td>' + item.name + '</td><td>' + item.quantity + '</td><td>' + item.price + '</td><td>' + item.subtotal + '</td></tr>');
         });
-        
+
         var tax = parseFloat($('#tax').text());
         var discount = parseFloat($('#discount').text());
         var propina = $('#propina').text();
@@ -1328,7 +1322,8 @@
             printable: 'printFactura',
             type: 'html',
             documentTitle: 'Factura',
-            style: '*{font-size: 12px;font-family: Arial, Helvetica, sans-serif; text-align: center;}'
+            style: '*{font-size: 14px;font-family: Arial, Helvetica, sans-serif;}  @media print {@page {size: portrait;margin: 0;padding: 0;width: 280px;max-width: 280px;}}',
+
         });
     }
 </script>

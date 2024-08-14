@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>factura de venta</title>
+    <title>factura de Compra</title>
     <style>
         * {
             font-size: 12px;
@@ -82,21 +82,24 @@
             vulca_david@hotmail.com <br>
             56652759029 - 56413243313 - 56232075270
         </h3>
-        <h3>Documento #00000{{ $sale->id }}</h3>
+        <h3>Documento de Compra</h3>
         <h3 style="text-align: left; font-weight: normal" >
-            <strong>Cliente:</strong> {{ $sale->customer->name }}
+            <strong>Proveedor:</strong> {{ $purchase->supplier->name }}
             <br>
-            <strong>Rut:</strong> {{ $sale->customer->rut }}
+            <strong>Teléfono:</strong> {{ $purchase->supplier->phone }}
             <br>
-            <strong>Correo:</strong> {{ $sale->customer->email }}
+            <strong>Correo:</strong> {{ $purchase->supplier->email }}
             <br>
-            <strong>Tlf:</strong> {{ $sale->customer->phone }}
             <br>
-            <strong>Dirección:</strong> {{ $sale->customer->address }}
+            <strong>Fecha:</strong> {{ \Carbon\Carbon::parse($purchase->created_at)->format('d/m/Y H:i A') }}
             <br>
-            <strong>Fecha:</strong> {{ \Carbon\Carbon::parse($sale->created_at)->format('d/m/Y H:i A') }}
+            <strong>Nro. Factura de compra:</strong> {{ $purchase->reference }}
             <br>
-            <strong>Vendedor:</strong> {{ $sale->user->name }}
+            <strong>¿Recibido?:</strong> {{ ($purchase->received == 1 ? 'Recibido' : 'No Recibido') }}
+            <br>
+            <strong>Tipo de Compra:</strong> {{ $purchase->type_purchase }}
+            <br>
+            <strong>Notas:</strong> {{ $purchase->note }}
         </h3>
         <br>
         <table>
@@ -109,39 +112,24 @@
                 </tr>
             </thead>
             <tbody>
-            @foreach ($sale->saleitems as $item)
+            @foreach ($purchase->purchaseItems as $item)
                 <tr style="text-align: center; font-size: 14px">
-                    <td>{{ $item->product_name }}</td>
-                    <td>{{ number_format($item->quantity, 0, ',', '.') }}</td>
-                    <td>{{ number_format($item->unit_price, 0, ',', '.') }}</td>
+                    <td>{{ $item->product->name }}</td>
+                    <td>{{ $item->quantity }}</td>
+                    <td>{{ number_format($item->cost, 0, ',', '.') }}</td>
                     <td>{{ number_format($item->subtotal, 0, ',', '.') }}</td>
                 </tr>
             @endforeach
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="3" style="text-align: right; font-weight: bold">SubTotal:</td>
-                    <td style="text-align: center;">{{ number_format($sale->total, 0, ',', '.') }}</td>
-                </tr>
-                <tr>
-                    <td colspan="3" style="text-align: right; font-weight: bold">Descuento(%{{ $sale->order_discount_id }}):</td>
-                    <td style="text-align: center;">{{ number_format($sale->total * ($sale->order_discount_id / 100), 0, ',', '.') }}</td>
-                </tr>
-                <tr>
-                    <td colspan="3" style="text-align: right; font-weight: bold">Impuesto (%{{ $sale->order_tax_id }}):</td>
-                    <td style="text-align: center;">{{ number_format($sale->total * ($sale->order_tax_id / 100), 0, ',', '.') }}</td>
-                </tr>
-                <tr>
                     <td colspan="3" style="text-align: right; font-weight: bold">Total:</td>
-                    <td style="text-align: center;">{{ number_format($sale->grand_total, 0, ',', '.') }}</td>
+                    <td style="text-align: center;">{{ number_format($purchase->total, 0, ',', '.') }}</td>
                 </tr>
             </tfoot>
         </table>
         <br>
         <br>
-        <h1 class="centrado">¡GRACIAS POR SU COMPRA!
-            <br>
-            <strong>¡HASTA PRONTO!</strong>
-        </h1>
+
 </body>
 </html>

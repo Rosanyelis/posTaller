@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 
 class ReportsController extends Controller
@@ -25,6 +27,7 @@ class ReportsController extends Controller
         $totalcredito = 0;
         $totalcheque = 0;
         $totaltransferencia = 0;
+        $totalpropina = 0;
         foreach ($data as $sale) {
             $informe[] = [
                 'id' => $sale->id,
@@ -34,6 +37,8 @@ class ReportsController extends Controller
                 'total' => $sale->grand_total,
             ];
             $total += $sale->grand_total;
+
+            $totalpropina += $sale->perquisite;
 
             $payments = DB::table('sales')
                 ->join('sale_payments', 'sales.id', '=', 'sale_payments.sale_id')
@@ -56,7 +61,7 @@ class ReportsController extends Controller
 
         }
 
-        return Pdf::loadView('pdfs.informesales', compact('informe', 'total', 'totalefectivo', 'totalcredito', 'totalcheque', 'totaltransferencia'))
+        return Pdf::loadView('pdfs.informesales', compact('informe', 'total', 'totalefectivo', 'totalcredito', 'totalcheque', 'totaltransferencia', 'totalpropina'))
                 ->stream(''.config('app.name', 'Laravel').' - Informe de ventas totales - ' . Carbon::now(). '.pdf');
     }
 
@@ -93,5 +98,96 @@ class ReportsController extends Controller
                 ->stream(''.config('app.name', 'Laravel').' - Listado de Productos.pdf');
     }
 
+    public function informeVentasxdia()
+    {
 
+        $users = User::where('rol_id', '!=' ,'1')->get();
+        return view('reports.ventapropina', compact('users'));
+
+    }
+
+    public function datatableVentasxDia(Request $request)
+    {
+        if ($request->ajax()) {
+            $data = DB::table('sales')
+                ->join('users', 'sales.user_id', '=', 'users.id')
+                ->select('sales.*', 'users.name as user_name');
+            return DataTables::of($data)
+                ->filter(function ($query) use ($request) {
+                    if ($request->has('vendedor') && $request->get('vendedor') != '') {
+                        $query->where('sales.user_id', $request->get('vendedor'));
+                    }
+                    if ($request->has('dateday') && $request->get('dateday') != '') {
+                        $query->whereDate('sales.created_at', '=', $request->get('dateday'));
+                    }
+
+                    if ($request->has('search') && $request->get('search')['value'] != '') {
+                        $searchValue = $request->get('search')['value'];
+                        $query->where(function ($subQuery) use ($searchValue) {
+                            $subQuery->where('users.name', 'like', "%{$searchValue}%")
+                                     ->orWhere('sales.customer_name', 'like', "%{$searchValue}%");
+                        });
+                    }
+                })
+                ->make(true);
+        }
+    }
+
+    public function informeVentasxdiaPdf(Request $request)
+    {
+        $informe = [];
+        $user_id = ($request->get('user') == 'Todos' ? '' : $request->get('user'));
+        $data = DB::table('sales')
+            ->join('users', 'sales.user_id', '=', 'users.id')
+            ->select('sales.*', 'users.name as user_name')
+            ->whereDate('sales.created_at', '=', $request->get('day'))
+            ->where(function ($subQuery) use ($user_id) {
+                if ($user_id != '' && $user_id != 'Todos') {
+                    $subQuery->where('sales.user_id', $user_id);
+                }
+            })
+            ->get();
+
+        $total = 0;
+        $totalefectivo = 0;
+        $totalcredito = 0;
+        $totalcheque = 0;
+        $totaltransferencia = 0;
+        $totalpropina = 0;
+        foreach ($data as $sale) {
+            $informe[] = [
+                'id' => $sale->id,
+                'fecha' => Carbon::parse($sale->created_at)->format('d/m/Y'),
+                'cliente' => $sale->customer_name,
+                'propina' => $sale->perquisite,
+                'vendedor' => $sale->user_name,
+                'total' => $sale->grand_total,
+            ];
+            $total += $sale->grand_total;
+            $totalpropina += $sale->perquisite;
+
+            $payments = DB::table('sales')
+                ->join('sale_payments', 'sales.id', '=', 'sale_payments.sale_id')
+                ->select(DB::raw('SUM(sale_payments.pos_paid) AS total'), 'sale_payments.payment_method')
+                ->groupBy('sale_payments.payment_method')
+                ->where('sales.id', $sale->id)
+                ->get();
+
+            foreach ($payments as $key) {
+                if ($key->payment_method == 'Efectivo') {
+                    $totalefectivo = $key->total;
+                } else if ($key->payment_method == 'Tarjeta de credito') {
+                    $totalcredito = $key->total;
+                } else if ($key->payment_method == 'Cheque') {
+                    $totalcheque = $key->total;
+                } else if ($key->payment_method == 'Transferencia') {
+                    $totaltransferencia = $key->total;
+                }
+            }
+
+        }
+
+        return Pdf::loadView('pdfs.ventaspropinasxdia', compact('informe', 'total', 'totalefectivo', 'totalcredito', 'totalcheque', 'totaltransferencia', 'totalpropina'))
+                ->stream(''.config('app.name', 'Laravel').' - Informe de ventas por dia con propina - ' . Carbon::now(). '.pdf');
+    }
 }

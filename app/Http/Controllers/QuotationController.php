@@ -90,7 +90,7 @@ class QuotationController extends Controller
         $customer = Customer::where('name', $request->customer)->first();
         $productos = json_decode($request->array_products);
         $descuento = $request->total * ($request->order_discount_id / 100);
-        $impuesto = $request->total * ($request->order_tax_id / 100);
+        $impuesto = $request->total * (19 / 100);
         $grandtotal = $request->total - $descuento + $impuesto;
         $quote = Quotation::create([
             'customer_id'    => $customer->id,
@@ -155,7 +155,7 @@ class QuotationController extends Controller
         $customer = Customer::where('name', $request->customer)->first();
         $productos = json_decode($request->array_products);
         $descuento = $request->total * ($request->order_discount_id / 100);
-        $impuesto = $request->total * ($request->order_tax_id / 100);
+        $impuesto = $request->total * (19 / 100);
         $grandtotal = $request->total - $descuento + $impuesto;
         $quote = Quotation::find($quotation);
         $quote->update([

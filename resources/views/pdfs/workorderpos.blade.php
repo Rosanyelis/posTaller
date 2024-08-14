@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>factura de venta</title>
+    <title>factura de Orden de Trabajo</title>
     <style>
         * {
             font-size: 12px;
@@ -82,21 +82,26 @@
             vulca_david@hotmail.com <br>
             56652759029 - 56413243313 - 56232075270
         </h3>
-        <h3>Documento #00000{{ $sale->id }}</h3>
+        <br>
+        <h2>OT N° {{ $workOrder->correlativo }}</h2>
+        <br>
         <h3 style="text-align: left; font-weight: normal" >
-            <strong>Cliente:</strong> {{ $sale->customer->name }}
+            <strong>Fecha:</strong> {{ \Carbon\Carbon::parse($workOrder->created_at)->format('d/m/Y h:i A') }}
             <br>
-            <strong>Rut:</strong> {{ $sale->customer->rut }}
+            <strong>Cliente:</strong> {{ $workOrder->customer->name }}
             <br>
-            <strong>Correo:</strong> {{ $sale->customer->email }}
+            <strong>Rut:</strong> {{ $workOrder->customer->rut }}
             <br>
-            <strong>Tlf:</strong> {{ $sale->customer->phone }}
+            <strong>Dirección:</strong> {{ $workOrder->customer->address }}
             <br>
-            <strong>Dirección:</strong> {{ $sale->customer->address }}
+            <strong>Tlf:</strong> {{ $workOrder->customer->phone }}
             <br>
-            <strong>Fecha:</strong> {{ \Carbon\Carbon::parse($sale->created_at)->format('d/m/Y H:i A') }}
+            <strong>Marca:</strong> {{ $workOrder->marca }}
             <br>
-            <strong>Vendedor:</strong> {{ $sale->user->name }}
+            <strong>Modelo:</strong> {{ $workOrder->modelo }}
+            <br>
+            <strong>Patente:</strong> {{ $workOrder->patente_vehiculo }}
+            <br>
         </h3>
         <br>
         <table>
@@ -109,39 +114,28 @@
                 </tr>
             </thead>
             <tbody>
-            @foreach ($sale->saleitems as $item)
+            @foreach ($workOrder->items as $service)
                 <tr style="text-align: center; font-size: 14px">
-                    <td>{{ $item->product_name }}</td>
-                    <td>{{ number_format($item->quantity, 0, ',', '.') }}</td>
-                    <td>{{ number_format($item->unit_price, 0, ',', '.') }}</td>
-                    <td>{{ number_format($item->subtotal, 0, ',', '.') }}</td>
+                    <td>{{ $service->product->name }}</td>
+                    <td>{{ number_format($service->quantity, 0, ',', '.') }}</td>
+                    <td>{{ number_format($service->price, 0, ',', '.') }}</td>
+                    <td>{{ number_format($service->total, 0, ',', '.') }}</td>
                 </tr>
             @endforeach
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="3" style="text-align: right; font-weight: bold">SubTotal:</td>
-                    <td style="text-align: center;">{{ number_format($sale->total, 0, ',', '.') }}</td>
-                </tr>
-                <tr>
-                    <td colspan="3" style="text-align: right; font-weight: bold">Descuento(%{{ $sale->order_discount_id }}):</td>
-                    <td style="text-align: center;">{{ number_format($sale->total * ($sale->order_discount_id / 100), 0, ',', '.') }}</td>
-                </tr>
-                <tr>
-                    <td colspan="3" style="text-align: right; font-weight: bold">Impuesto (%{{ $sale->order_tax_id }}):</td>
-                    <td style="text-align: center;">{{ number_format($sale->total * ($sale->order_tax_id / 100), 0, ',', '.') }}</td>
+                    <td colspan="3" style="text-align: right; font-weight: bold">Impuesto:</td>
+                    <td style="text-align: center;">{{ number_format($workOrder->taxamount, 0, ',', '.') }}</td>
                 </tr>
                 <tr>
                     <td colspan="3" style="text-align: right; font-weight: bold">Total:</td>
-                    <td style="text-align: center;">{{ number_format($sale->grand_total, 0, ',', '.') }}</td>
+                    <td style="text-align: center;">{{ number_format($workOrder->total, 0, ',', '.') }}</td>
                 </tr>
             </tfoot>
         </table>
         <br>
         <br>
-        <h1 class="centrado">¡GRACIAS POR SU COMPRA!
-            <br>
-            <strong>¡HASTA PRONTO!</strong>
-        </h1>
+
 </body>
 </html>

@@ -3,6 +3,11 @@
     <i class="mdi mdi-file-pdf"></i>
 </a>
 
+<a href="{{ route('compras.purchasefactura', $id) }}" class="btn btn-secondary btn-sm"
+    title="Compras Factura PDF" target="_blank">
+    <i class="mdi mdi-file-pdf"></i>
+</a>
+
 <button type="button" class="btn btn-info btn-sm" onclick="viewRecord({{ $id }})">
     <i class="mdi mdi-eye"></i>
 </button>

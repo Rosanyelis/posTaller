@@ -98,16 +98,19 @@ class SaleController extends Controller
         $totalcredito = 0;
         $totalcheque = 0;
         $totaltransferencia = 0;
+        $totalpropina = 0;
         foreach ($data as $sale) {
             $informe[] = [
                 'id' => $sale->id,
                 'fecha' => Carbon::parse($sale->created_at)->format('d/m/Y'),
                 'cliente' => $sale->customer_name,
                 'vendedor' => $sale->user_name,
+                'propina' => $sale->perquisite,
                 'total' => $sale->grand_total,
-
             ];
             $total += $sale->grand_total;
+
+            $totalpropina += $sale->perquisite;
 
             $payments = DB::table('sales')
                 ->join('sale_payments', 'sales.id', '=', 'sale_payments.sale_id')
@@ -127,9 +130,9 @@ class SaleController extends Controller
                     $totaltransferencia = $key->total;
                 }
             }
-        }
 
-        return Pdf::loadView('pdfs.informesales', compact('informe', 'total', 'totalefectivo', 'totalcredito', 'totalcheque', 'totaltransferencia'))
+        }
+        return Pdf::loadView('pdfs.informesales', compact('informe', 'total', 'totalefectivo', 'totalcredito', 'totalcheque', 'totaltransferencia', 'totalpropina'))
                 ->stream(''.config('app.name', 'Laravel').' - Informe de ventas totales - ' . Carbon::now(). '.pdf');
     }
 

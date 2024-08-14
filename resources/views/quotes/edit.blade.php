@@ -73,7 +73,7 @@
                             <div class="mb-3">
                                 <label for="order_tax_id" class="form-label">Impuesto (%) (opcional)</label>
                                 <input type="number" class="form-control" name="order_tax_id" id="order_tax_id"
-                                value="{{ $quotation->order_tax_id }}" >
+                                value="{{ $quotation->order_tax_id }}" readonly>
                             </div>
                         </div>
 

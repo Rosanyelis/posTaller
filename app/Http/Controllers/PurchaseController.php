@@ -200,6 +200,14 @@ class PurchaseController extends Controller
                 ->stream(''.config('app.name', 'Laravel').' - Compra.pdf');
     }
 
+    public function purchasefactura($purchase)
+    {
+        $purchase = Purchase::with('purchaseItems', 'purchaseItems.product', 'supplier')->find($purchase);
+        return Pdf::loadView('pdfs.purchasepos', compact('purchase'))
+                ->setPaper([0,0,220,1000])
+                ->stream(''.config('app.name', 'Laravel').' - Compra.pdf');
+    }
+
     public function generateInforme()
     {
         $informe = [];
