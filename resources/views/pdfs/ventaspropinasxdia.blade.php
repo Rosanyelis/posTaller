@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Informe de Ventas Totales \Carbon\Carbon::now()->format('d/m/Y H:i A')</title>
+    <title>Informe de Ventas Totales {{ \Carbon\Carbon::now()->format('d/m/Y H:i A') }}</title>
 </head>
 <body>
     <table cellspacing="0" cellpadding="1" style="width: 100%;font-family: Helvetica, Arial, sans-serif">

@@ -100,7 +100,7 @@
                         <div class="w-100"></div>
                         <hr>
 
-                        <div class="col-lg-4 col-md-4 col-sm-6">
+                        <div class="col-lg-2 col-md-4 col-sm-6">
                             <div class="mb-3">
                                 <label for="producto" class="form-label">Nombre de Producto</label>
                                 <select class="form-control" name="producto" id="producto" style="width: 100%">
@@ -135,6 +135,13 @@
                         </div>
 
                         <div class="col-lg-2 col-md-2 col-sm-6">
+                            <div class="mb-3">
+                                <label for="cost" class="form-label">Peso de Neumático(opc)</label>
+                                <input type="text" class="form-control" name="weight" id="weight" >
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-md-2 col-sm-6">
                             <button type="button" class="btn btn-info mt-4" id="add_product">Agregar Producto</button>
                         </div>
 
@@ -146,6 +153,7 @@
                                         <th>Cantidad</th>
                                         <th>Costo</th>
                                         <th>Total</th>
+                                        <th>Peso</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
@@ -154,7 +162,7 @@
                                 <tfoot>
                                     <tr>
                                         <td colspan="3" class="text-end"><h4>Total</h4></td>
-                                        <td colspan="2" ><h4 id="total">0</h4></td>
+                                        <td colspan="3" ><h4 id="total">0</h4></td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -209,6 +217,7 @@
                 datosFila.quantity = value.quantity;
                 datosFila.cost = value.cost;
                 datosFila.total = value.subtotal;
+                datosFila.weight = value.weight;
                 datosTabla.push(datosFila);
 
             $("#table_products tbody").append(
@@ -217,6 +226,7 @@
                     <td>`+value.quantity+`</td>
                     <td>`+value.cost+`</td>
                     <td>`+value.subtotal+`</td>
+                    <td>`+value.weight+`</td>
                     <td>
                          <button type="button" class="btn btn-danger btn-sm"
                             id="delete_product" data-name="`+value.product.name+`">

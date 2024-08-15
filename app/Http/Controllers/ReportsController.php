@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Product;
+use App\Models\TypeProduct;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Yajra\DataTables\DataTables;
@@ -190,4 +191,216 @@ class ReportsController extends Controller
         return Pdf::loadView('pdfs.ventaspropinasxdia', compact('informe', 'total', 'totalefectivo', 'totalcredito', 'totalcheque', 'totaltransferencia', 'totalpropina'))
                 ->stream(''.config('app.name', 'Laravel').' - Informe de ventas por dia con propina - ' . Carbon::now(). '.pdf');
     }
+
+    public function informeVentasxdiaxproducto()
+    {
+
+        $types = TypeProduct::all();
+        return view('reports.productosvendidos', compact('types'));
+
+    }
+
+    public function datatableVentasxDiaxProducto(Request $request)
+    {
+
+        $data = DB::table('sales')
+            ->join('users', 'sales.user_id', '=', 'users.id')
+            ->join('sale_items', 'sales.id', '=', 'sale_items.sale_id')
+            ->join('sale_payments', 'sales.id', '=', 'sale_payments.sale_id')
+            ->join('products', 'sale_items.product_id', '=', 'products.id')
+            ->select('sales.*', 'users.name as user_name', 'products.name as product_name', 'products.type as type',
+            'sale_items.unit_price as price', 'sale_items.subtotal as subtotal', 'sale_items.quantity as quantity',
+            'sale_payments.payment_method as payment');
+
+            return DataTables::of($data)
+                ->filter(function ($query) use ($request) {
+                    if ($request->has('type') && $request->get('type') != '') {
+                        $query->where('products.type', $request->get('type'));
+                    }
+                    if ($request->has('dateday') && $request->get('dateday') != '') {
+                        $query->whereDate('sales.created_at', '=', $request->get('dateday'));
+                    }
+
+                    if ($request->has('search') && $request->get('search')['value'] != '') {
+                        $searchValue = $request->get('search')['value'];
+                        $query->where(function ($subQuery) use ($searchValue) {
+                            $subQuery->where('users.name', 'like', "%{$searchValue}%")
+                                     ->orWhere('sales.customer_name', 'like', "%{$searchValue}%")
+                                     ->orWhere('sale_payments.payment_method', 'like', "%{$searchValue}%");
+                        });
+                    }
+                })
+                ->make(true);
+    }
+
+    public function pdfVentasxDiaxProducto(Request $request)
+    {
+        $informe = [];
+        $type = $request->get('type');
+        $data = DB::table('sales')
+            ->join('users', 'sales.user_id', '=', 'users.id')
+            ->join('sale_items', 'sales.id', '=', 'sale_items.sale_id')
+            ->join('sale_payments', 'sales.id', '=', 'sale_payments.sale_id')
+            ->join('products', 'sale_items.product_id', '=', 'products.id')
+            ->select('sales.*', 'users.name as user_name', 'products.name as product_name', 'products.type as type',
+            'sale_items.unit_price as price', 'sale_items.subtotal as subtotal', 'sale_items.quantity as quantity',
+            'sale_payments.payment_method as payment')
+            ->whereDate('sales.created_at', '=', $request->get('day'))
+            ->where(function ($subQuery) use ($type) {
+                if ($type != '' && $type != 'Todos') {
+                    $subQuery->where('products.type', $type);
+                }
+            })
+            ->get();
+
+        foreach ($data as $key) {
+
+            $informe[] = [
+                'fecha' => Carbon::parse($key->created_at)->format('d/m/Y'),
+                'documento' => '#00000'.$key->id,
+                'producto' => $key->product_name,
+                'tipo' => $key->type,
+                'cantidad' => $key->quantity,
+                'precio' => $key->price,
+                'pago' => $key->payment,
+            ];
+        }
+
+        return Pdf::loadView('pdfs.productosvendidosxdia', compact('informe'))
+                ->stream(''.config('app.name', 'Laravel').' - Listado de productos vendidos por dia - ' . Carbon::now(). '.pdf');
+    }
+
+    public function informeProductosVendidos()
+    {
+
+        return view('reports.productosvendidoswitheliminados');
+
+    }
+
+    public function datatableProductosVendidos(Request $request)
+    {
+        $data = DB::table('sales')
+            ->join('users', 'sales.user_id', '=', 'users.id')
+            ->join('sale_items', 'sales.id', '=', 'sale_items.sale_id')
+            ->join('sale_payments', 'sales.id', '=', 'sale_payments.sale_id')
+            ->leftJoin('products', 'sale_items.product_id', '=', 'products.id')
+            ->select('sales.*', 'users.name as user_name', 'products.name as product_name', 'products.type as type',
+            'sale_items.unit_price as price', 'sale_items.subtotal as subtotal', 'sale_items.quantity as quantity',
+            'sale_payments.payment_method as payment')
+            ->where('products.type', '!=', 'SERVICIOS');
+
+            return DataTables::of($data)
+                ->filter(function ($query) use ($request) {
+                    if ($request->has('dateday') && $request->get('dateday') != '') {
+                        $query->whereDate('sales.created_at', '=', $request->get('dateday'));
+                    }
+
+                    if ($request->has('search') && $request->get('search')['value'] != '') {
+                        $searchValue = $request->get('search')['value'];
+                        $query->where(function ($subQuery) use ($searchValue) {
+                            $subQuery->where('users.name', 'like', "%{$searchValue}%")
+                                     ->orWhere('sales.customer_name', 'like', "%{$searchValue}%")
+                                     ->orWhere('sale_payments.payment_method', 'like', "%{$searchValue}%");
+                        });
+                    }
+                })
+                ->make(true);
+    }
+
+    public function pdfProductosVendidos(Request $request)
+    {
+        $informe = [];
+        $data = DB::table('sales')
+            ->join('users', 'sales.user_id', '=', 'users.id')
+            ->join('sale_items', 'sales.id', '=', 'sale_items.sale_id')
+            ->join('sale_payments', 'sales.id', '=', 'sale_payments.sale_id')
+            ->leftJoin('products', 'sale_items.product_id', '=', 'products.id')
+            ->select('sales.*', 'users.name as user_name', 'products.name as product_name', 'products.type as type',
+            'sale_items.unit_price as price', 'sale_items.subtotal as subtotal', 'sale_items.quantity as quantity',
+            'sale_payments.payment_method as payment')
+            ->where('products.type', '!=', 'SERVICIOS')
+            ->whereDate('sales.created_at', '=', $request->get('day'))
+            ->get();
+
+        foreach ($data as $key) {
+
+            $informe[] = [
+                'fecha' => Carbon::parse($key->created_at)->format('d/m/Y'),
+                'documento' => '#00000'.$key->id,
+                'producto' => $key->product_name,
+                'tipo' => $key->type,
+                'cantidad' => $key->quantity,
+                'precio' => $key->price,
+                'pago' => $key->payment,
+            ];
+        }
+
+        return Pdf::loadView('pdfs.productosvendidoswitheliminados', compact('informe'))
+                ->stream(''.config('app.name', 'Laravel').' - Listado de productos vendidos por dia incluyendo los eliminados - ' . Carbon::now(). '.pdf');
+    }
+
+    public function informeNeumaticosInternacionales()
+    {
+        return view('reports.neumaticosinternacionales');
+    }
+
+    public function datatableNeumaticosInternacionales(Request $request)
+    {
+        $data = DB::table('purchases')
+            ->join('purchase_items', 'purchases.id', '=', 'purchase_items.purchase_id')
+            ->leftJoin('products', 'purchase_items.product_id', '=', 'products.id')
+            ->select('purchases.*', 'products.name as product_name', 'products.type as type',
+            'purchase_items.cost as price_purchase', 'purchase_items.subtotal as subtotal',
+            'purchase_items.quantity as quantity', 'purchase_items.weight as weight')
+            ->where('products.type', 'NEUMATICOS')
+            ->where('purchases.type_purchase', 'Nacional');
+
+            return DataTables::of($data)
+                ->filter(function ($query) use ($request) {
+                    if ($request->has('start') && $request->has('end') && $request->get('start') != '' && $request->get('end') != '') {
+                        $query->whereBetween('purchases.created_at', [$request->get('start'), $request->get('end')]);
+                    }
+                    if ($request->has('search') && $request->get('search')['value'] != '') {
+                        $searchValue = $request->get('search')['value'];
+                        $query->where(function ($subQuery) use ($searchValue) {
+                            $subQuery->where('products.name', 'like', "%{$searchValue}%");
+                        });
+                    }
+                })
+                ->make(true);
+    }
+
+    public function pdfNeumaticosInternacionales(Request $request)
+    {
+        $informe = [];
+        $fechaInicio = Carbon::parse($request->get('start'))->format('d/m/Y');
+        $fechaFin = Carbon::parse($request->get('end'))->format('d/m/Y');
+        $data = DB::table('purchases')
+            ->join('purchase_items', 'purchases.id', '=', 'purchase_items.purchase_id')
+            ->leftJoin('products', 'purchase_items.product_id', '=', 'products.id')
+            ->select('purchases.*', 'products.name as product_name', 'products.type as type',
+            'purchase_items.cost as price_purchase', 'purchase_items.subtotal as subtotal',
+            'purchase_items.quantity as quantity', 'purchase_items.weight as weight')
+            ->where('products.type', 'NEUMATICOS')
+            ->where('purchases.type_purchase', 'Nacional')
+            ->whereBetween('purchases.created_at', [$request->get('start'), $request->get('end')])
+            ->get();
+
+        foreach ($data as $key) {
+
+            $informe[] = [
+                'fecha' => Carbon::parse($key->created_at)->format('d/m/Y'),
+                'producto' => $key->product_name,
+                'tipo' => $key->type,
+                'cantidad' => $key->quantity,
+                'costo' => $key->price_purchase,
+                'subtotal' => $key->subtotal,
+                'peso' => $key->weight
+            ];
+        }
+
+        return Pdf::loadView('pdfs.neumaticoscomprados', compact('informe', 'fechaInicio', 'fechaFin'))
+                ->stream(''.config('app.name', 'Laravel').' - Listado de neumaticos internacionales vendidos por dia - ' . Carbon::now(). '.pdf');
+    }
+
 }

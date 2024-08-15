@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>factura de Orden de Trabajo</title>
+    <title>Documento de Orden de Trabajo</title>
     <style>
         * {
             font-size: 12px;

@@ -124,7 +124,7 @@
                                                                 data-bs-toggle="modal" data-bs-target="#taxModal">Impuesto</a>
                                                             </td>
                                                             <td class="text-center">
-                                                                <span id="tax">19</span>%
+                                                                <span id="tax">0</span>%
                                                             </td>
                                                         </tr>
                                                         <tr class="info">

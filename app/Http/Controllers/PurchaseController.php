@@ -109,6 +109,7 @@ class PurchaseController extends Controller
                 'quantity'          => $key->quantity,
                 'cost'              => $key->cost,
                 'subtotal'          => $key->total,
+                'weight'            => $key->weight
             ]);
         }
         return redirect()->route('compras.index')->with('success', 'Compra Guardada Exitosamente');
@@ -173,6 +174,7 @@ class PurchaseController extends Controller
                 'quantity'          => $key->quantity,
                 'cost'              => $key->cost,
                 'subtotal'          => $key->total,
+                'weight'            => $key->weight
             ]);
         }
         return redirect()->route('compras.index')->with('success', 'Compra Actualizada Exitosamente');

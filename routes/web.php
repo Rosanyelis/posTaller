@@ -179,12 +179,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/informe-de-ventas-por-dia-con-propina', [ReportsController::class, 'informeVentasxdia'])->name('reportes.informeVentasxdia');
     Route::get('/datatable-ventas-por-dia-con-propina', [ReportsController::class, 'datatableVentasxDia'])->name('reportes.datatableVentasxDia');
     Route::post('/informe-de-ventas-por-dia', [ReportsController::class, 'informeVentasxdiaPdf'])->name('reportes.informeVentasxdiaPdf');
-    // Route::get('/informe-de-ventas-filtrado', [ReportsController::class, 'informeventasfilter'])->name('reportes.informeventasfilter');
     Route::get('/informe-de-gastos', [ReportsController::class, 'informegastos'])->name('reportes.informegastos');
-    // Route::get('/informe-de-gastos-filtrado', [ReportsController::class, 'informegastosfilter'])->name('reportes.informegastosfilter');
-    // Route::get('/informe-de-compras', [ReportsController::class, 'informecompras'])->name('reportes.informecompras');
-    // Route::get('/informe-de-compras-filtrado', [ReportsController::class, 'informecomprasfilter'])->name('reportes.informecomprasfilter');
-    // Route::get('/informe-de-ordenes-trabajo', [ReportsController::class, 'informeordenes'])->name('reportes.informeordenes');
+    Route::get('/informe-de-ventas-de-productos-por-dia', [ReportsController::class, 'informeVentasxdiaxproducto'])->name('reportes.informeVentasxdiaxproducto');
+    Route::get('/datatable-de-ventas-de-productos-por-dia', [ReportsController::class, 'datatableVentasxDiaxProducto'])->name('reportes.datatableVentasxDiaxProducto');
+    Route::post('/informe-de-ventas-de-productos-por-dia-pdf', [ReportsController::class, 'pdfVentasxDiaxProducto'])->name('reportes.pdfVentasxDiaxProducto');
+    Route::get('/informe-de-productos-vendidos-incluidos-eliminados', [ReportsController::class, 'informeProductosVendidos'])->name('reportes.informeProductosVendidos');
+    Route::get('/datatable-de-productos-vendidos-incluidos-eliminados', [ReportsController::class, 'datatableProductosVendidos'])->name('reportes.datatableProductosVendidos');
+    Route::post('/informe-de-productos-vendidos-incluidos-eliminados-pdf', [ReportsController::class, 'pdfProductosVendidos'])->name('reportes.pdfProductosVendidos');
+    Route::get('/informe-de-neumaticos-internacionales', [ReportsController::class, 'informeNeumaticosInternacionales'])->name('reportes.informeNeumaticosInternacionales');
+    Route::get('/datatable-de-neumaticos-internacionales', [ReportsController::class, 'datatableNeumaticosInternacionales'])->name('reportes.datatableNeumaticosInternacionales');
+    Route::post('/informe-de-neumaticos-internacionales-pdf', [ReportsController::class, 'pdfNeumaticosInternacionales'])->name('reportes.pdfNeumaticosInternacionales');
+
+
 
 });
 Route::get('comandos', function () {
