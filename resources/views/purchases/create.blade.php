@@ -99,7 +99,7 @@
                         <div class="w-100"></div>
                         <hr>
 
-                        <div class="col-lg-2 col-md-4 col-sm-6">
+                        <div class="col-lg-6 col-md-6 col-sm-6">
                             <div class="mb-3">
                                 <label for="producto" class="form-label">Nombre de Producto</label>
                                 <select class="form-control" name="producto" id="producto" style="width: 100%">
@@ -112,27 +112,29 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-2 col-md-2 col-sm-6">
+                        <div class="col-lg-3 col-md-3 col-sm-6">
                             <div class="mb-3">
                                 <label for="name" class="form-label">Precio Actual Prod.</label>
                                 <input type="text" class="form-control" name="price" id="price"  readonly>
                             </div>
                         </div>
 
-                        <div class="col-lg-2 col-md-2 col-sm-6">
+                        <div class="w-100"></div>
+
+                        <div class="col-lg-3 col-md-3 col-sm-6">
                             <div class="mb-3">
                                 <label for="name" class="form-label">Cantidad del Producto</label>
                                 <input type="text" class="form-control" name="quantity" id="quantity" >
                             </div>
                         </div>
 
-                        <div class="col-lg-2 col-md-2 col-sm-6">
+                        <div class="col-lg-3 col-md-3 col-sm-6">
                             <div class="mb-3">
                                 <label for="cost" class="form-label">Costo de Compra</label>
                                 <input type="text" class="form-control" name="cost" id="cost" >
                             </div>
                         </div>
-                        <div class="col-lg-2 col-md-2 col-sm-6">
+                        <div class="col-lg-3 col-md-3 col-sm-6">
                             <div class="mb-3">
                                 <label for="cost" class="form-label">Peso de Neumático(opc)</label>
                                 <input type="text" class="form-control" name="weight" id="weight" >

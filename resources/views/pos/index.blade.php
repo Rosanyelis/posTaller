@@ -572,7 +572,6 @@
                 dataType: 'json',
                 delay: 250,
                 processResults: function (data) {
-                    console.log(data);
 
                     return {
                         results:  $.map(data, function (item) {
@@ -810,7 +809,7 @@
                         element.image = baseStorage + element.image;
                     }
 
-                    $('#productlist').append('<div class="col-3"><a href="javascript:void(0);" data-id="'+code+'" id="add-product" ><div class="card" style="width: 100%; height: 104px;"><div class="card-body p-1"><div class="product-img position-relative p-0"><img src="'+ element.image + '" width="70" class="img-fluid mx-auto d-block rounded "></div></div><div class="card-footer py-1 text-center bg-dark-subtle text-uppercase" style="font-size: 11px;"><b>' + element.name + '</b></div></div></a></div>');
+                    $('#productlist').append('<div class="col-3"><a href="javascript:void(0);" data-id="'+code+'" id="add-product" ><div class="card" style="width: 100%; height: 104px;"><div class="card-body p-1"><div class="product-img position-relative p-0"><img src="'+ element.image + '" width="50%" heigth="50%" class="img-fluid mx-auto d-block rounded "></div></div><div class="card-footer py-1 text-center bg-dark-subtle text-uppercase" style="font-size: 11px;"><b>' + element.name + '</b></div></div></a></div>');
                 })
 
 
@@ -1137,7 +1136,30 @@
 
         });
         $('#save_payment').on('click', function() {
-            // cliente
+            // Variable para almacenar campos incompletos
+            var missingFields = [];
+            if ($('#customer').val() === 'Seleccione cliente') {
+                Swal.fire({
+                    position: 'top-center',
+                    icon: 'error',
+                    title: 'Seleccione un cliente para procesar el pago',
+                    showConfirmButton: false,
+                    timer: 2500
+                });
+
+                missingFields.push('Cliente');
+            }
+            if ($('#paymentBy').val() === 'seleccione') {
+                Swal.fire({
+                    position: 'top-center',
+                    icon: 'error',
+                    title: 'Seleccione la forma de pago',
+                    showConfirmButton: false,
+                    timer: 2500
+                });
+                missingFields.push('metodo');
+
+            }
             var customer = $('#customer').val();
             var noteRef = $('#note_ref').val();
             var tax = $('#tax').text();
@@ -1178,8 +1200,25 @@
             $('#notepayh').val(notePay);
             $('#paypartial').val(JSON.stringify(dataPartial));
             $('#note_payment').val(noteRef);
-            $('#posForm').submit();
 
+            if (missingFields.length > 0) {
+                Swal.fire({
+                    position: 'top-center',
+                    icon: 'error',
+                    title: 'Por favor verifique los datos para completar la venta',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+
+                return false;
+
+            }
+            console.log(missingFields.length);
+
+            if (missingFields.length == 0) {
+
+                $('#posForm').submit();
+            }
         });
 
         $('#salir').on('click', function() {
