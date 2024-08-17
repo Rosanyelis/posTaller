@@ -133,11 +133,11 @@ class PosController extends Controller
                 ]);
 
                 # disminuimos el stock del producto
-                if ($product->type == 'Standard') {
-                    $productqty = ProductStoreQty::where('product_id', $key->id)->first();
-                    $productqty->quantity = $productqty->quantity - $key->quantity;
-                    $productqty->save();
-                }
+
+                $productqty = ProductStoreQty::where('product_id', $key->id)->first();
+                $productqty->quantity = $productqty->quantity - $key->quantity;
+                $productqty->save();
+
 
                 # ingresamos informacion en kardex del producto
                 Kardex::create([
@@ -170,21 +170,21 @@ class PosController extends Controller
                 foreach ($workorder as $item) {
                     $product = Product::where('id', $item->product_id)->first();
                     # disminuimos el stock del proyecto
-                    if ($product->type == 'Standard') {
-                        $productqty = ProductStoreQty::where('product_id', $item->product_id)->first();
-                        $productqty->quantity = $productqty->quantity - $item->quantity;
-                        $productqty->save();
 
-                        # ingresamos informacion en kardex del producto
-                        Kardex::create([
-                            'product_id'    => $item->product_id,
-                            'quantity'      => $item->quantity,
-                            'price'         => $item->price,
-                            'total'         => $item->total,
-                            'type'          => 2,
-                            'description'   => 'Venta de ' . $product->name.' de la orden de trabajo ' . $key->name
-                        ]);
-                    }
+                    $productqty = ProductStoreQty::where('product_id', $item->product_id)->first();
+                    $productqty->quantity = $productqty->quantity - $item->quantity;
+                    $productqty->save();
+
+                    # ingresamos informacion en kardex del producto
+                    Kardex::create([
+                        'product_id'    => $item->product_id,
+                        'quantity'      => $item->quantity,
+                        'price'         => $item->price,
+                        'total'         => $item->total,
+                        'type'          => 2,
+                        'description'   => 'Venta de ' . $product->name.' de la orden de trabajo ' . $key->name
+                    ]);
+
                 }
 
             }

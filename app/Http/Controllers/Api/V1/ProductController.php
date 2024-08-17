@@ -15,11 +15,11 @@ class ProductController extends Controller
      */
     public function getStock($product)
     {
-        $count = Product::where('id', $product)->count();
+        $count = Product::where('code', $product)->count();
         if ($count > 0) {
             $data = Product::join('product_store_qties', 'products.id', '=', 'product_store_qties.product_id')
                     ->select('products.id', 'products.name', 'products.code', 'products.price', 'product_store_qties.quantity')
-                    ->where('products.id', $product)
+                    ->where('products.code', $product)
                     ->first();
 
             return response()->json($data, 200);
@@ -34,26 +34,35 @@ class ProductController extends Controller
      */
     public function updateStock(Request $request)
     {
-        $count = Product::where('id', $request->product_id)->count();
+        $product = Product::with('storeqty')->where('code', $request->code)->first();
 
-        if ($count > 0) {
-            $productqty = ProductStoreQty::where('product_id', $request->product_id)->first();
-            $productqty->quantity = $productqty->quantity - $request->quantity;
-            $productqty->save();
+        $productqty = ProductStoreQty::where('product_id', $product->id)->first();
 
-            $product = Product::with('storeqty')->find($request->product_id);
+        if ($productqty->quantity > 0) {
+
+            $pqty = ProductStoreQty::where('product_id', $product->id)->first();
+            $pqty->quantity = $pqty->quantity - $request->quantity;
+            $pqty->save();
+
             # ingresamos informacion en kardex del producto
             Kardex::create([
-                'product_id'    => $request->product_id,
+                'product_id'    => $product->id,
                 'quantity'      => $request->quantity,
                 'price'         => $request->price,
                 'total'         => $request->total,
                 'type'          => 2,
                 'description'   => 'Venta de ' . $product->name.' en la tienda en linea',
             ]);
+
+            $p = Product::with('storeqty')->where('code', $request->code)->first();
+
+            return response()->json($p, 200);
+        } else {
+
+            return response()->json('No hay stock para este producto', 404);
         }
 
-        return response()->json($product, 200);
+
     }
 
 }
