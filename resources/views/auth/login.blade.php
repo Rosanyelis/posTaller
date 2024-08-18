@@ -10,7 +10,7 @@
                                 <div class="d-flex flex-column h-100">
                                     <div class="mb-md-0 text-center">
                                         <a href="{{ route('home') }}" class="d-block auth-logo">
-                                            <img src="{{ asset('assets/images/logo-official.png') }}" alt="logo" height="100">
+                                            <img src="{{ asset('assets/images/rossdigital.png') }}" alt="logo" height="100">
                                             <br>
                                             <span class="logo-txt">POS</span>
                                         </a>

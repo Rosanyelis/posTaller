@@ -496,7 +496,7 @@
                     <thead>
                         <tr>
                             <th colspan="4" class="text-center">
-                            <img src="{{ asset('assets/images/logo-official.png') }}" alt="logo" height="60">
+                            <img src="{{ asset('assets/images/rossdigital.png') }}" alt="logo" height="60">
                                 <h1>Rey del Neumatico</h1>
                                 <h3>Jose Joaquin Prieto 5780 - <br>San Miguel - Santiago<br>
                                     vulca_david@hotmail.com <br>

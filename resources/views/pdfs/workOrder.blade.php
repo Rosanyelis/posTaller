@@ -10,7 +10,7 @@
         <thead>
             <tr>
                 <th colspan="5">
-                    <img src="{{ asset('assets/images/logo-official.png') }}" alt="logo" height="150">
+                    <img src="{{ asset('assets/images/rossdigital.png') }}" alt="logo" height="150">
                     <br>
                     <h4>
                         Jose Joaquin Prieto 5780 - San Miguel
