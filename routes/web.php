@@ -72,6 +72,7 @@ Route::middleware('auth')->group(function () {
     # Productos
     Route::get('/productos', [ProductController::class, 'index'])->name('productos.index');
     Route::get('/productos/datatable', [ProductController::class, 'datatable'])->name('productos.datatable');
+    Route::post('/productos/totales', [ProductController::class, 'totalProductos'])->name('productos.totalProductos');
     Route::get('/productos/create', [ProductController::class, 'create'])->name('productos.create');
     Route::post('/productos', [ProductController::class, 'store'])->name('productos.store');
     Route::get('/productos/{product}/show', [ProductController::class, 'show'])->name('productos.show');
@@ -99,16 +100,30 @@ Route::middleware('auth')->group(function () {
     Route::get('/categorias/{category}/productos-por-categoria', [CategoryController::class, 'productcategory'])->name('categories.productcategory');
 
     # Ventas
-    Route::get('/ventas', [SaleController::class, 'index'])->name('ventas.index');
+    Route::get('/ventas-por-caja', [SaleController::class, 'index'])->name('ventas.index');
     Route::get('/ventas/datatable', [SaleController::class, 'datatable'])->name('ventas.datatable');
+    Route::post('/ventas/total-ventas-por-caja', [SaleController::class, 'totalSales'])->name('ventas.totalSales');
+    Route::post('/ventas/generar-informe', [SaleController::class, 'generateInforme'])->name('ventas.generateInforme');
+
+    Route::get('/ventas-por-mes', [SaleController::class, 'indexmonth'])->name('ventas.indexmonth');
+    Route::get('/ventas/datatable-por-mes', [SaleController::class, 'datatablexmonth'])->name('ventas.datatablexmonth');
+    Route::post('/ventas/total-ventas-por-mes', [SaleController::class, 'totalSalesxmonth'])->name('ventas.totalSalesxmonth');
+    Route::post('/ventas/generar-informe-por-mes', [SaleController::class, 'generateInformexmes'])->name('ventas.generateInformexmes');
+
+    Route::get('/ventas-por-rango', [SaleController::class, 'indexrange'])->name('ventas.indexrange');
+    Route::get('/ventas/datatable-por-rango', [SaleController::class, 'datatablexrange'])->name('ventas.datatablexrange');
+    Route::post('/ventas/total-ventas-por-rango', [SaleController::class, 'totalSalesxrange'])->name('ventas.totalSalesxrange');
+    Route::post('/ventas/generar-informe-por-rango', [SaleController::class, 'generateInformexrange'])->name('ventas.generateInformexrange');
+
     Route::get('/ventas/{sale}/show', [SaleController::class, 'show'])->name('ventas.show');
     Route::get('/ventas/{sale}/generar-factura', [SaleController::class, 'generateInvoice'])->name('ventas.generateInvoice');
     Route::get('/ventas/{sale}/generar-factura-ticket', [SaleController::class, 'generateTicket'])->name('ventas.generateTicket');
-    Route::get('/ventas/generar-informe', [SaleController::class, 'generateInforme'])->name('ventas.generateInforme');
+    Route::get('/ventas/{sale}/generar-ticket', [SaleController::class, 'printPos'])->name('ventas.printPos');
 
     # Cotizaciones
     Route::get('/cotizaciones', [QuotationController::class, 'index'])->name('cotizaciones.index');
     Route::get('/cotizaciones/datatable', [QuotationController::class, 'datatable'])->name('cotizaciones.datatable');
+    Route::post('/cotizaciones/total', [QuotationController::class, 'totalQuotes'])->name('cotizaciones.totalQuotes');
     Route::get('/cotizaciones/create', [QuotationController::class, 'create'])->name('cotizaciones.create');
     Route::post('/cotizaciones', [QuotationController::class, 'store'])->name('cotizaciones.store');
     Route::get('/cotizaciones/{quotation}/show', [QuotationController::class, 'show'])->name('cotizaciones.show');
@@ -148,12 +163,15 @@ Route::middleware('auth')->group(function () {
     # compras
     Route::get('/compras', [PurchaseController::class, 'index'])->name('compras.index');
     Route::get('/compras/datatable', [PurchaseController::class, 'datatable'])->name('compras.datatable');
+    Route::post('/compras/total-compras', [PurchaseController::class, 'totalPurchases'])->name('compras.totalPurchases');
+
     Route::get('/compras/create', [PurchaseController::class, 'create'])->name('compras.create');
-    Route::post('/compras', [PurchaseController::class, 'store'])->name('compras.store');
+    Route::post('/compras/store', [PurchaseController::class, 'store'])->name('compras.store');
     Route::get('/compras/{compra}/show', [PurchaseController::class, 'show'])->name('compras.show');
     Route::get('/compras/{compra}/edit', [PurchaseController::class, 'edit'])->name('compras.edit');
     Route::put('/compras/{compra}/update', [PurchaseController::class, 'update'])->name('compras.update');
     Route::get('/compras/{compra}/delete', [PurchaseController::class, 'destroy'])->name('compras.destroy');
+
     Route::get('/compras/{compra}/purchasepdf', [PurchaseController::class, 'purchasepdf'])->name('compras.purchasepdf');
     Route::get('/compras/{compra}/purchasepos', [PurchaseController::class, 'purchasefactura'])->name('compras.purchasefactura');
     Route::get('/compras/generar-informe', [PurchaseController::class, 'generateInforme'])->name('compras.generateInforme');
@@ -162,6 +180,7 @@ Route::middleware('auth')->group(function () {
 
     # Ordenes de Trabajo
     Route::get('/ordenes-trabajo', [WorkOrderController::class, 'index'])->name('ordenes-trabajo.index');
+    Route::get('/ordenes-trabajo/totales', [WorkOrderController::class, 'totalWorkOrder'])->name('ordenes-trabajo.totalWorkOrder');
     Route::get('/ordenes-trabajo/create', [WorkOrderController::class, 'create'])->name('ordenes-trabajo.create');
     Route::post('/ordenes-trabajo', [WorkOrderController::class, 'store'])->name('ordenes-trabajo.store');
     Route::get('/ordenes-trabajo/{workOrder}/show', [WorkOrderController::class, 'show'])->name('ordenes-trabajo.show');

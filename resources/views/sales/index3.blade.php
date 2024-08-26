@@ -21,11 +21,11 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0 font-size-18">Ventas por Caja </h4>
+            <h4 class="mb-sm-0 font-size-18">Ventas por Rango de Fecha y Caja </h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item active">Ventas por Caja</li>
+                    <li class="breadcrumb-item active">Ventas por Rango de Fecha y Caja</li>
                 </ol>
             </div>
 
@@ -87,7 +87,10 @@
             <div class="card-header ">
                 <div class="row py-0">
                     <div class="col-md-2">
-                        <input type="date" class="form-control" id="dateday" name="dateday">
+                        <input type="date" class="form-control" id="startday" name="datestart">
+                    </div>
+                    <div class="col-md-2">
+                        <input type="date" class="form-control" id="endday" name="dateday">
                     </div>
                     <div class="col-md-3">
                         <select name="vendedor" id="vendedor" class="form-control">
@@ -109,9 +112,10 @@
                             <i class="mdi mdi-file-pdf"></i>
                             Generar Informe
                         </button>
-                        <form id="formfilter" action="{{ route('ventas.generateInforme') }}" method="post" target="_blank">
+                        <form id="formfilter" action="{{ route('ventas.generateInformexrange') }}" method="post" target="_blank">
                             @csrf
-                            <input type="hidden" name="day" id="dayfilter">
+                            <input type="hidden" name="start" id="dayfilter">
+                            <input type="hidden" name="end" id="endfilter">
                             <input type="hidden" name="user_id" id="userfilter">
                         </form>
                     </div>
@@ -268,10 +272,11 @@
 
     function totalSales() {
         $.ajax({
-            url: "{{ route('ventas.totalSales') }}",
+            url: "{{ route('ventas.totalSalesxrange') }}",
             type: "POST",
             data: {
-                day: $('#dateday').val(),
+                start: $('#startday').val(),
+                end: $('#endday').val(),
                 user_id: $('#vendedor').val(),
                 _token: "{{ csrf_token() }}"
             },
@@ -293,9 +298,10 @@
         processing: true,
         serverSide: true,
         ajax: {
-            url: "{{ route('ventas.datatable') }}",
+            url: "{{ route('ventas.datatablexrange') }}",
             data: function(d) {
-                d.day = $('#dateday').val();
+                d.start = $('#startday').val();
+                d.end = $('#endday').val();
                 d.user_id = $('#vendedor').val();
             }
         },
@@ -355,21 +361,30 @@
     });
 
     $('#filter').on('click', function() {
+        if ($('#startday').val() > $('#endday').val()) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'La fecha inicial no puede ser mayor que la fecha final',
+                timer: 1500
+            });
+            return false;
+        }
         totalSales();
         table.draw();
-
     });
 
     $('#removefilter').on('click', function() {
-
-        $('#dateday').val('').trigger('change');
+        $('#startday').val('').trigger('change');
+        $('#endday').val('').trigger('change');
         $('#vendedor').val('').trigger('change');
         table.draw();
         totalSales();
     });
 
     function generateReport() {
-        $('#dayfilter').val($('#dateday').val());
+        $('#dayfilter').val($('#startday').val());
+        $('#endfilter').val($('#endday').val());
         $('#userfilter').val($('#vendedor').val());
         $('#formfilter').submit();
     }

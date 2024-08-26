@@ -21,6 +21,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $empresa = DB::table('stores')->first();
+        View::share('empresa', $empresa);
+
         $data = DB::table('products')
         ->join('product_store_qties', 'products.id', '=', 'product_store_qties.product_id')
         ->where('product_store_qties.quantity', '<=', 'products.alert_quantity')

@@ -24,7 +24,12 @@
         background-color: #f1f1f1; /* Color del track */
     }
 
-
+    .producto {
+        width: 60px;
+        height: auto; /* La altura se ajusta automáticamente */
+        object-fit: cover !important; /* Hace que la imagen llene todo el contenedor, recortando si es necesario */
+        object-position: center; /* Centra la imagen */
+    }
  </style>
 @endsection
 
@@ -113,42 +118,23 @@
                                                         </tr>
                                                         <tr class="info">
                                                             <td width="25%">
-                                                                <a href="#" data-bs-toggle="modal"
-                                                                data-bs-target="#discountModal">Descuento</a>
+                                                                Descuento
                                                             </td>
                                                             <td class="text-center" style="padding-right:10px;">
-                                                                <span id="discount">0</span>%
+                                                                <input type="number" name="discount" id="discount"
+                                                                class="form-control form-control-sm" value="0">
                                                             </td>
                                                             <td width="25%">
-                                                                <a href="javascript:void(0);"
-                                                                data-bs-toggle="modal" data-bs-target="#taxModal">Impuesto</a>
+                                                                Propina
                                                             </td>
                                                             <td class="text-center">
-                                                                <span id="tax">0</span>%
-                                                            </td>
-                                                        </tr>
-                                                        <tr class="info">
-                                                            <td width="25%">
-                                                                <!-- <a href="#" data-bs-toggle="modal"
-                                                                data-bs-target="#discountModal">Descuento</a> -->
-                                                            </td>
-                                                            <td class="text-center" style="padding-right:10px;">
-                                                                <!-- <span id="discount">0</span>% -->
-                                                            </td>
-                                                            <td width="25%">
-                                                                <a href="javascript:void(0);"
-                                                                data-bs-toggle="modal" data-bs-target="#propinaModal">Propina</a>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <span id="propina">0</span>
+                                                                <input type="number" name="propina" id="propina"
+                                                                class="form-control form-control-sm" value="0">
                                                             </td>
                                                         </tr>
                                                         <tr class="success">
                                                             <td colspan="3" style="font-weight:bold;">
                                                                 Total a pagar
-                                                                <a role="button" data-toggle="modal" data-target="#noteModal">
-                                                                    <i class="fa fa-comment"></i>
-                                                                </a>
                                                             </td>
                                                             <td class="text-center"  style="font-weight:bold;">
                                                                 $ <span id="totalpay">0</span>
@@ -215,7 +201,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <div id="productlist" class="row gx-2 gy-1" style="position: relative;overflow: auto;width: auto;height: 610px;margin: 0; padding: 0">
+                            <div id="productlist" class="row gx-2 gy-3"
+                                style="position: relative;overflow: auto;width: auto;
+                                    height: 610px;margin: 0; padding: 0">
 
                             </div>
                         </td>
@@ -273,84 +261,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- Modal Impuestos -->
-                <div class="modal fade" id="taxModal" data-bs-backdrop="static" data-bs-keyboard="false"
-                    tabindex="-1" aria-labelledby="taxModal" aria-modal="true" role="dialog">
-                    <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="staticBackdropLabel">Agregar Impuesto</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body" >
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12">
-                                        <div class="mb-3">
-                                            <label for="tax" class="form-label">Por favor indique el impuesto en números enteros</label>
-                                            <input class="form-control" type="number" name="tax" id="order_tax" required>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary pull-left" data-bs-dismiss="modal"> Cancelar </button>
-                                <button type="button" class="btn btn-primary" id="save_tax"> Guardar Impuesto </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Modal Descuento -->
-                <div class="modal fade" id="discountModal" data-bs-backdrop="static" data-bs-keyboard="false"
-                    tabindex="-1" aria-labelledby="discountModal" aria-modal="true" role="dialog">
-                    <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="staticBackdropLabel">Agregar Descuento</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body" >
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12">
-                                        <div class="mb-3">
-                                            <label for="tax" class="form-label">Por favor indique el descuento en números enteros</label>
-                                            <input class="form-control" type="number" name="order_discount" id="order_discount" required>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary pull-left" data-bs-dismiss="modal"> Cancelar </button>
-                                <button type="button" class="btn btn-primary" id="save_discount"> Guardar Descuento </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Modal Propina -->
-                <div class="modal fade" id="propinaModal" data-bs-backdrop="static" data-bs-keyboard="false"
-                    tabindex="-1" aria-labelledby="propinaModal" aria-modal="true" role="dialog">
-                    <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="staticBackdropLabel">Agregar Propina</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body" >
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12">
-                                        <div class="mb-3">
-                                            <label for="tax" class="form-label">Por favor indique la propina en números enteros</label>
-                                            <input class="form-control" type="number" name="perquisite" id="perquisite" required>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary pull-left" data-bs-dismiss="modal"> Cancelar </button>
-                                <button type="button" class="btn btn-primary" id="save_perquisite"> Guardar Propina </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <!-- Modal Payment -->
                 <div class="modal fade" id="modalPayment" data-bs-backdrop="static" data-bs-keyboard="false"
                     tabindex="-1" role="dialog" aria-labelledby="modalPayment" aria-hidden="true"
@@ -376,11 +286,6 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="w-100"></div>
-                                    <div class="col-md-12">
-                                        <h4>Balance: <span id="balance">0</span> </h4>
-                                    </div>
-
                                     <hr>
                                     <div class="w-100"></div>
                                     <div class="col-md-12">
@@ -496,7 +401,7 @@
                     <thead>
                         <tr>
                             <th colspan="4" class="text-center">
-                            <img src="{{ asset('assets/images/logo-official.png') }}" alt="logo" height="60">
+                            <img src="{{ asset('') }}/{{ $empresa->logo }}" alt="logo" height="60">
                                 <h1>Rey del Neumatico</h1>
                                 <h3>Jose Joaquin Prieto 5780 - <br>San Miguel - Santiago<br>
                                     vulca_david@hotmail.com <br>
@@ -518,12 +423,8 @@
                             <th><span id="subtotalf"></span></th>
                         </tr>
                         <tr>
-                            <th colspan="3" class="text-end">Descuento (%<span id="discountpercentf"></span>)</th>
+                            <th colspan="3" class="text-end">Descuento </th>
                             <th><span id="discountf"></span></th>
-                        </tr>
-                        <tr>
-                            <th colspan="3" class="text-end">Impuesto (%<span id="taxpercentf">19</span>)</th></th>
-                            <th ><span id="taxf"></span></th>
                         </tr>
                         <tr>
                             <th colspan="3" class="text-end">Propina</th>
@@ -647,6 +548,8 @@
                             );
 
                         } else if (index != -1) {
+                            let qtyHtml = '#quantity-' + code;
+                            let subtotalHtml = '#subtotal-' + code;
                             dataProduct[index].quantity = parseInt(dataProduct[index].quantity) + 1;
                             dataProduct[index].price = parseFloat(dataProduct[index].price) + parseFloat(ui.item.price);
                             dataProduct[index].subtotal = parseFloat(dataProduct[index].subtotal) + parseFloat(ui.item.price);
@@ -809,7 +712,7 @@
                         element.image = baseStorage + element.image;
                     }
 
-                    $('#productlist').append('<div class="col-3"><a href="javascript:void(0);" data-id="'+code+'" id="add-product" ><div class="card" style="width: 100%; height: 104px;"><div class="card-body p-1"><div class="product-img position-relative p-0"><img src="'+ element.image + '" width="50%" heigth="50%" class="img-fluid mx-auto d-block rounded "></div></div><div class="card-footer py-1 text-center bg-dark-subtle text-uppercase" style="font-size: 11px;"><b>' + element.name + '</b></div></div></a></div>');
+                    $('#productlist').append('<div class="col-3"><a href="javascript:void(0);" data-id="'+code+'" id="add-product" ><div class="card" style="width: 100%; height: 104px;"><div class="card-body p-2"><div class="product-img position-relative p-0"><img src="'+ element.image + '"  class="producto mx-auto d-block rounded "></div></div><div class="card-footer py-1 text-center bg-dark-subtle text-uppercase" style="font-size: 10px;"><b>' + element.name + '</b></div></div></a></div>');
                 })
 
 
@@ -980,70 +883,15 @@
 
         });
 
-        // agregar impuestos
-        $('#save_tax').on('click', function() {
-
-            let tax = parseFloat($('#order_tax').val());
-            let total = parseFloat($('#totalComplete').text());
-            if (tax == '') {
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'error',
-                    title: 'Por favor rellene el campo de impuestos',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-            } else {
-                let totalTax = total * (tax / 100);
-                let totalWithTax = total + totalTax;
-                $('#tax').text(tax);
-                $('#order_tax').val('');
-                $('#taxModal').modal('hide');
-            }
-            calculateComplete();
-        });
         // agrega descuento
-        $('#save_discount').on('click', function() {
-            let discount = parseFloat($('#order_discount').val());
-            let total = parseFloat($('#totalComplete').text());
-            if (discount == '') {
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'error',
-                    title: 'Por favor rellene el campo de descuento',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-            } else {
-                let totalDiscount = total * (discount / 100);
-                let totalWithDiscount = total - totalDiscount;
-                $('#discount').text(discount);
-                $('#discount').val('');
-                $('#discountModal').modal('hide');
-            }
-
+        $('#discount').on('change', function() {
+            calculateComplete();
+        });
+        // agrega propina
+        $('#propina').on('change', function() {
             calculateComplete();
         });
 
-        $('#save_perquisite').on('click', function() {
-            let propina = parseFloat($('#perquisite').val());
-            let total = parseFloat($('#propina').text());
-            if (propina == '') {
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'error',
-                    title: 'Por favor rellene el campo de propina',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-            } else {
-                $('#propina').text(propina);
-                $('#perquisite').val('');
-                $('#propinaModal').modal('hide');
-            }
-
-            calculateComplete();
-        });
         $('#paymentmethod').on('click', function() {
             $('#modalPayment').modal('show');
             $('#total_amount').text($('#totalpay').text());
@@ -1160,21 +1008,14 @@
                 missingFields.push('metodo');
 
             }
-            var customer = $('#customer').val();
-            var noteRef = $('#note_ref').val();
-            var tax = $('#tax').text();
-            var discount = $('#discount').text();
-            var propina = $('#propina').text();
-            var subtotal = parseFloat($('#totalComplete').text());
-            var total = parseFloat($('#totalpay').text());
-            var totalItems = parseInt($('#totalItems').text());
-            // medios y detalles de pago
-            var note = $('#note').val();
-            var method = $('#method').val(); // parcial o total
-            var paymentBy = $('#paymentBy').val(); // efectivo, cheque, transferencia o tarjeta // pago total
-            var paymentspartials = JSON.stringify(dataPartial);
-            var notePay;
-            var notePayment = $('#notepayment').val();
+            var customer = $('#customer').val(), noteRef = $('#note_ref').val(),
+            tax = $('#tax').text(),discount = $('#discount').val(),
+            propina = $('#propina').val(), subtotal = parseFloat($('#totalComplete').text()),
+            total = parseFloat($('#totalpay').text()), totalItems = parseInt($('#totalItems').text()),
+            note = $('#note').val(),method = $('#method').val(),
+            paymentBy = $('#paymentBy').val(), paymentspartials = JSON.stringify(dataPartial),
+            notePay, notePayment = $('#notepayment').val();
+
             if ($('#notepayefecty').val() != '') {
                 notePay = $('#notepayefecty').val();
             }
@@ -1209,14 +1050,9 @@
                     showConfirmButton: false,
                     timer: 1500
                 });
-
-                return false;
-
+               return false;
             }
-            console.log(missingFields.length);
-
             if (missingFields.length == 0) {
-
                 $('#posForm').submit();
             }
         });
@@ -1239,7 +1075,6 @@
         });
     });
     function deleteRow(dato) {
-        console.log(dato.id);
         let btnId = "#"+dato.id;
         let codeProduct = $(btnId).data('id');
 
@@ -1252,8 +1087,6 @@
                 break;
             }
         }
-
-        console.log(dataProduct);
         calculateTotal();
         calculateArticulos();
         calculateComplete();
@@ -1273,23 +1106,15 @@
         $('#totalItems').text(total);
     }
     function calculateComplete() {
-        let total = 0;
-        let tax = parseFloat($('#tax').text());
-        let discount = parseFloat($('#discount').text());
-        let propina = parseFloat($('#propina').text());
+        let total = 0, tax = parseFloat($('#tax').val()),
+        discount = parseFloat($('#discount').val()),
+        propina = parseFloat($('#propina').val());
 
         for (let i = 0; i < dataProduct.length; i++) {
             total += parseFloat(dataProduct[i].subtotal);
         }
-        // calcula el impuesto
-        let totalTax = total * (tax / 100);
-        // calcula el descuento
-        let totalDiscount = total * (discount / 100);
-        // suma el impuesto
-        let totalWithTax = total + totalTax;
         // resta el descuento
-        let totalWithDiscount = totalWithTax - totalDiscount + propina;
-
+        let totalWithDiscount = total - discount;
         $('#totalpay').text(totalWithDiscount);
     }
     function calculateQuantity(dato) {
@@ -1309,23 +1134,10 @@
         calculateTotal();
         calculateComplete();
     }
-    function calculateBalance() {
-
-        let total = parseFloat($('#totalpay').text());
-        let totalPartial = 0;
-        let balance = 0;
-        for (let i = 0; i < dataPartial.length; i++) {
-            totalPartial += parseFloat(dataPartial[i].amount);
-        }
-        balance = total - totalPartial;
-        $('#balance').text(balance);
-    }
     function deletePartial(payment) {
         dataPartial = dataPartial.filter((item) => item.payment != payment.id);
         let idtr = '#payment-' + payment.id;
         $(idtr).remove();
-        // $('#payment-' + payment.id).remove();
-        calculateBalance();
     }
 
     function imprimir() {
@@ -1343,15 +1155,11 @@
         });
 
         var tax = parseFloat($('#tax').text());
-        var discount = parseFloat($('#discount').text());
-        var propina = $('#propina').text();
+        var discount = parseFloat($('#discount').val());
+        var propina = $('#propina').val();
         var subtotal = parseFloat($('#totalComplete').text());
         var total = parseFloat($('#totalpay').text());
-        var taxtotal = subtotal * (tax / 100);
-        var discounttotal = subtotal * (discount / 100);
-        $('#discountpercentf').text(discount);
-        $('#taxpercentf').text(tax);
-        $('#taxf').text(taxtotal);
+        var discounttotal = discount;
         $('#discountf').text(discounttotal);
         $('#perquisitef').text(propina);
         $('#subtotalf').text(subtotal);

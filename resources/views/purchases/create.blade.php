@@ -37,19 +37,26 @@
             </div>
             <div class="card-body p-4">
                 <form id="formQuotation" action="{{ route('compras.store') }}" method="POST"
-                    enctype="multipart/form-data" class="needs-validation @if ($errors->any()) was-validated @endif"
+                    enctype="multipart/form-data" class="needs-validation "
                     novalidate>
                     @csrf
                     <div class="row">
                         <div class="col-lg-4 col-md-4 col-sm-6">
                             <div class="mb-3">
                                 <label for="supplier" class="form-label">Proveedores</label>
-                                <select class="form-control" name="supplier" id="supplier" style="width: 100%">
+                                <select class="form-control @if ($errors->has('supplier')) is-invalid @endif "
+                                    name="supplier" id="supplier" style="width: 100%">
                                     <option value="">-- Seleccione --</option>
                                     @foreach ($suppliers as $item)
                                     <option value="{{ $item->id }}">{{ $item->name }}</option>
                                     @endforeach
                                 </select>
+
+                                @if ($errors->has('supplier'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('supplier') }}
+                                </div>
+                                @endif
                             </div>
                         </div>
 
@@ -70,22 +77,36 @@
                         <div class="col-lg-3 col-md-3 col-sm-6">
                             <div class="mb-3">
                                 <label for="received" class="form-label">¿Recibido?</label>
-                                <select class="form-control" name="received" id="received" style="width: 100%">
+                                <select class="form-control @if ($errors->has('received')) is-invalid @endif "
+                                name="received" id="received" style="width: 100%">
                                     <option value="">-- Seleccione --</option>
                                     <option value="1">Recibido</option>
                                     <option value="0">No Recibido</option>
                                 </select>
+
+                                @if ($errors->has('received'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('received') }}
+                                </div>
+                                @endif
                             </div>
                         </div>
 
                         <div class="col-lg-3 col-md-3 col-sm-6">
                             <div class="mb-3">
                                 <label for="type_purchase" class="form-label">Tipo de Compra</label>
-                                <select class="form-control" name="type_purchase" id="type_purchase" style="width: 100%">
+                                <select class="form-control @if ($errors->has('type_purchase')) is-invalid @endif" name="type_purchase"
+                                id="type_purchase" style="width: 100%">
                                     <option value="">-- Seleccione --</option>
                                     <option value="Nacional" {{ old('type_purchase') == 'Nacional' ? 'selected' : '' }} >Nacional</option>
                                     <option value="Internacional" {{ old('type_purchase') == 'Internacional' ? 'selected' : '' }}>Internacional</option>
                                 </select>
+
+                                @if ($errors->has('type_purchase'))
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('type_purchase') }}
+                                </div>
+                                @endif
                             </div>
                         </div>
 
@@ -263,7 +284,6 @@
             datosTabla = datosTabla.filter(function(item) {
                 return item.producto !== product;
             });
-            console.log(datosTabla);
             $("#total").empty();
             let totalfinal = 0;
             for (let i = 0; i < datosTabla.length; i++) {
@@ -273,6 +293,14 @@
         });
 
         $('#guardar').on('click', function() {
+            if (datosTabla.length == 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'No hay productos agregados, por favor agrega uno',
+                });
+                return false;
+            }
             $('#array_products').val(JSON.stringify(datosTabla));
             $('#totalform').val($('#total').text());
             $('guardar').prop('disabled', true);

@@ -37,7 +37,7 @@
             </div>
             <div class="card-body p-4">
                 <form id="formQuotation" action="{{ route('cotizaciones.update', $quotation->id) }}" method="POST"
-                    enctype="multipart/form-data" class="needs-validation @if ($errors->any()) was-validated @endif"
+                    enctype="multipart/form-data" class="needs-validation"
                     novalidate>
                     @csrf
                     @method('PUT')
@@ -45,12 +45,15 @@
                         <div class="col-lg-4 col-md-4 col-sm-6">
                             <div class="mb-3">
                                 <label for="customer" class="form-label">Cliente</label>
-                                <select class="form-control" name="customer" id="customer" style="width: 100%">
+                                <select class="form-control @if ($errors->has('customer')) is-invalid @endif" name="customer" id="customer" style="width: 100%">
                                     <option value="">-- Seleccione --</option>
                                     @foreach ($customers as $item)
                                     <option value="{{ $item->name }}" {{ $item->name == $quotation->customer_name ? 'selected' : '' }} >{{ $item->name }}</option>
                                     @endforeach
                                 </select>
+                                @if ($errors->has('customer'))
+                                <div class="invalid-feedback">{{ $errors->first('customer') }}</div>
+                                @endif
                             </div>
                         </div>
 
@@ -66,14 +69,6 @@
                                 <label for="order_discount_id" class="form-label">Descuento (%) (opcional)</label>
                                 <input type="number" class="form-control" name="order_discount_id"
                                 id="order_discount_id" value="{{ $quotation->order_discount_id }}">
-                            </div>
-                        </div>
-
-                        <div class="col-lg-3 col-md-3 col-sm-6">
-                            <div class="mb-3">
-                                <label for="order_tax_id" class="form-label">Impuesto (%) (opcional)</label>
-                                <input type="number" class="form-control" name="order_tax_id" id="order_tax_id"
-                                value="{{ $quotation->order_tax_id }}" readonly>
                             </div>
                         </div>
 
@@ -289,6 +284,14 @@
         });
 
         $('#guardar').on('click', function() {
+            if (datosTabla.length == 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'No hay productos agregados, por favor agrega uno',
+                });
+                return false;
+            }
             $('#array_products').val(JSON.stringify(datosTabla));
             $('#totalform').val($('#total').text());
             $('guardar').prop('disabled', true);

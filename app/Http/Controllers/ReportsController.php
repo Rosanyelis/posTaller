@@ -346,19 +346,21 @@ class ReportsController extends Controller
 
     public function datatableNeumaticosInternacionales(Request $request)
     {
-        $data = DB::table('purchases')
-            ->join('purchase_items', 'purchases.id', '=', 'purchase_items.purchase_id')
-            ->leftJoin('products', 'purchase_items.product_id', '=', 'products.id')
-            ->select('purchases.*', 'products.name as product_name', 'products.type as type',
-            'purchase_items.cost as price_purchase', 'purchase_items.subtotal as subtotal',
-            'purchase_items.quantity as quantity', 'purchase_items.weight as weight')
-            ->where('products.type', 'NEUMATICOS')
-            ->where('purchases.type_purchase', 'Nacional');
-
+        $data = DB::table('sales')
+                    ->join('users', 'sales.user_id', '=', 'users.id')
+                    ->join('sale_items', 'sales.id', '=', 'sale_items.sale_id')
+                    ->leftjoin('products', 'sale_items.product_id', '=', 'products.id')
+                    ->select('sales.*', 'users.name as user_name', 'products.name as product_name',
+                    'products.type as type', 'products.weight as weight',
+                    'sale_items.unit_price as price', 'sale_items.quantity as quantity',
+                    'sale_items.subtotal as subtotal')
+                    ->where('products.type', 'NEUMATICOS')
+                    ->where('products.nacionality', 'Internacional')
+                    ->orderBy('sales.id', 'desc');
             return DataTables::of($data)
                 ->filter(function ($query) use ($request) {
                     if ($request->has('start') && $request->has('end') && $request->get('start') != '' && $request->get('end') != '') {
-                        $query->whereBetween('purchases.created_at', [$request->get('start'), $request->get('end')]);
+                        $query->whereBetween('sales.created_at', [$request->get('start'), $request->get('end')]);
                     }
                     if ($request->has('search') && $request->get('search')['value'] != '') {
                         $searchValue = $request->get('search')['value'];
@@ -370,21 +372,26 @@ class ReportsController extends Controller
                 ->make(true);
     }
 
+
+
     public function pdfNeumaticosInternacionales(Request $request)
     {
         $informe = [];
         $fechaInicio = Carbon::parse($request->get('start'))->format('d/m/Y');
         $fechaFin = Carbon::parse($request->get('end'))->format('d/m/Y');
-        $data = DB::table('purchases')
-            ->join('purchase_items', 'purchases.id', '=', 'purchase_items.purchase_id')
-            ->leftJoin('products', 'purchase_items.product_id', '=', 'products.id')
-            ->select('purchases.*', 'products.name as product_name', 'products.type as type',
-            'purchase_items.cost as price_purchase', 'purchase_items.subtotal as subtotal',
-            'purchase_items.quantity as quantity', 'purchase_items.weight as weight')
-            ->where('products.type', 'NEUMATICOS')
-            ->where('purchases.type_purchase', 'Nacional')
-            ->whereBetween('purchases.created_at', [$request->get('start'), $request->get('end')])
-            ->get();
+        $data = DB::table('sales')
+                ->join('users', 'sales.user_id', '=', 'users.id')
+                ->join('sale_items', 'sales.id', '=', 'sale_items.sale_id')
+                ->leftjoin('products', 'sale_items.product_id', '=', 'products.id')
+                ->select('sales.*', 'users.name as user_name',
+                'products.type as type', 'products.weight as weight',
+                'sale_items.unit_price as price', 'sale_items.quantity as quantity',
+                'sale_items.subtotal as subtotal')
+                ->where('products.type', 'NEUMATICOS')
+                ->where('products.nacionality', 'Internacional')
+                ->orderBy('sales.id', 'desc')
+                ->whereBetween('purchases.created_at', [$request->get('start'), $request->get('end')])
+                ->get();
 
         foreach ($data as $key) {
 
@@ -393,7 +400,7 @@ class ReportsController extends Controller
                 'producto' => $key->product_name,
                 'tipo' => $key->type,
                 'cantidad' => $key->quantity,
-                'costo' => $key->price_purchase,
+                'costo' => $key->price,
                 'subtotal' => $key->subtotal,
                 'peso' => $key->weight
             ];

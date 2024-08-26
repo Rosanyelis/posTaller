@@ -31,10 +31,10 @@ class DashboardController extends Controller
                                 ->select(DB::raw('SUM(products.cost * product_store_qties.quantity) as total'))
                                 ->first()
                                 ->total;
-        $totalQuote = Quotation::wheremonth('created_at', $mes)->count();
-        $totalMontoQuote = Quotation::wheremonth('created_at', $mes)->sum('grand_total');
-        $totalot = WorkOrder::wheremonth('created_at', $mes)->count();
-        $totalMontoot = WorkOrder::wheremonth('created_at', $mes)->sum('total');
+        $totalQuote = Quotation::whereMonth('created_at', $mes)->count();
+        $totalMontoQuote = Quotation::whereMonth('created_at', $mes)->sum('grand_total');
+        $totalot = WorkOrder::whereMonth('created_at', $mes)->count();
+        $totalMontoot = WorkOrder::whereMonth('created_at', $mes)->sum('total');
         $totaldiaventas = Sale::whereDate('created_at', Carbon::today())->sum('grand_total');
         $totalxdia = $this->totalSales();
         $totalservices = $this->totalServices();

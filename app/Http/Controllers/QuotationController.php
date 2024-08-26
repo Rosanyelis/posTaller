@@ -35,7 +35,8 @@ class QuotationController extends Controller
             $data = DB::table('quotations')
                 ->join('users', 'quotations.user_id', '=', 'users.id')
                 ->join('customers', 'quotations.customer_id', '=', 'customers.id')
-                ->select('quotations.*', 'users.name as user', 'customers.name as customer', 'customers.rut as rut');
+                ->select('quotations.*', 'users.name as user', 'customers.name as customer', 'customers.rut as rut')
+                ->orderby('quotations.id', 'desc');
             return DataTables::of($data)
                 ->filter(function ($query) use ($request) {
                     if ($request->has('user_id') && $request->get('user_id') != '') {
@@ -63,6 +64,22 @@ class QuotationController extends Controller
         }
     }
 
+    public function totalQuotes(Request $request)
+    {
+        if ($request->ajax()) {
+            $data = Quotation::select(DB::raw('count(id) as total'), DB::raw('sum(grand_total) as total_monto'))
+                ->where(function ($query) use ($request) {
+                    if ($request->has('start') && $request->has('end') && $request->get('start') != '' && $request->get('end') != '') {
+                        $query->whereBetween('created_at', [$request->get('start'), $request->get('end')]);
+                    }
+                    if ($request->has('user_id') && $request->get('user_id') != '') {
+                        $query->where('user_id', $request->get('user_id'));
+                    }
+                })
+                ->first();
+            return response()->json($data);
+        }
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -90,8 +107,7 @@ class QuotationController extends Controller
         $customer = Customer::where('name', $request->customer)->first();
         $productos = json_decode($request->array_products);
         $descuento = $request->total * ($request->order_discount_id / 100);
-        $impuesto = $request->total * (19 / 100);
-        $grandtotal = $request->total - $descuento + $impuesto;
+        $grandtotal = $request->total - $descuento;
         $quote = Quotation::create([
             'customer_id'    => $customer->id,
             'user_id'        => auth()->user()->id,
@@ -101,7 +117,6 @@ class QuotationController extends Controller
             'order_discount_id' => $request->order_discount_id,
             'order_tax_id' => $request->order_tax_id,
             'total_discount' => $descuento,
-            'total_tax'      => $impuesto,
             'total'          => $request->total,
             'grand_total'    => $grandtotal,
             'total_items'    => count($productos),
@@ -155,8 +170,7 @@ class QuotationController extends Controller
         $customer = Customer::where('name', $request->customer)->first();
         $productos = json_decode($request->array_products);
         $descuento = $request->total * ($request->order_discount_id / 100);
-        $impuesto = $request->total * (19 / 100);
-        $grandtotal = $request->total - $descuento + $impuesto;
+        $grandtotal = $request->total - $descuento;
         $quote = Quotation::find($quotation);
         $quote->update([
             'customer_id'    => $customer->id,
@@ -166,7 +180,6 @@ class QuotationController extends Controller
             'order_discount_id' => $request->order_discount_id,
             'order_tax_id' => $request->order_tax_id,
             'total_discount' => $descuento,
-            'total_tax'      => $impuesto,
             'total'          => $request->total,
             'grand_total'    => $grandtotal,
             'total_items'    => count($productos),

@@ -10,15 +10,12 @@
         <thead>
             <tr>
                 <th colspan="5">
-                    <img src="{{ asset('assets/images/logo-official.png') }}" alt="logo" height="150">
+                    <img src="{{ asset('') }}/{{ $empresa->logo }}" alt="logo" height="150">
                 </th>
                 <th colspan="5" style="text-align: center; font-weight: bold; ">
-                    <h4>
-                        Jose Joaquin Prieto 5780 - San Miguel
-                        <br>
-                        Santiago - vulca_david@hotmail.com
-                        <br>
-                        56 6 5275 9029 - 56 4 1324 3313 - 56 2 3207 5270
+                    <h4>{{ $empresa->address }}<br>
+                        {{ $empresa->email }} <br>
+                        {{ $empresa->phone }}
                     </h4>
                 </th>
             </tr>

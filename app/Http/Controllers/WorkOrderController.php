@@ -40,6 +40,29 @@ class WorkOrderController extends Controller
         return view('workorders.index');
     }
 
+    public function totalWorkOrder()
+    {
+
+        $totales = WorkOrder::select(DB::raw('SUM(total) as total_monto'), DB::raw('count(id) as total'))
+                        ->where('status', '!=', 'Cancelado')
+                        ->first();
+        $statusPendiente = Workorder::where('status', 'Pendiente')->count();
+        $statusEnProceso = Workorder::where('status', 'En Proceso')->count();
+        $statusCompletado = Workorder::where('status', 'Completado')->count();
+        $statusCancelado = Workorder::where('status', 'Cancelado')->count();
+
+        $data = [
+            'total' => $totales->total,
+            'total_monto' => $totales->total_monto,
+            'statusPendiente' => $statusPendiente,
+            'statusEnProceso' => $statusEnProceso,
+            'statusCompletado' => $statusCompletado,
+            'statusCancelado' => $statusCancelado
+        ];
+        return response()->json($data);
+
+    }
+
     /**
      * Show the form for creating a new resource.
      */

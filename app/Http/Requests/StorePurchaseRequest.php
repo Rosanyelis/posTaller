@@ -22,7 +22,18 @@ class StorePurchaseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'supplier' => 'required',
+            'received' => 'required',
+            'type_purchase' => 'required',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'supplier.required' => 'El campo Proveedor es obligatorio',
+            'received.required' => 'El campo ¿Recibido? es obligatorio',
+            'type_purchase.required' => 'El campo Tipo de Compra es obligatorio',
         ];
     }
 }

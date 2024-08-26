@@ -34,12 +34,60 @@
 </div>
 <!-- end page title -->
 <div class="row">
+<div class="col-2">
+        <div class="card">
+            <div class="card-body text-center text-uppercase">
+                <h6>Ordenes de T.</h6>
+                <h5 id="total">0</h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-2">
+        <div class="card">
+            <div class="card-body text-center text-uppercase">
+                <h6>Total de OT</h6>
+                <h5 id="total_monto">0</h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-2">
+        <div class="card">
+            <div class="card-body text-center text-uppercase">
+                <h6>Completadas</h6>
+                <h5 id="completadas">0</h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-2">
+        <div class="card">
+            <div class="card-body text-center text-uppercase">
+                <h6>Pendientes</h6>
+                <h5 id="pendientes">0</h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-2">
+        <div class="card">
+            <div class="card-body text-center text-uppercase">
+                <h6>En Proceso</h6>
+                <h5 id="en_proceso">0</h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-2">
+        <div class="card">
+            <div class="card-body text-center text-uppercase">
+                <h6>Canceladas</h6>
+                <h5 id="canceladas">0</h5>
+            </div>
+        </div>
+    </div>
     <div class="col-12">
         <div class="card">
             <div class="card-header ">
                 <div class="row">
                     <div class="col-md-6">
-                        <h4 class="card-title">Listado de Ordenes de Trabajo</h4>
+
                     </div>
                     <div class="col-md-6 text-end">
                         <a href="{{ route('ordenes-trabajo.create') }}"
@@ -196,6 +244,23 @@
     const basepath = "{{ asset('assets/images/') }}";
     const baseStorage = "{{ asset('') }}";
     const numberFormat2 = new Intl.NumberFormat('de-DE');
+    function totalot() {
+        $.ajax({
+            url: "{{ route('ordenes-trabajo.totalWorkOrder') }}",
+            type: "GET",
+            dataType: 'json',
+            success: function(data) {
+                $('#total').html(numberFormat2.format(data.total));
+                $('#total_monto').html(numberFormat2.format(data.total_monto));
+                $('#completadas').html(numberFormat2.format(data.statusCompletado));
+                $('#pendientes').html(numberFormat2.format(data.statusPendiente));
+                $('#en_proceso').html(numberFormat2.format(data.statusEnProceso));
+                $('#canceladas').html(numberFormat2.format(data.statusCancelado));
+            }
+        });
+    }
+
+    totalot();
     $('#datatable').DataTable({
         processing: true,
         serverSide: true,

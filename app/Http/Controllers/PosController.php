@@ -89,8 +89,7 @@ class PosController extends Controller
     public function store(Request $request)
     {
         $customer = Customer::find($request->customer);
-        $discount = $request->subtotal * ($request->discount / 100);
-        $impuesto = $request->subtotal * ($request->tax / 100);
+        $discount = $request->discount;
         $status= '';
         if ($request->methodpay == 'Total') {
             $status = 'paid';
@@ -103,10 +102,10 @@ class PosController extends Controller
             'user_id'               => auth()->user()->id,
             'customer_name'         => $customer->name,
             'total'                 => $request->subtotal,
-            'order_discount_id'     => $request->discount,
+            'order_discount_id'     => 0,
             'total_discount'        => $discount,
-            'order_tax_id'          => $request->tax,
-            'total_tax'             => $impuesto,
+            'order_tax_id'          => 0,
+            'total_tax'             => 0,
             'perquisite'            => $request->perquisite,
             'grand_total'           => $request->grandtotal,
             'total_items'           => $request->total_items,

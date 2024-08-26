@@ -31,7 +31,8 @@ class ProductController extends Controller
     public function datatable(Request $request)
     {
         if ($request->ajax()) {
-            $data = Product::with('category', 'storeqty');
+            $data = Product::with('category', 'storeqty')
+                    ->orderby('id', 'desc');
             return DataTables::of($data)
                 ->filter(function ($query) use ($request) {
                     if ($request->has('category_id') && $request->get('category_id') != '') {
@@ -53,6 +54,39 @@ class ProductController extends Controller
                 ->rawColumns(['actions'])
                 ->make(true);
         }
+    }
+
+    public function totalProductos(Request $request)
+    {
+        if ($request->ajax()) {
+            $total = DB::table('products')
+            ->join('product_store_qties', 'products.id', '=', 'product_store_qties.product_id')
+            ->where('type', '!=', 'SERVICIOS')
+            ->select(DB::raw('SUM(product_store_qties.quantity) as total_products'),
+                    DB::raw('SUM(products.cost * product_store_qties.quantity) as total'))
+            ->where(function ($query) use ($request) {
+                if ($request->has('category_id') && $request->get('category_id') != '') {
+                    $query->where('products.category_id', $request->get('category_id'));
+                }
+            })
+            ->first();
+
+            $totalp = Product::where(function ($query) use ($request) {
+                if ($request->has('category_id') && $request->get('category_id') != '') {
+                    $query->where('products.category_id', $request->get('category_id'));
+                }
+            })
+            ->count();
+
+            $data = [
+                'total' => $totalp,
+                'stock' => $total->total_products,
+                'totalclp' => $total->total
+            ];
+
+            return response()->json($data);
+        }
+
     }
 
     /**
@@ -204,7 +238,6 @@ class ProductController extends Controller
 
         $data = Product::find($product);
         $data->delete();
-
 
         return redirect()->route('productos.index')->with('success', 'Producto eliminado con exito');
     }

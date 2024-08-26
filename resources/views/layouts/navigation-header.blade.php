@@ -3,19 +3,19 @@
                         <div class="navbar-brand-box">
                             <a href="{{ route('dashboard') }}" class="logo logo-dark">
                                 <span class="logo-sm">
-                                    <img src="{{ asset('assets/images/rey-neumatico-.png') }}" alt="logo" height="40">
+                                    <img src="{{ asset('') }}/{{ $empresa->logo }}" alt="logo" height="40">
                                 </span>
                                 <span class="logo-lg">
-                                    <img src="{{ asset('assets/images/rey-neumatico-.png') }}" alt="logo" height="73"> <span class="logo-txt"></span>
+                                    <img src="{{ asset('') }}/{{ $empresa->logo }}" alt="logo" height="73"> <span class="logo-txt"></span>
                                 </span>
                             </a>
 
                             <a href="{{ route('dashboard') }}" class="logo logo-light">
                                 <span class="logo-sm">
-                                    <img src="{{ asset('assets/images/rey-neumatico-.png') }}" alt="logo" height="40">
+                                    <img src="{{ asset('') }}/{{ $empresa->logo }}" alt="logo" height="40">
                                 </span>
                                 <span class="logo-lg">
-                                    <img src="{{ asset('assets/images/rey-neumatico-.png') }}" alt="logo" height="73"> <span class="logo-txt"></span>
+                                    <img src="{{ asset('') }}/{{ $empresa->logo }}" alt="logo" height="73"> <span class="logo-txt"></span>
                                 </span>
                             </a>
                         </div>

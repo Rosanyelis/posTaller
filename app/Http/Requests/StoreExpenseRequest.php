@@ -22,7 +22,6 @@ class StoreExpenseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'store_id' => ['required'],
             'name' => ['required'],
             'amount' => ['required'],
             'file' => ['max:2048'],
@@ -32,7 +31,6 @@ class StoreExpenseRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'store_id.required' => 'La Tienda es requerida',
             'name.required' => 'La Referencia es requerida',
             'amount.required' => 'El Monto es requerido',
             'file.mimes' => 'El archivo debe ser una imagen, un video, un archivo PDF, un archivo de Word o de Excel',

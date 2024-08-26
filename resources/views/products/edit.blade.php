@@ -182,7 +182,7 @@
                         <div class="col-lg-4 col-md-4 col-sm-6">
                             <div class="mb-3">
                                 <label for="weight" class="form-label">Peso de Neumático (opcional)</label>
-                                <input class="form-control" type="text" name="weight" id="weight"
+                                <input class="form-control" type="number" name="weight" id="weight"
                                     value="{{ $product->weight }}">
                                 @if($errors->has('weight'))
                                     <div class="invalid-feedback">

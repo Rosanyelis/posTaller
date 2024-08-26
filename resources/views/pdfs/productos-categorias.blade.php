@@ -9,7 +9,7 @@
     <table >
         <thead>
             <tr>
-                <th colspan="2" style="text-align: center">{{ config('app.name', 'Laravel') }}</th>
+                <th colspan="2" style="text-align: center">{{ $empresa->name }}</th>
             </tr>
             <tr>
                 <th>Categoria</th>

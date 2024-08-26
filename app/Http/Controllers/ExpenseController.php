@@ -33,6 +33,8 @@ class ExpenseController extends Controller
         return view('expenses.index');
     }
 
+
+
     /**
      * Show the form for creating a new resource.
      */
@@ -60,7 +62,7 @@ class ExpenseController extends Controller
             $foto = $url;
             $data['file'] = $url;
         }
-
+        $data['store_id'] = 1;
         $data['user_id'] = auth()->user()->id;
         $expense = Expense::create($data);
         return redirect()->route('gastos.index')->with('success', 'Gasto creado satisfactoriamente');
@@ -107,7 +109,7 @@ class ExpenseController extends Controller
             $url = '/storage/gastos/'.$fileName;
             $data['file'] = $url;
         }
-
+        $data['store_id'] = 1;
         $data['user_id'] = auth()->user()->id;
         $exp->update($data);
         return redirect()->route('gastos.index')->with('success', 'Gasto actualizado satisfactoriamente');

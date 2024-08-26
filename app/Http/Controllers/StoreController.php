@@ -97,7 +97,7 @@ class StoreController extends Controller
 
         $store = Store::find($store);
         $store->update($data);
-        return redirect()->route('tiendas.index')->with('success', 'Tienda actualizada con exito');
+        return redirect()->back()->with('success', 'Empresa actualizada con exito');
     }
 
     /**

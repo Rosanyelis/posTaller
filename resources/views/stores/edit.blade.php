@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title') Tiendas @endsection
+@section('title') Empresa @endsection
 
 @section('css')
 
@@ -12,13 +12,13 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0 font-size-18">Tiendas </h4>
+            <h4 class="mb-sm-0 font-size-18">Empresa </h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item"><a href="javascript: void(0);">Configuraciones</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('tiendas.index') }}">Tiendas</a></li>
-                    <li class="breadcrumb-item active">Editar Tienda</li>
+                    <li class="breadcrumb-item"><a href="{{ route('tiendas.index') }}">Empresa</a></li>
+                    <li class="breadcrumb-item active">Editar datos de Empresa</li>
                 </ol>
             </div>
 
@@ -30,7 +30,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h4 class="card-title">Editar tienda</h4>
+                <h4 class="card-title">Editar datos</h4>
             </div>
             <div class="card-body p-4">
                 <form action="{{ route('tiendas.update', $store) }}" method="POST" enctype="multipart/form-data"

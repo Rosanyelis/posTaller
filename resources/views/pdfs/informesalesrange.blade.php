@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Informe de Ventas por vendedor y dia</title>
+    <title>Informe de Ventas por vendedor y rango de fecha</title>
     <style>
 
         body {
             font-family: 'Be Vietnam Pro', sans-serif;
-            font-size: 12px;
         }
     </style>
 </head>
@@ -30,7 +29,7 @@
         <tbody>
             <tr style="border-bottom: 1px solid #1C84EE; ">
                 <td colspan="10" style="font-weight: bold; text-align: center; padding-bottom: 15px; padding-top: 40px">
-                    Ventas del Vendedor {{ $vendedor }} en el día {{ $dia }}
+                    Ventas desde {{ $fechai }} hasta {{ $fechaf }} @if ($vendedor != 'Todos') del vendedor {{ $vendedor }} @endif
                 </td>
             </tr>
             <tr>

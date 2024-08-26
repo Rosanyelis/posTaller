@@ -282,7 +282,7 @@
         <div class="card card-h-100">
             <!-- card body -->
             <div class="card-body text-center">
-                <img src="{{ asset('assets/images/logo-official.png') }}" alt="rey del neumatico">
+                <img src="{{ asset('') }}/{{ $empresa->logo }}" alt="rey del neumatico">
             </div>
         </div>
         <!-- end card -->

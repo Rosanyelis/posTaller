@@ -34,59 +34,51 @@
 </div>
 <!-- end page title -->
 <div class="row">
+<div class="col-2">
+        <div class="card">
+            <div class="card-body text-center text-uppercase">
+                <h6>Compras</h6>
+                <h5 id="total">0</h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-2">
+        <div class="card">
+            <div class="card-body text-center text-uppercase">
+                <h6>Total</h6>
+                <h5 id="totalpurchase">0</h5>
+            </div>
+        </div>
+    </div>
     <div class="col-12">
         <div class="card">
             <div class="card-header ">
                 <div class="row">
-                    <div class="col-md-6">
-                        <h4 class="card-title">Listado de Compras</h4>
+                    <div class="col-md-2">
+                        <input type="date" class="form-control" id="startday" name="startday">
                     </div>
-                    <div class="col-md-6 text-end">
-                        <a class="btn btn-success btn-sm" target="_blank"
-                            href="{{ route('compras.generateInforme') }}">
-                            Generar Informe de Compras Totales
-                        </a>
-                        <a href="{{ route('compras.create') }}"
-                            class="btn btn-primary btn-sm ">
-                            <i class="mdi mdi-plus"></i>
-                            Nueva Compra
-                        </a>
+                    <div class="col-md-2">
+                        <input type="date" class="form-control" id="endday" name="endday">
                     </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <p>El informe se genera solo si aplica el filtro, sino hay datos no podra generarse
-                            el informe.
-                        </p>
+                    <div class="col-md-2">
+                        <select name="proveedor" id="proveedor" class="form-control">
+                            <option value="">Todos</option>
+                            @foreach ($suppliers as $item)
+                                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
-                    <div class="col-md-3">
-                        <div class="mb-3">
-                            <label for="startday">Fecha de Inicio</label>
-                            <input type="date" class="form-control" id="startday" name="startday">
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="mb-3">
-                            <label for="endday">Fecha Final</label>
-                            <input type="date" class="form-control" id="endday" name="endday">
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="mb-3">
-                            <label for="proveedor">Proveedores</label>
-                            <select name="proveedor" id="proveedor" class="form-control">
-                                <option value="">Todos</option>
-                                @foreach ($suppliers as $item)
-                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <button type="button" class="btn btn-primary mt-4" id="filter">Filtrar</button>
-                        <button type="button" class="btn btn-success mt-4" id="informe">Generar Informe</button>
+                    <div class="col-md-4">
+                        <button type="button" class="btn btn-primary" id="filter">
+                            <i class="mdi mdi-filter"></i> Filtrar
+                        </button>
+
+                        <button type="button" class="btn btn-danger" id="removefilter"
+                            title="Eliminar filtro">
+                            <i class="mdi mdi-filter-remove"></i>
+                        </button>
+                        <button type="button" class="btn btn-success" id="informe">
+                            <i class="mdi mdi-file-pdf"></i> Generar Informe</button>
                         <form id="formfilter" action="{{ route('compras.generateInformefilter') }}" method="post" target="_blank">
                             @csrf
                             <input type="hidden" name="supplier_id" id="proveedorfilter">
@@ -95,8 +87,10 @@
                         </form>
                     </div>
                 </div>
+            </div>
+            <div class="card-body">
                 <div class="table-responsive">
-                    <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
+                    <table id="datatable" class="table table-bordered dt-responsive  w-100">
                         <thead>
                             <tr>
                                 <th>Fecha</th>
@@ -231,6 +225,29 @@
     const basepath = "{{ asset('assets/images/') }}";
     const baseStorage = "{{ asset('') }}";
     const numberFormat2 = new Intl.NumberFormat('de-DE');
+
+    function totalPurchase() {
+        $.ajax({
+            url: "{{ route('compras.totalPurchases') }}",
+            type: "POST",
+            data: {
+                start: $('#startday').val(),
+                end: $('#endday').val(),
+                supplier_id: $('#proveedor').val(),
+                _token: "{{ csrf_token() }}"
+            },
+            dataType: "JSON",
+            success: function(data) {
+                console.log(data);
+
+                $('#total').html(numberFormat2.format(data.total));
+                $('#totalpurchase').html(numberFormat2.format(data.total_monto));
+            }
+        });
+    }
+
+    totalPurchase();
+
     const table = $('#datatable').DataTable({
         processing: true,
         serverSide: true,
@@ -337,6 +354,7 @@
             return false;
         }
         table.draw();
+        totalPurchase();
     });
 
     $('#informe').on('click', function() {

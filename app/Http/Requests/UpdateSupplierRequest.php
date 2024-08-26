@@ -23,8 +23,7 @@ class UpdateSupplierRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'email' => 'required|email',
-            'phone' => 'required',
+            'email' => 'email',
         ];
     }
 
@@ -32,9 +31,7 @@ class UpdateSupplierRequest extends FormRequest
     {
         return [
             'name.required' => 'El nombre del proveedor es requerido',
-            'email.required' => 'El correo es requerido',
             'email.email' => 'El correo no es valido',
-            'phone.required' => 'El telefono es requerido',
         ];
     }
 }

@@ -9,8 +9,8 @@
     <table border="1" cellspacing="0" style="width: 100%; border-collapse: collapse; font-family: Arial, Helvetica, sans-serif">
         <thead>
             <tr>
-                <th colspan="3"><img src="{{ asset('assets/images/logo-official.png') }}" alt="logo" height="60"></th>
-                <th colspan="3" style="text-align: center"><h3>{{ config('app.name', 'Laravel') }}</h3></th>
+                <th colspan="3"><img src="{{ asset('') }}/{{ $empresa->logo }}" alt="logo" height="60"></th>
+                <th colspan="3" style="text-align: center"><h3>{{ $empresa->name }}</h3></th>
             </tr>
             <tr>
                 <th colspan="6" style="text-align: center"><h4>Kardex del Producto {{ $producto->name }}</h4></th>

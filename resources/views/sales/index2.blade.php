@@ -21,11 +21,11 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0 font-size-18">Ventas por Caja </h4>
+            <h4 class="mb-sm-0 font-size-18">Ventas por Mes y Caja </h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item active">Ventas por Caja</li>
+                    <li class="breadcrumb-item active">Ventas por Mes y Caja</li>
                 </ol>
             </div>
 
@@ -87,7 +87,21 @@
             <div class="card-header ">
                 <div class="row py-0">
                     <div class="col-md-2">
-                        <input type="date" class="form-control" id="dateday" name="dateday">
+                        <select name="month" id="month" class="form-control">
+                            <option value="">Seleccione mes</option>
+                            <option value="1">Enero</option>
+                            <option value="2">Febrero</option>
+                            <option value="3">Marzo</option>
+                            <option value="4">Abril</option>
+                            <option value="5">Mayo</option>
+                            <option value="6">Junio</option>
+                            <option value="7">Julio</option>
+                            <option value="8">Agosto</option>
+                            <option value="9">Septiembre</option>
+                            <option value="10">Octubre</option>
+                            <option value="11">Noviembre</option>
+                            <option value="12">Diciembre</option>
+                        </select>
                     </div>
                     <div class="col-md-3">
                         <select name="vendedor" id="vendedor" class="form-control">
@@ -109,9 +123,9 @@
                             <i class="mdi mdi-file-pdf"></i>
                             Generar Informe
                         </button>
-                        <form id="formfilter" action="{{ route('ventas.generateInforme') }}" method="post" target="_blank">
+                        <form id="formfilter" action="{{ route('ventas.generateInformexmes') }}" method="post" target="_blank">
                             @csrf
-                            <input type="hidden" name="day" id="dayfilter">
+                            <input type="hidden" name="month" id="monthfilter">
                             <input type="hidden" name="user_id" id="userfilter">
                         </form>
                     </div>
@@ -268,10 +282,10 @@
 
     function totalSales() {
         $.ajax({
-            url: "{{ route('ventas.totalSales') }}",
+            url: "{{ route('ventas.totalSalesxmonth') }}",
             type: "POST",
             data: {
-                day: $('#dateday').val(),
+                month: $('#month').val(),
                 user_id: $('#vendedor').val(),
                 _token: "{{ csrf_token() }}"
             },
@@ -293,9 +307,9 @@
         processing: true,
         serverSide: true,
         ajax: {
-            url: "{{ route('ventas.datatable') }}",
+            url: "{{ route('ventas.datatablexmonth') }}",
             data: function(d) {
-                d.day = $('#dateday').val();
+                d.month = $('#month').val();
                 d.user_id = $('#vendedor').val();
             }
         },
@@ -362,14 +376,14 @@
 
     $('#removefilter').on('click', function() {
 
-        $('#dateday').val('').trigger('change');
+        $('#month').val('').trigger('change');
         $('#vendedor').val('').trigger('change');
         table.draw();
         totalSales();
     });
 
     function generateReport() {
-        $('#dayfilter').val($('#dateday').val());
+        $('#monthfilter').val($('#month').val());
         $('#userfilter').val($('#vendedor').val());
         $('#formfilter').submit();
     }

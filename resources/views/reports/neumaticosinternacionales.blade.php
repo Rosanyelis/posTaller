@@ -25,7 +25,7 @@
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item active">Reportes</li>
+                    <li class="breadcrumb-item active">Neumaticos Int. Vendidos</li>
                 </ol>
             </div>
 
@@ -38,34 +38,21 @@
         <div class="card">
             <div class="card-header ">
                 <div class="row">
-                    <div class="col-md-6">
-                        <h4 class="card-title">Listado de Neumaticos Internacionales Comprados y su Peso</h4>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                <div class="col-md-2">
-                        <div class="mb-3">
-                            <label for="startday">Fecha de Inicio</label>
-                            <input type="date" class="form-control" id="startday" name="startday">
-                        </div>
+                    <div class="col-md-2">
+                        <input type="date" class="form-control" id="startday" name="startday">
                     </div>
                     <div class="col-md-2">
-                        <div class="mb-3">
-                            <label for="endday">Fecha Final</label>
-                            <input type="date" class="form-control" id="endday" name="endday">
-                        </div>
+                        <input type="date" class="form-control" id="endday" name="endday">
                     </div>
                     <div class="col-md-4">
-                        <button type="button" class="btn btn-primary mt-4" id="filter">
+                        <button type="button" class="btn btn-primary" id="filter">
                             <i class="mdi mdi-filter"></i> Filtrar
                         </button>
-                        <button type="button" class="btn btn-danger mt-4" id="removefilter"
+                        <button type="button" class="btn btn-danger" id="removefilter"
                             title="Eliminar filtro">
                             <i class="mdi mdi-filter-remove"></i>
                         </button>
-                        <button type="button" class="btn btn-success mt-4" id="informe">
+                        <button type="button" class="btn btn-success" id="informe">
                             <i class="mdi mdi-file-pdf"></i>
                             Generar Informe
                         </button>
@@ -76,6 +63,8 @@
                         </form>
                     </div>
                 </div>
+            </div>
+            <div class="card-body">
                 <div class="table-responsive">
                     <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
                         <thead>
@@ -84,7 +73,7 @@
                                 <th>Producto</th>
                                 <th>Tipo</th>
                                 <th>Cant.</th>
-                                <th>Precio Compra</th>
+                                <th>Precio</th>
                                 <th>SubTotal</th>
                                 <th>Peso</th>
                             </tr>
@@ -147,8 +136,8 @@
         dataType: 'json',
         type: "POST",
         lengthMenu: [
-            [10, 25, 50, 100, -1],
-            [10, 25, 50, 100, "All"]
+            [25, 50, 100, -1],
+            [25, 50, 100, "All"]
         ],
         responsive: true,
         language: {
@@ -172,8 +161,8 @@
                 name: 'quantity'
             },
             {
-                data: 'price_purchase',
-                name: 'price_purchase'
+                data: 'price',
+                name: 'price'
             },
             {
                 data: 'subtotal',

@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }} | @yield('title')</title>
+        <title>{{ $empresa->name }} | @yield('title')</title>
 
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta content="Sistema Pos para administracion de Taller " name="description" />
@@ -63,7 +63,7 @@
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-sm-12">
-                                <script>document.write(new Date().getFullYear())</script> © Rey del Neumático.
+                                <script>document.write(new Date().getFullYear())</script> © {{ $empresa->name }}.
                             </div>
                         </div>
                     </div>

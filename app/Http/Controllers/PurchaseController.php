@@ -62,6 +62,24 @@ class PurchaseController extends Controller
         }
     }
 
+    public function totalPurchases(Request $request)
+    {
+        if (request()->ajax()) {
+            $data = Purchase::select(DB::raw('count(id) as total'), DB::raw('sum(total) as total_monto'))
+                ->where(function ($query) use ($request) {
+                    if ($request->has('start') && $request->has('end') && $request->get('start') != '' && $request->get('end') != '') {
+                        $query->whereBetween('created_at', [$request->get('start'), $request->get('end')]);
+                    }
+                    if ($request->has('supplier_id') && $request->get('supplier_id') != '') {
+                        $query->where('supplier_id', $request->get('supplier_id'));
+                    }
+                })
+                ->first();
+
+            return response()->json($data);
+        }
+
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -111,7 +129,27 @@ class PurchaseController extends Controller
                 'subtotal'          => $key->total,
                 'weight'            => $key->weight
             ]);
+
+            if ($request->received == 1) {
+                $p = Product::find($product->id);
+                $p->update([
+                    'cost' => $key->cost,
+                ]);
+                $productqty = ProductStoreQty::where('product_id', $p->id)->first();
+                $productqty->quantity = $productqty->quantity + $key->quantity;
+                $productqty->save();
+                # ingresamos informacion en kardex del producto
+                Kardex::create([
+                    'product_id'    => $p->id,
+                    'quantity'      => $key->quantity,
+                    'price'         => $key->cost,
+                    'total'         => $key->total,
+                    'type'          => 1,
+                    'description'   => 'Compra de ' . $key->producto
+                ]);
+            }
         }
+
         return redirect()->route('compras.index')->with('success', 'Compra Guardada Exitosamente');
     }
 
@@ -162,7 +200,6 @@ class PurchaseController extends Controller
             'reference'      => $request->reference,
             'files'          => $urlfile,
             'note'           => $request->note,
-            'received'       => $request->received,
             'type_purchase'  => $request->type_purchase
         ]);
         PurchaseItem::where('purchase_id', $purchase->id)->delete();

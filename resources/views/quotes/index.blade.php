@@ -34,64 +34,65 @@
 </div>
 <!-- end page title -->
 <div class="row">
+    <div class="col-2">
+        <div class="card">
+            <div class="card-body text-center text-uppercase">
+                <h6>Cotizaciones</h6>
+                <h5 id="total">0</h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-2">
+        <div class="card">
+            <div class="card-body text-center text-uppercase">
+                <h6>Total</h6>
+                <h5 id="totalquote">0</h5>
+            </div>
+        </div>
+    </div>
     <div class="col-12">
         <div class="card">
             <div class="card-header ">
                 <div class="row">
-                    <div class="col-md-6">
-                        <h4 class="card-title">Listado de Cotizaciones</h4>
+                    <div class="col-md-2">
+                        <input type="date" class="form-control" id="startday" name="startday">
                     </div>
-                    <div class="col-md-6 text-end">
-                        <a href="{{ route('cotizaciones.create') }}"
-                            class="btn btn-primary btn-sm ">
-                            <i class="mdi mdi-plus"></i>
-                            Nueva Cotización
-                        </a>
+                    <div class="col-md-2">
+                        <input type="date" class="form-control" id="endday" name="endday">
+                    </div>
+                    <div class="col-md-2">
+                        <select name="vendedor" id="vendedor" class="form-control">
+                            <option value="">Todos</option>
+                            @foreach ($users as $user)
+                                <option value="{{ $user->id }}">{{ $user->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-primary" id="filter">
+                            <i class="mdi mdi-filter"></i> Filtrar
+                        </button>
+
+                        <button type="button" class="btn btn-danger" id="removefilter"
+                            title="Eliminar filtro">
+                            <i class="mdi mdi-filter-remove"></i>
+                        </button>
                     </div>
                 </div>
+
             </div>
             <div class="card-body">
-                <div class="row">
 
-                    <div class="col-md-3">
-                        <div class="mb-3">
-                            <label for="startday">Fecha de Inicio</label>
-                            <input type="date" class="form-control" id="startday" name="startday">
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="mb-3">
-                            <label for="endday">Fecha Final</label>
-                            <input type="date" class="form-control" id="endday" name="endday">
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="mb-3">
-                            <label for="vendedor">Vendedor</label>
-                            <select name="vendedor" id="vendedor" class="form-control">
-                                <option value="">Todos</option>
-                                @foreach ($users as $user)
-                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <button type="button" class="btn btn-primary mt-4" id="filter">Filtrar</button>
-                    </div>
-                </div>
                 <div class="table-responsive">
-                    <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
+                    <table id="datatable" class="table table-bordered dt-responsive w-100">
                         <thead>
                             <tr>
                                 <th>Fecha</th>
-
                                 <th>Cliente</th>
                                 <th>Rut Cliente</th>
                                 <th>Nro. Cot.</th>
                                 <th>Total</th>
-                                <th>Descuento</th>
-                                <th>Gran Total</th>
+                                <th>Vendedor</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -119,19 +120,18 @@
                                         <strong>Fecha de Cotización:</strong> <span id="date"></span>
                                     </div>
                                     <div class="col-md-6">
-                                        <strong>Total :</strong> <span id="total"></span>
+                                        <strong>Total :</strong> <span id="totall"></span>
                                     </div>
                                     <div class="col-md-12">
                                         <strong>Notas:</strong> <span id="note"></span>
                                     </div>
                                     <hr>
-                                    <div class="col-md-12 text-center">
-                                        <h4>Productos</h4>
-                                    </div>
-                                    <hr>
                                     <div class="col-md-12">
-                                        <table class="table table-bordered nowrap w-100">
+                                        <table class="table table-striped table-sm table-bordered w-100">
                                             <thead>
+                                                <tr>
+                                                    <th colspan="6" class="text-center">Detalles de Cotizacion</th>
+                                                </tr>
                                                 <tr class="text-center">
                                                     <th>Código</th>
                                                     <th>Articulo</th>
@@ -147,10 +147,6 @@
                                                 <tr>
                                                     <td colspan="5" class="text-end">Descuento (% <span id="discount1"></span>)</td>
                                                     <td id="discount2" class="text-center"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="5" class="text-end">Impuesto (% <span id="tax1"></span>)</td>
-                                                    <td id="tax2" class="text-center"></td>
                                                 </tr>
                                                 <tr>
                                                     <td colspan="5" class="text-end">Total</td>
@@ -210,6 +206,25 @@
     const basepath = "{{ asset('assets/images/') }}";
     const baseStorage = "{{ asset('') }}";
     const numberFormat2 = new Intl.NumberFormat('de-DE');
+    function totalQuotes() {
+        $.ajax({
+            url: "{{ route('cotizaciones.totalQuotes') }}",
+            type: "POST",
+            data: {
+                start: $('#startday').val(),
+                end: $('#endday').val(),
+                user_id: $('#vendedor').val(),
+                _token: "{{ csrf_token() }}"
+            },
+            dataType: "JSON",
+            success: function(data) {
+                $('#total').html(numberFormat2.format(data.total));
+                $('#totalquote').html(numberFormat2.format(data.total_monto));
+            }
+        });
+    }
+
+    totalQuotes();
     const table = $('#datatable').DataTable({
         processing: true,
         serverSide: true,
@@ -224,8 +239,8 @@
         dataType: 'json',
         type: "POST",
         lengthMenu: [
-            [10, 25, 50, 100, -1],
-            [10, 25, 50, 100, "All"]
+            [25, 50, 100, -1],
+            [25, 50, 100, "All"]
         ],
         responsive: true,
         language: {
@@ -249,16 +264,12 @@
                 name: 'correlativo'
             },
             {
-                data: 'total',
-                name: 'total'
-            },
-            {
-                data: 'total_discount',
-                name: 'total_discount'
-            },
-            {
                 data: 'grand_total',
                 name: 'grand_total'
+            },
+            {
+                data: 'user',
+                name: 'user'
             },
             {
                 data: 'actions',
@@ -274,7 +285,7 @@
             }
         },
         {
-            targets:[4, 5, 6],
+            targets:[4],
             render: function (data) {
                 return '$ ' + numberFormat2.format(data);
             }
@@ -282,24 +293,39 @@
     });
 
     $('#filter').on('click', function(){
+        if ($('#startday').val() > $('#endday').val()) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'La fecha inicial no puede ser mayor que la fecha final',
+                timer: 1500
+            });
+            return false;
+        }
+        totalQuotes();
         table.draw();
     });
-
+    $('#removefilter').on('click', function() {
+        $('#startday').val('').trigger('change');
+        $('#endday').val('').trigger('change');
+        $('#vendedor').val('').trigger('change');
+        table.draw();
+        totalQuotes();
+    });
     function viewRecord(id) {
         $.ajax({
             url: "{{ route('cotizaciones.show', ':id') }}"
                 .replace(':id', id),
             type: 'GET',
             success: function(res) {
+
                 $('#name').text(res.customer_name);
                 $('#date').text(moment(res.created_at).format('DD/MM/YYYY hh:mm A'));
-                $('#total').text(res.grand_total);
+                $('#totall').text(numberFormat2.format(res.grand_total));
                 $('#note').text(res.note);
-                $('#total2').text(res.grand_total);
+                $('#total2').text(numberFormat2.format(res.grand_total));
                 $('#discount1').text(res.order_discount_id);
-                $('#discount2').text(res.total_discount);
-                $('#tax1').text(res.order_tax_id);
-                $('#tax2').text(res.total_tax);
+                $('#discount2').text(numberFormat2.format(res.total_discount));
 
                 $('#details').empty();
 

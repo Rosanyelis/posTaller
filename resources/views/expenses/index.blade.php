@@ -55,7 +55,6 @@
                     <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
                         <thead>
                             <tr>
-                                <th>Tienda</th>
                                 <th>Fecha</th>
                                 <th>Referencia</th>
                                 <th>Monto</th>
@@ -66,7 +65,7 @@
                         <tbody>
                         </tbody>
                         <tfoot>
-                            <th colspan="3" class="text-end"><h5>Total de Gastos</h5></th>
+                            <th colspan="2" class="text-end"><h5>Total de Gastos</h5></th>
                             <th colspan="3"></th>
                         </tfoot>
                     </table>
@@ -86,9 +85,6 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <strong>Referencia:</strong> <span id="name"></span>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <strong>Tienda:</strong> <span id="store"></span>
                                     </div>
                                     <div class="col-md-6">
                                         <strong>Fecha:</strong> <span id="date"></span>
@@ -160,18 +156,14 @@
         dataType: 'json',
         type: "POST",
         lengthMenu: [
-            [10, 25, 50, 100, -1],
-            [10, 25, 50, 100, "All"]
+            [25, 50, 100, -1],
+            [25, 50, 100, "All"]
         ],
         responsive: true,
         language: {
             url: "https://cdn.datatables.net/plug-ins/2.0.8/i18n/es-ES.json",
         },
         columns: [
-            {
-                data: 'store_name',
-                name: 'store_name'
-            },
             {
                 data: 'created_at',
                 name: 'created_at'
@@ -196,7 +188,7 @@
             },
         ],
         columnDefs: [{
-            targets: 1,
+            targets: 0,
             render: function(data) {
                 return moment(data).format('DD/MM/YYYY hh:mm A');
             }
@@ -213,7 +205,7 @@
 
             // Total en todas las páginas
             total = api
-                .column(3)
+                .column(2)
                 .data()
                 .reduce( function (a, b) {
                     return intVal(a) + intVal(b);
@@ -221,14 +213,14 @@
 
             // Total en esta página
             pageTotal = api
-                .column( 3, { page: 'current'} )
+                .column( 2, { page: 'current'} )
                 .data()
                 .reduce( function (a, b) {
                     return intVal(a) + intVal(b);
                 }, 0 );
 
             // Actualizar pie de página
-            $( api.column( 3 ).footer() ).html('<h5>$'+ total.toFixed(0) +'</h5>');
+            $( api.column( 2 ).footer() ).html('<h5>$'+ total.toFixed(0) +'</h5>');
             // $('#total').html('Total: ' + total.toFixed(2));
         }
     });

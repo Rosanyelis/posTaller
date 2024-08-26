@@ -37,19 +37,24 @@
             </div>
             <div class="card-body p-4">
                 <form id="formQuotation" action="{{ route('ordenes-trabajo.store') }}" method="POST"
-                    enctype="multipart/form-data" class="needs-validation @if ($errors->any()) was-validated @endif"
+                    enctype="multipart/form-data" class="needs-validation"
                     novalidate>
                     @csrf
                     <div class="row">
                         <div class="col-lg-4 col-md-4 col-sm-6">
                             <div class="mb-3">
                                 <label for="customer" class="form-label">Cliente</label>
-                                <select class="form-control" name="customer" id="customer" style="width: 100%">
+                                <select class="form-control @if ($errors->has('customer')) is-invalid @endif "
+                                name="customer" id="customer"
+                                style="width: 100%">
                                     <option value="">-- Seleccione --</option>
                                     @foreach ($customers as $item)
                                     <option value="{{ $item->id }}">{{ $item->name }}</option>
                                     @endforeach
                                 </select>
+                                @if ($errors->has('customer'))
+                                <div class="invalid-feedback">{{ $errors->first('customer') }}</div>
+                                @endif
                             </div>
                         </div>
 
@@ -169,7 +174,6 @@
                     name: name
                 },
                 success: function(data) {
-                    console.log(data);
                     $('#cost').val(data.price);
                 }
             });
@@ -283,7 +287,6 @@
             datosTabla = datosTabla.filter(function(item) {
                 return item.producto !== product;
             });
-            console.log(datosTabla);
             $("#table_products tfoot #total").empty();
             let totalfinal = 0;
             for (let i = 0; i < datosTabla.length; i++) {
@@ -293,6 +296,14 @@
         });
 
         $('#guardar').on('click', function() {
+            if (datosTabla.length == 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'No hay productos agregados, por favor agrega uno',
+                });
+                return false;
+            }
             $('#array_products').val(JSON.stringify(datosTabla));
             $('#totalform').val($('#total').text());
             $('guardar').prop('disabled', true);

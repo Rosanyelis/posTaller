@@ -22,7 +22,14 @@ class StoreWorkOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'customer'       => 'required',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'customer.required' => 'El campo Cliente es requerido',
         ];
     }
 }

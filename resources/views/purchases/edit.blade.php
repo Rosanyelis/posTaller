@@ -37,7 +37,7 @@
             </div>
             <div class="card-body p-4">
                 <form id="formQuotation" action="{{ route('compras.update', $purchase->id) }}" method="POST"
-                    enctype="multipart/form-data" class="needs-validation @if ($errors->any()) was-validated @endif"
+                    enctype="multipart/form-data" class="needs-validation"
                     novalidate>
                     @csrf
                     @method('PUT')
@@ -45,12 +45,13 @@
                         <div class="col-lg-4 col-md-4 col-sm-6">
                             <div class="mb-3">
                                 <label for="supplier" class="form-label">Proveedores</label>
-                                <select class="form-control" name="supplier" id="supplier" style="width: 100%">
+                                <select class="form-control " name="supplier" id="supplier" style="width: 100%">
                                     <option value="">-- Seleccione --</option>
                                     @foreach ($suppliers as $item)
                                     <option value="{{ $item->id }}" {{ $item->id == $purchase->supplier_id ? 'selected' : '' }}>{{ $item->name }}</option>
                                     @endforeach
                                 </select>
+
                             </div>
                         </div>
 
@@ -302,6 +303,14 @@
         });
 
         $('#guardar').on('click', function() {
+            if (datosTabla.length == 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'No hay productos agregados, por favor agrega uno',
+                });
+                return false;
+            }
             $('#array_products').val(JSON.stringify(datosTabla));
             $('#totalform').val($('#total').text());
             $('guardar').prop('disabled', true);

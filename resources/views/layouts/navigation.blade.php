@@ -28,7 +28,7 @@
                                     <li><a href="{{ route('productos.index') }}" key="t-products">Lista Productos</a></li>
                                     <li><a href="{{ route('productos.create') }}" data-key="t-product-add">Agregar producto</a></li>
                                     <li><a href="{{ route('productos.viewimport') }}" data-key="t-orders">Importar Productos</a></li>
-
+                                    <li><a href="{{ route('products.allproductpdf') }}" target="_blank">Listado de Productos</a></li>
                                 </ul>
                             </li>
                             <li>
@@ -48,7 +48,9 @@
                                     <span data-key="ventas">Ventas</span>
                                 </a>
                                 <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="{{ route('ventas.index') }}" key="t-sales">Lista Ventas</a></li>
+                                    <li><a href="{{ route('ventas.index') }}" key="t-sales">Ventas por caja</a></li>
+                                    <li><a href="{{ route('ventas.indexmonth') }}" key="t-sales">Ventas por mes</a></li>
+                                    <li><a href="{{ route('ventas.indexrange') }}" key="t-sales">Ventas por rango</a></li>
                                 </ul>
                             </li>
                             <li>
@@ -136,8 +138,7 @@
                                     <span data-key="Configuraciones">Configuraciones</span>
                                 </a>
                                 <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="{{ route('tiendas.index') }}" key="t-products">Lista Tiendas</a></li>
-                                    <li><a href="{{ route('tiendas.create') }}" data-key="t-product-add">Agregar Tiendas</a></li>
+                                    <li><a href="{{ route('tiendas.edit', 1) }}" key="t-products">Empresa</a></li>
                                     <li><a href="{{ route('users.index') }}" key="t-products">Lista Usuarios</a></li>
                                     <li><a href="{{ route('users.create') }}" data-key="t-product-add">Agregar Usuario</a></li>
                                 </ul>

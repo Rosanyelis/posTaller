@@ -35,47 +35,36 @@
 </div>
 <!-- end page title -->
 <div class="row">
+    <div class="col-2">
+        <div class="card">
+            <div class="card-body text-center text-uppercase">
+                <h6>Total Prod.</h6>
+                <h5 id="total">0</h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-2">
+        <div class="card">
+            <div class="card-body text-center text-uppercase">
+                <h6>Inventario</h6>
+                <h5 id="stock">0</h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-2">
+        <div class="card">
+            <div class="card-body text-center text-uppercase">
+                <h6>Total CLP</h6>
+                <h5 id="totalclp">0</h5>
+            </div>
+        </div>
+    </div>
     <div class="col-12">
         <div class="card">
             <div class="card-header ">
-                <div class="row">
-                    <div class="col-md-6">
-                        <h4 class="card-title">Listado de Productos</h4>
-                    </div>
-                    <div class="col-md-6 text-end">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-info btn-sm dropdown-toggle"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="mdi mdi-file-pdf"></i>Exportar
-                                <i class="mdi mdi-chevron-down"></i>
-                            </button>
-                            <div class="dropdown-menu" style="">
-                                <a class="dropdown-item" target="_blank" href="{{ route('products.allproductpdf') }}">Todos los productos</a>
-                            </div>
-                        </div>
-                        <a href="{{ route('productos.viewimport') }}"
-                            class="btn btn-success btn-sm ">
-                            <i class="mdi mdi-file-excel"></i>
-                            Importar Productos
-                        </a>
-                        <a href="{{ route('productos.create') }}"
-                            class="btn btn-primary btn-sm ">
-                            <i class="mdi mdi-plus"></i>
-                            Nuevo Producto
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="row gy-1">
-                    <div class="col-md-12">
-                        <p>El informe se genera solo si aplica el filtro, sino hay datos no podra generarse
-                            el informe.
-                        </p>
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-6">
+            <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-3">
                         <div class="">
-                            <label for="category_id">Categorias</label>
                             <select name="category_id" id="category_id" class="form-control "
                                 style="width: 100%;">
                                 <option value="">Todos</option>
@@ -85,15 +74,20 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-5 col-lg-5 col-sm-6 p-0 text-center">
-                        <button type="button" class="btn btn-primary mt-4" id="filter">
+                    <div class="col-md-5 col-lg-5 col-sm-6 p-0 ">
+                        <button type="button" class="btn btn-primary" id="filter">
                             <i class="mdi mdi-filter"></i> Filtrar
                         </button>
-                        <button type="button" class="btn btn-danger mt-4" id="removefilter"
+
+                        <button type="button" class="btn btn-danger" id="removefilter"
                             title="Eliminar filtro">
                             <i class="mdi mdi-filter-remove"></i>
                         </button>
-                        <button type="button" class="btn btn-success mt-4" id="informe">Generar Informe</button>
+
+                        <button type="button" class="btn btn-success" id="informe">
+                            <i class="mdi mdi-file-pdf"></i>
+                            Generar Informe
+                        </button>
                         <form id="formfilter" action="{{ route('products.generateInformefilter') }}" method="post" target="_blank">
                             @csrf
                             <input type="hidden" name="category_id" id="categoryfilter">
@@ -101,8 +95,12 @@
                     </div>
                 </div>
 
+            </div>
+            <div class="card-body">
+
+
                 <div class="table-responsive mt-3">
-                    <table id="datatable" class="table table-bordered nowrap w-100">
+                    <table id="datatable" class="table table-bordered dt-responsive  w-100">
                         <thead>
                             <tr>
                                 <th width="60px">Imagen</th>
@@ -165,8 +163,28 @@
     $('#category_id').select2({
         placeholder: 'Seleccione una categoria',
     });
-    const table = $('#datatable').DataTable({
 
+    function totalProductos() {
+        $.ajax({
+            url: "{{ route('productos.totalProductos') }}",
+            type: "POST",
+            data: {
+                category_id: $('#category_id').val(),
+                _token: "{{ csrf_token() }}"
+            },
+            dataType: "JSON",
+            success: function(data) {
+                $('#total').html(numberFormat2.format(data.total));
+                $('#stock').html(numberFormat2.format(data.stock));
+                $('#totalclp').html(numberFormat2.format(data.totalclp));
+
+            }
+        });
+    }
+
+    totalProductos();
+
+    const table = $('#datatable').DataTable({
         processing: true,
         serverSide: true,
         ajax: {
@@ -178,8 +196,8 @@
         dataType: 'json',
         type: "POST",
         lengthMenu: [
-            [10, 25, 50, 100, -1],
-            [10, 25, 50, 100, "All"]
+            [25, 50, 100, -1],
+            [25, 50, 100, "All"]
         ],
         responsive: true,
         language: {
@@ -270,6 +288,7 @@
     }
 
     $('#filter').on('click', function() {
+        totalProductos();
         table.draw();
     });
 

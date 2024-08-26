@@ -120,7 +120,7 @@ table, td { color: #000000; } @media (max-width: 480px) { #u_content_text_3 .v-c
   <tr>
     <td style="padding-right: 0px;padding-left: 0px;" align="center">
 
-      <img align="center" border="0" src="https://sistema.reydelneumatico.cl/assets/images/logo-official.png" alt="image" title="image" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 70%;max-width: 394.8px;" width="394.8"/>
+      <img align="center" border="0" src="{{ asset('') }}/{{ $empresa->logo }}" alt="image" title="image" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 70%;max-width: 394.8px;" width="394.8"/>
 
     </td>
   </tr>

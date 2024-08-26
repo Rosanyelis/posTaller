@@ -22,7 +22,14 @@ class UpdateQuotationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'customer'       => 'required',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'customer.required' => 'El campo cliente es obligatorio',
         ];
     }
 }

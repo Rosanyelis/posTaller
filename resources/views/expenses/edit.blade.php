@@ -41,22 +41,6 @@
                     <div class="row">
                         <div class="col-lg-4 col-md-4 col-sm-6">
                             <div class="mb-3">
-                                <label for="store_id" class="form-label">Tienda</label>
-                                <select class="form-select" name="store_id" id="store_id" required>
-                                    <option value="">Seleccionar</option>
-                                    @foreach($stores as $store)
-                                        <option value="{{ $store->id }}" {{ $expense->store_id == $store->id ? 'selected' : '' }}>{{ $store->name }}</option>
-                                    @endforeach
-                                </select>
-                                @if($errors->has('store_id'))
-                                    <div class="invalid-feedback">
-                                        {{ $errors->first('store_id') }}
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-4 col-sm-6">
-                            <div class="mb-3">
                                 <label for="name" class="form-label">Referencia</label>
                                 <input class="form-control" type="text" name="name" id="name" required
                                     value="{{ $expense->name }}">

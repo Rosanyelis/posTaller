@@ -37,7 +37,7 @@
             </div>
             <div class="card-body p-4">
                 <form id="formQuotation" action="{{ route('ordenes-trabajo.update', $workOrder->id) }}" method="POST"
-                    enctype="multipart/form-data" class="needs-validation @if ($errors->any()) was-validated @endif"
+                    enctype="multipart/form-data" class="needs-validation"
                     novalidate>
                     @csrf
                     @method('PUT')
@@ -229,8 +229,6 @@
             }
             $("#total").append(totalfinal);
 
-            console.log(datosTabla);
-
             $("#quantity").val('');
             $("#cost").val('');
             $("#details").val('');
@@ -248,7 +246,6 @@
             datosTabla = datosTabla.filter(function(item) {
                 return item.producto !== product;
             });
-            console.log(datosTabla);
             $("#total").empty();
             let totalfinal = 0;
             for (let i = 0; i < datosTabla.length; i++) {
@@ -258,6 +255,14 @@
         });
 
         $('#guardar').on('click', function() {
+            if (datosTabla.length == 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'No hay productos agregados, por favor agrega uno',
+                });
+                return false;
+            }
             $('#array_products').val(JSON.stringify(datosTabla));
             $('#totalform').val($('#total').text());
             $('guardar').prop('disabled', true);
