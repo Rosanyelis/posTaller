@@ -86,7 +86,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/productos/{product}/kardex', [ProductController::class, 'kardex'])->name('products.kardex');
     Route::get('/productos/{product}/kardex-pdf', [ProductController::class, 'kardexpdf'])->name('products.kardexpdf');
     Route::post('/productos/{product}/kardex-pdf-filter', [ProductController::class, 'kardexpdffilter'])->name('products.kardexpdffilter');
-    // Route::get('/productos/todos-los-productos-con-barras', [ProductController::class, 'allproductbarspdf'])->name('products.allproductbarspdf');
+    Route::get('/productos/productos-internacionales-excel', [ProductController::class, 'export'])->name('products.export');
 
     # Categorias
     Route::get('/categorias', [CategoryController::class, 'index'])->name('categorias.index');
@@ -207,6 +207,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/informe-de-productos-vendidos-incluidos-eliminados-pdf', [ReportsController::class, 'pdfProductosVendidos'])->name('reportes.pdfProductosVendidos');
     Route::get('/informe-de-neumaticos-internacionales', [ReportsController::class, 'informeNeumaticosInternacionales'])->name('reportes.informeNeumaticosInternacionales');
     Route::get('/datatable-de-neumaticos-internacionales', [ReportsController::class, 'datatableNeumaticosInternacionales'])->name('reportes.datatableNeumaticosInternacionales');
+    Route::post('/total-de-neumaticos-internacionales', [ReportsController::class, 'totalneumaticos'])->name('reportes.totalneumaticos');
     Route::post('/informe-de-neumaticos-internacionales-pdf', [ReportsController::class, 'pdfNeumaticosInternacionales'])->name('reportes.pdfNeumaticosInternacionales');
 
 

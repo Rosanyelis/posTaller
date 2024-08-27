@@ -267,12 +267,15 @@
     const numberFormat2 = new Intl.NumberFormat('de-DE');
 
     function totalSales() {
+        var day = $('#dateday').val();
+        var user_id = ($('#vendedor').val() == 'Todos') ? '' : $('#vendedor').val();
+
         $.ajax({
             url: "{{ route('ventas.totalSales') }}",
             type: "POST",
             data: {
-                day: $('#dateday').val(),
-                user_id: $('#vendedor').val(),
+                day: day,
+                user_id: user_id,
                 _token: "{{ csrf_token() }}"
             },
             dataType: "JSON",
@@ -296,7 +299,7 @@
             url: "{{ route('ventas.datatable') }}",
             data: function(d) {
                 d.day = $('#dateday').val();
-                d.user_id = $('#vendedor').val();
+                d.user_id = ($('#vendedor').val() == 'Todos') ? '' : $('#vendedor').val();
             }
         },
         dataType: 'json',

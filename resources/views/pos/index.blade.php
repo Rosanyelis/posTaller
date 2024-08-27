@@ -402,10 +402,10 @@
                         <tr>
                             <th colspan="4" class="text-center">
                             <img src="{{ asset('') }}/{{ $empresa->logo }}" alt="logo" height="60">
-                                <h1>Rey del Neumatico</h1>
-                                <h3>Jose Joaquin Prieto 5780 - <br>San Miguel - Santiago<br>
-                                    vulca_david@hotmail.com <br>
-                                    56652759029 - 56413243313 - 56232075270
+                                <h1>{{ $empresa->name }}</h1>
+                                <h3>{{ $empresa->address }}<br>
+                                    {{ $empresa->email }}<br>
+                                    {{ $empresa->phone }}
                                 </h3>
                             </th>
                         </tr>

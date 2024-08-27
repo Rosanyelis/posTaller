@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Exports\ProductsInternationalExport;
 
 class ProductController extends Controller
 {
@@ -32,7 +33,7 @@ class ProductController extends Controller
     {
         if ($request->ajax()) {
             $data = Product::with('category', 'storeqty')
-                    ->orderby('id', 'desc');
+                    ->orderby('name', 'desc');
             return DataTables::of($data)
                 ->filter(function ($query) use ($request) {
                     if ($request->has('category_id') && $request->get('category_id') != '') {
@@ -335,5 +336,10 @@ class ProductController extends Controller
         return Pdf::loadView('pdfs.kardex', compact('kardexes', 'producto'))
                 ->setPaper('letter', 'landscape')
                 ->stream(''.config('app.name', 'Laravel').' - Listado de Kardex.pdf');
+    }
+
+    public function export()
+    {
+        return Excel::download(new ProductsInternationalExport, 'neumaticos-internacionales.xlsx');
     }
 }

@@ -277,7 +277,7 @@
             data: {
                 start: $('#startday').val(),
                 end: $('#endday').val(),
-                user_id: $('#vendedor').val(),
+                user_id: ($('#vendedor').val() == 'Todos') ? '' : $('#vendedor').val(),
                 _token: "{{ csrf_token() }}"
             },
             dataType: "JSON",
@@ -302,7 +302,7 @@
             data: function(d) {
                 d.start = $('#startday').val();
                 d.end = $('#endday').val();
-                d.user_id = $('#vendedor').val();
+                d.user_id = ($('#vendedor').val() == 'Todos') ? '' : $('#vendedor').val();
             }
         },
         dataType: 'json',

@@ -35,7 +35,7 @@ class DashboardController extends Controller
         $totalMontoQuote = Quotation::whereMonth('created_at', $mes)->sum('grand_total');
         $totalot = WorkOrder::whereMonth('created_at', $mes)->count();
         $totalMontoot = WorkOrder::whereMonth('created_at', $mes)->sum('total');
-        $totaldiaventas = Sale::whereDate('created_at', Carbon::today())->sum('grand_total');
+        $totalAcumuladasventas = Sale::sum('grand_total');
         $totalxdia = $this->totalSales();
         $totalservices = $this->totalServices();
         $topservices = $this->topServices();
@@ -44,7 +44,7 @@ class DashboardController extends Controller
         $statuWorkorders = $this->workordersStatus();
 
         return view('dashboard', compact('totalMes', 'totalProductos', 'totalMontoProductos',
-            'totalxdia', 'totalQuote', 'totalMontoQuote', 'totaldiaventas', 'totalot', 'totalMontoot',
+            'totalxdia', 'totalQuote', 'totalMontoQuote', 'totalAcumuladasventas', 'totalot', 'totalMontoot',
             'totalservices', 'topservices', 'compras', 'totalventasanuales', 'statuWorkorders'));
     }
 
@@ -123,6 +123,7 @@ class DashboardController extends Controller
                 ->join('sale_items', 'sales.id', '=', 'sale_items.sale_id')
                 ->join('products', 'sale_items.product_id', '=', 'products.id')
                 ->where('products.type', 'SERVICIOS')
+                ->whereDate('sales.created_at', Carbon::today())
                 ->select(DB::raw('SUM(sale_items.subtotal) AS total'), 'products.name')
                 ->groupBy('products.name')
                 ->orderBy('total', 'desc')

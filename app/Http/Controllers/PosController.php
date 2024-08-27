@@ -43,6 +43,7 @@ class PosController extends Controller
                     ->where('product_store_qties.quantity', '>', '1')
                     ->where('products.name', 'like', '%' . $request->term . '%')
                     ->orWhere('products.code', 'like', '%' . $request->term . '%')
+                    ->orderby('products.name', 'asc')
                     ->get();
 
         return response()->json($data);
@@ -73,7 +74,8 @@ class PosController extends Controller
     {
         $query = Product::join('product_store_qties', 'products.id', '=', 'product_store_qties.product_id')
                         ->select('products.id', 'products.name', 'products.image', 'products.code', 'products.price', 'product_store_qties.quantity')
-                        ->where('product_store_qties.quantity', '>', '0');
+                        ->where('product_store_qties.quantity', '>', '0')
+                        ->orderby('products.name', 'asc');
         // Si se proporciona un ID de categoría, se filtra por esa categoría
         if ($request->has('category_id')) {
             $query->where('category_id', $request->category_id);

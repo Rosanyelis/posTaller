@@ -29,6 +29,7 @@
                                     <li><a href="{{ route('productos.create') }}" data-key="t-product-add">Agregar producto</a></li>
                                     <li><a href="{{ route('productos.viewimport') }}" data-key="t-orders">Importar Productos</a></li>
                                     <li><a href="{{ route('products.allproductpdf') }}" target="_blank">Listado de Productos</a></li>
+                                    <li><a href="{{ route('products.export') }}" target="_blank">Neumaticos Int.</a></li>
                                 </ul>
                             </li>
                             <li>
@@ -126,7 +127,7 @@
                                     <li><a href="{{ route('reportes.informeVentasxdia') }}">Ventas con Propina</a></li>
                                     <li><a href="{{ route('reportes.informeVentasxdiaxproducto') }}">Productos Vendidos por Dia</a></li>
                                     <li><a href="{{ route('reportes.informeProductosVendidos') }}">Productos Vendidos por Dia (Solo Productos)</a></li>
-                                    <li><a href="{{ route('reportes.informeNeumaticosInternacionales') }}">Neumáticos Internaciones Comprados y su Peso</a></li>
+                                    <li><a href="{{ route('reportes.informeNeumaticosInternacionales') }}">Neumáticos Internaciones Vendidos y su Peso</a></li>
                                     <li><a href="{{ route('reportes.informegastos') }}" target="_blank">Informe de Gastos</a></li>
                                     <li><a href="{{ route('products.allproductpdf') }}" target="_blank">Informe de Productos</a></li>
                                 </ul>

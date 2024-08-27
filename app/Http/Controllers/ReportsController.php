@@ -346,11 +346,11 @@ class ReportsController extends Controller
 
     public function datatableNeumaticosInternacionales(Request $request)
     {
-        $data = DB::table('sales')
-                    ->join('users', 'sales.user_id', '=', 'users.id')
+        if ($request->ajax()) {
+            $data = DB::table('sales')
                     ->join('sale_items', 'sales.id', '=', 'sale_items.sale_id')
-                    ->leftjoin('products', 'sale_items.product_id', '=', 'products.id')
-                    ->select('sales.*', 'users.name as user_name', 'products.name as product_name',
+                    ->join('products', 'sale_items.product_id', '=', 'products.id')
+                    ->select('sales.*', 'products.name as product_name',
                     'products.type as type', 'products.weight as weight',
                     'sale_items.unit_price as price', 'sale_items.quantity as quantity',
                     'sale_items.subtotal as subtotal')
@@ -370,9 +370,30 @@ class ReportsController extends Controller
                     }
                 })
                 ->make(true);
+        }
     }
 
+    public function totalneumaticos(Request $request)
+    {
+        if ($request->ajax()) {
+            $data = DB::table('sales')
+                    ->join('sale_items', 'sales.id', '=', 'sale_items.sale_id')
+                    ->join('products', 'sale_items.product_id', '=', 'products.id')
+                    ->select(DB::raw('SUM(sale_items.quantity) AS total_neumaticos'),
+                            DB::raw('SUM(products.weight * sale_items.quantity) AS total_peso'))
+                    ->where('products.type', 'NEUMATICOS')
+                    ->where('products.nacionality', 'Internacional')
+                    ->where(function ($query) use ($request) {
+                        if ($request->has('start') && $request->has('end') && $request->get('start') != '' && $request->get('end') != '') {
+                            $query->whereBetween('sales.created_at', [$request->get('start'), $request->get('end')]);
+                        }
+                    })
+                    ->first();
 
+
+            return response()->json($data);
+        }
+    }
 
     public function pdfNeumaticosInternacionales(Request $request)
     {
@@ -383,14 +404,14 @@ class ReportsController extends Controller
                 ->join('users', 'sales.user_id', '=', 'users.id')
                 ->join('sale_items', 'sales.id', '=', 'sale_items.sale_id')
                 ->leftjoin('products', 'sale_items.product_id', '=', 'products.id')
-                ->select('sales.*', 'users.name as user_name',
+                ->select('sales.*', 'users.name as user_name', 'products.name as product_name',
                 'products.type as type', 'products.weight as weight',
                 'sale_items.unit_price as price', 'sale_items.quantity as quantity',
                 'sale_items.subtotal as subtotal')
                 ->where('products.type', 'NEUMATICOS')
                 ->where('products.nacionality', 'Internacional')
                 ->orderBy('sales.id', 'desc')
-                ->whereBetween('purchases.created_at', [$request->get('start'), $request->get('end')])
+                ->whereBetween('sales.created_at', [$request->get('start'), $request->get('end')])
                 ->get();
 
         foreach ($data as $key) {

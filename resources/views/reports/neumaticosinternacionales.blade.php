@@ -34,6 +34,22 @@
 </div>
 <!-- end page title -->
 <div class="row">
+    <div class="col-2">
+        <div class="card">
+            <div class="card-body text-center text-uppercase">
+                <h6>Total Neumaticos</h6>
+                <h5 id="total">0</h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-2">
+        <div class="card">
+            <div class="card-body text-center text-uppercase">
+                <h6>Peso Total</h6>
+                <h5 id="totalpeso">0</h5>
+            </div>
+        </div>
+    </div>
     <div class="col-12">
         <div class="card">
             <div class="card-header ">
@@ -123,23 +139,47 @@
 <!-- Datatable init js -->
 <script>
     const numberFormat2 = new Intl.NumberFormat('de-DE');
+
+    function totalNeumaticos() {
+        var day = $('#dateday').val();
+        var user_id = ($('#vendedor').val() == 'Todos') ? '' : $('#vendedor').val();
+
+        $.ajax({
+            url: "{{ route('reportes.totalneumaticos') }}",
+            type: "POST",
+            data: {
+                start: $('#startday').val(),
+                end: $('#endday').val(),
+                _token: "{{ csrf_token() }}"
+            },
+            dataType: "JSON",
+            success: function(data) {
+                $('#total').html(numberFormat2.format(data.total_neumaticos));
+                $('#totalpeso').html(data.total_peso + ' kg');
+            }
+        });
+    }
+
+    totalNeumaticos();
     const table = $('#datatable').DataTable({
         processing: true,
         serverSide: true,
         ajax: {
             url: "{{ route('reportes.datatableNeumaticosInternacionales') }}",
             data: function(d) {
-                d.start = $('#startday').val();
-                d.end = $('#endday').val();
+                if ($('#startday').val() != '' && $('#endday').val() != '') {
+                    d.start = $('#startday').val();
+                    d.end = $('#endday').val();
+                }
             }
         },
         dataType: 'json',
         type: "POST",
+        responsive: true,
         lengthMenu: [
             [25, 50, 100, -1],
             [25, 50, 100, "All"]
         ],
-        responsive: true,
         language: {
             url: "https://cdn.datatables.net/plug-ins/2.0.8/i18n/es-ES.json",
         },
@@ -224,7 +264,8 @@
             $('#endfilter').val($('#endday').val());
             $('#formfilter').submit();
 
-        } else {
+        }
+        if ($('#startday').val() == '' && $('#endday').val() == '' ) {
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',

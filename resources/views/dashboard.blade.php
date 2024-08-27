@@ -31,18 +31,18 @@
 @if (Auth::user()->rol_id == 1 || Auth::user()->rol_id == 2)
 <div class="row">
 
-    <div class="col-xl-4 col-md-6">
+    <div class="col-xl-4 col-md-4 col-sm-6">
         <!-- card -->
         <div class="card card-h-100">
             <!-- card body -->
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="">
-                        <span class="text-muted mb-3 lh-1 d-block text-truncate">Ventas de Mes</span>
-                        <h4 class="mb-3 text-success">
+                        <h4 class="text-muted mb-3 lh-1 d-block text-truncate">Ventas de Mes</h4>
+                        <h5 class="mb-3 text-success">
                             CLP<span>
                                 {{ number_format($totalMes, 0, ',', '.') }}</span>
-                        </h4>
+                        </h3>
                     </div>
                 </div>
             </div><!-- end card body -->
@@ -99,7 +99,7 @@
                         <span class="text-muted mb-3 lh-1 d-block text-truncate">Ventas Acumuladas</span>
                         <h4 class="mb-3 text-success">
                             CLP
-                            <span>{{ number_format($totaldiaventas, 0, ',', '.') }}</span>
+                            <span>{{ number_format($totalAcumuladasventas, 0, ',', '.') }}</span>
                         </h4>
                     </div>
                 </div>
@@ -193,7 +193,7 @@
                                 <td>CLP {{ number_format($totalxdia['totalefectivo'], 0, ',', '.') }}</td>
                             </tr>
                             <tr>
-                                <td><strong>Tarjeta de Debito</strong></td>
+                                <td><strong>Tarjeta</strong></td>
                                 <td>CLP {{ number_format($totalxdia['totalcredito'], 0, ',', '.') }}</td>
                             </tr>
                             <tr>
@@ -215,7 +215,7 @@
 
 
 
-    <div class="col-xl-3">
+    <div class="col-xl-4">
         <div class="card">
             <div class="card-header align-items-center d-flex">
                 <h4 class="card-title mb-0 flex-grow-1">Servicios del Día</h4>
@@ -240,7 +240,7 @@
         <!-- end card -->
     </div>
 
-    <div class="col-xl-6">
+    <div class="col-xl-5">
         <div class="card">
             <div class="card-header align-items-center d-flex">
                 <h4 class="card-title mb-0 flex-grow-1">Compras del mes</h4>
