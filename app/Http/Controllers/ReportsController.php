@@ -171,7 +171,11 @@ class ReportsController extends Controller
                 ->join('sale_payments', 'sales.id', '=', 'sale_payments.sale_id')
                 ->select(DB::raw('SUM(sale_payments.pos_paid) AS total'), 'sale_payments.payment_method')
                 ->groupBy('sale_payments.payment_method')
-                ->where('sales.id', $sale->id)
+                ->where(function ($subQuery) use ($user_id) {
+                    if ($user_id != '' && $user_id != 'Todos') {
+                        $subQuery->where('sales.user_id', $user_id);
+                    }
+                })
                 ->get();
 
             foreach ($payments as $key) {
@@ -411,8 +415,26 @@ class ReportsController extends Controller
                 ->where('products.type', 'NEUMATICOS')
                 ->where('products.nacionality', 'Internacional')
                 ->orderBy('sales.id', 'desc')
-                ->whereBetween('sales.created_at', [$request->get('start'), $request->get('end')])
+                ->where(function ($query) use ($request) {
+                    if ($request->has('start') && $request->has('end') && $request->get('start') != '' && $request->get('end') != '') {
+                        $query->whereBetween('sales.created_at', [$request->get('start'), $request->get('end')]);
+                    }
+                })
                 ->get();
+
+        $totales = DB::table('sales')
+            ->join('sale_items', 'sales.id', '=', 'sale_items.sale_id')
+            ->join('products', 'sale_items.product_id', '=', 'products.id')
+            ->select(DB::raw('SUM(sale_items.quantity) AS total_neumaticos'),
+                    DB::raw('SUM(products.weight * sale_items.quantity) AS total_peso'))
+            ->where('products.type', 'NEUMATICOS')
+            ->where('products.nacionality', 'Internacional')
+            ->where(function ($query) use ($request) {
+                if ($request->has('start') && $request->has('end') && $request->get('start') != '' && $request->get('end') != '') {
+                    $query->whereBetween('sales.created_at', [$request->get('start'), $request->get('end')]);
+                }
+            })
+            ->first();
 
         foreach ($data as $key) {
 
@@ -427,7 +449,7 @@ class ReportsController extends Controller
             ];
         }
 
-        return Pdf::loadView('pdfs.neumaticoscomprados', compact('informe', 'fechaInicio', 'fechaFin'))
+        return Pdf::loadView('pdfs.neumaticoscomprados', compact('informe', 'fechaInicio', 'fechaFin', 'totales'))
                 ->stream(''.config('app.name', 'Laravel').' - Listado de neumaticos internacionales vendidos por dia - ' . Carbon::now(). '.pdf');
     }
 

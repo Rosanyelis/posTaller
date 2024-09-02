@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\TypeProduct;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Exports\ProductsExport;
 use App\Imports\ProductsImport;
 use App\Models\ProductStoreQty;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -32,8 +33,10 @@ class ProductController extends Controller
     public function datatable(Request $request)
     {
         if ($request->ajax()) {
-            $data = Product::with('category', 'storeqty')
-                    ->orderby('name', 'desc');
+            $data = Product::join('categories', 'products.category_id', '=', 'categories.id')
+            ->join('product_store_qties', 'products.id', '=', 'product_store_qties.product_id')
+            ->select('products.*', 'product_store_qties.quantity as stock', 'categories.name as category_name')
+            ->orderBy('categories.name', 'asc', 'products.code', 'asc');
             return DataTables::of($data)
                 ->filter(function ($query) use ($request) {
                     if ($request->has('category_id') && $request->get('category_id') != '') {
@@ -260,7 +263,11 @@ class ProductController extends Controller
 
     public function allproductpdf()
     {
-        $products = Product::all();
+        $products = Product::join('categories', 'products.category_id', '=', 'categories.id')
+                ->join('product_store_qties', 'products.id', '=', 'product_store_qties.product_id')
+                ->select('products.*', 'product_store_qties.quantity as stock', 'categories.name as category_name')
+                ->orderBy('categories.name', 'asc', 'products.code', 'asc')
+                ->get();
         return Pdf::loadView('pdfs.allproducts', compact('products'))
                 ->setPaper('letter', 'landscape')
                 ->stream(''.config('app.name', 'Laravel').' - Listado de Productos.pdf');
@@ -341,5 +348,10 @@ class ProductController extends Controller
     public function export()
     {
         return Excel::download(new ProductsInternationalExport, 'neumaticos-internacionales.xlsx');
+    }
+
+    public function exportproduct()
+    {
+        return Excel::download(new ProductsExport, 'productos.xlsx');
     }
 }

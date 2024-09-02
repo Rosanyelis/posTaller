@@ -286,7 +286,7 @@
             type: "POST",
             data: {
                 month: $('#month').val(),
-                user_id: ($('#vendedor').val() == 'Todos') ? '' : $('#vendedor').val(),
+                user_id: $('#vendedor').val(),
                 _token: "{{ csrf_token() }}"
             },
             dataType: "JSON",
@@ -310,7 +310,7 @@
             url: "{{ route('ventas.datatablexmonth') }}",
             data: function(d) {
                 d.month = $('#month').val();
-                d.user_id = ($('#vendedor').val() == 'Todos') ? '' : $('#vendedor').val();
+                d.user_id = $('#vendedor').val();
             }
         },
         dataType: 'json',

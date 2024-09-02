@@ -219,16 +219,16 @@
                 searchable: true
             },
             {
-                data: 'category.name',
-                name: 'category.name'
+                data: 'category_name',
+                name: 'category_name'
             },
             {
                 data: 'type',
                 name: 'type'
             },
             {
-                data: 'storeqty.quantity',
-                name: 'storeqty.quantity'
+                data: 'stock',
+                name: 'stock'
             },
             {
                 data: 'cost',

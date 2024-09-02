@@ -172,6 +172,7 @@ class DashboardController extends Controller
         $data = Purchase::join('suppliers', 'purchases.supplier_id', '=', 'suppliers.id')
             ->select('purchases.created_at', 'purchases.total', 'suppliers.name')
             ->whereMonth('purchases.created_at', $mes)
+            ->orderBy('purchases.created_at', 'desc')
             ->get();
 
         return $data;

@@ -268,7 +268,7 @@
 
     function totalSales() {
         var day = $('#dateday').val();
-        var user_id = ($('#vendedor').val() == 'Todos') ? '' : $('#vendedor').val();
+        var user_id = $('#vendedor').val();
 
         $.ajax({
             url: "{{ route('ventas.totalSales') }}",
@@ -299,7 +299,7 @@
             url: "{{ route('ventas.datatable') }}",
             data: function(d) {
                 d.day = $('#dateday').val();
-                d.user_id = ($('#vendedor').val() == 'Todos') ? '' : $('#vendedor').val();
+                d.user_id = $('#vendedor').val();
             }
         },
         dataType: 'json',

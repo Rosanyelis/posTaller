@@ -139,7 +139,7 @@
                                         <strong>Fecha de Orden:</strong> <span id="date"></span>
                                     </div>
                                     <div class="col-md-6">
-                                        <strong>Total :</strong> <span id="total"></span>
+                                        <strong>Total :</strong> <span id="totals"></span>
                                     </div>
 
                                     <div class="col-md-6">
@@ -375,9 +375,9 @@
             success: function(res) {
                 $('#name').text(res.customer.name);
                 $('#date').text(moment(res.created_at).format('DD/MM/YYYY hh:mm A'));
-                $('#total').text(res.total);
+                $('#totals').text(numberFormat2.format(res.total));
                 $('#nfactura').text(res.correlativo);
-                $('#total2').text(res.total);
+                $('#total2').text(numberFormat2.format(res.total));
                 $('#status').text(res.status);
                 $('#marca').text(res.marca);
                 $('#patente').text(res.patente_vehiculo);
@@ -392,8 +392,8 @@
                         .append('<td>' + value.product.name + '</td>')
                         .append('<td>' + value.details + '</td>')
                         .append('<td>' + value.quantity + '</td>')
-                        .append('<td>' + value.price + '</td>')
-                        .append('<td>' + value.total + '</td>')
+                        .append('<td>' + numberFormat2.format(value.price) + '</td>')
+                        .append('<td>' + numberFormat2.format(value.total) + '</td>')
                         .append('</tr>');
                 })
 
@@ -409,7 +409,7 @@
 
         Swal.fire({
             title: '¿Esta seguro de cambiar el estado de la orden de trabajo?',
-            text: "No podra cambiar el estado si es cancelado o completado!",
+            text: "No podra cambiar el estado si es cancelado o completado!. Al completar la orden los productos seran descontados del inventario.",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',

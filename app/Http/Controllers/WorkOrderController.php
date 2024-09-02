@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kardex;
 use App\Models\Product;
 use App\Models\Customer;
 use App\Models\WorkOrder;
 use App\Mail\SendWorkorder;
 use Illuminate\Http\Request;
 use App\Models\WorkOrderItems;
+use App\Models\ProductStoreQty;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
@@ -62,6 +64,14 @@ class WorkOrderController extends Controller
         return response()->json($data);
 
     }
+    public function productjson(Request $request)
+    {
+        $data = Product::join('product_store_qties', 'products.id', '=', 'product_store_qties.product_id')
+                ->select('products.id', 'products.name', 'products.code', 'products.price', 'product_store_qties.quantity')
+                ->where('name', $request->name)
+                ->first();
+        return response()->json($data);
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -110,6 +120,8 @@ class WorkOrderController extends Controller
                 'price'          => $key->cost,
                 'total'          => $key->total,
             ]);
+
+
         }
 
 
@@ -131,7 +143,7 @@ class WorkOrderController extends Controller
     public function edit($workOrder)
     {
         $workOrder = WorkOrder::with('items', 'customer', 'items.product', 'user')->find($workOrder);
-        $products = Product::where('type', 'Servicios')->get();
+        $products = Product::all();
         $customers = Customer::all();
         return view('workorders.edit', compact('workOrder', 'products', 'customers'));
     }
@@ -151,6 +163,8 @@ class WorkOrderController extends Controller
             'patente_vehiculo' => $request->patente_vehiculo,
             'total'          => $request->total,
         ]);
+
+        $workorder->items()->delete();
 
         foreach ($productos as $key) {
             $product = Product::where('name', $key->producto)->first();
@@ -173,10 +187,32 @@ class WorkOrderController extends Controller
     public function destroy(Request $request)
     {
         $workOrder = WorkOrder::find($request->id);
+        if ($request->status == 'Completado') {
+            foreach($workOrder->items as $key){
+                $product = Product::find($key->product_id);
+
+                $productqty = ProductStoreQty::where('product_id', $product->id)->first();
+                if ($productqty->quantity < $key->quantity) {
+                    return redirect()->route('ordenes-trabajo.index')->with('error', 'Oops.. Para cambiar el estado a completado, debe haber suficiente stock para los productos de la OT, verifique su inventario.');
+                }
+                $productqty->quantity = $productqty->quantity - $key->quantity;
+                $productqty->save();
+
+                # ingresamos informacion en kardex del producto
+                Kardex::create([
+                    'product_id'    => $product->id,
+                    'quantity'      => $key->quantity,
+                    'price'         => $key->price,
+                    'total'         => $key->total,
+                    'type'          => 2,
+                    'description'   => $product->name.' aplicado en Orden de trabajo ' . $workOrder->correlativo
+                ]);
+            }
+
+        }
         $workOrder->update([
             'status' => $request->status
         ]);
-
         LogActivityWorkOrder::create([
             'work_order_id'    => $request->id,
             'user_id'    => auth()->user()->id,
@@ -232,9 +268,5 @@ class WorkOrderController extends Controller
 
     }
 
-    public function productjson(Request $request)
-    {
-        $data = Product::where('name', $request->name)->first();
-        return response()->json($data);
-    }
+
 }

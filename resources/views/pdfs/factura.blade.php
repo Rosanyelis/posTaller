@@ -128,10 +128,6 @@
                     <td style="text-align: center;">{{ number_format($sale->total * ($sale->order_discount_id / 100), 0, ',', '.') }}</td>
                 </tr>
                 <tr>
-                    <td colspan="3" style="text-align: right; font-weight: bold">Impuesto (%{{ $sale->order_tax_id }}):</td>
-                    <td style="text-align: center;">{{ number_format($sale->total * ($sale->order_tax_id / 100), 0, ',', '.') }}</td>
-                </tr>
-                <tr>
                     <td colspan="3" style="text-align: right; font-weight: bold">Total:</td>
                     <td style="text-align: center;">{{ number_format($sale->grand_total, 0, ',', '.') }}</td>
                 </tr>

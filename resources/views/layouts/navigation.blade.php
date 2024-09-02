@@ -28,7 +28,8 @@
                                     <li><a href="{{ route('productos.index') }}" key="t-products">Lista Productos</a></li>
                                     <li><a href="{{ route('productos.create') }}" data-key="t-product-add">Agregar producto</a></li>
                                     <li><a href="{{ route('productos.viewimport') }}" data-key="t-orders">Importar Productos</a></li>
-                                    <li><a href="{{ route('products.allproductpdf') }}" target="_blank">Listado de Productos</a></li>
+                                    <li><a href="{{ route('products.allproductpdf') }}" target="_blank">Listado de Productos PDF</a></li>
+                                    <li><a href="{{ route('products.exportproduct') }}" target="_blank">Listado de Productos Excel</a></li>
                                     <li><a href="{{ route('products.export') }}" target="_blank">Neumaticos Int.</a></li>
                                 </ul>
                             </li>

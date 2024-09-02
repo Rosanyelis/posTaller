@@ -29,7 +29,7 @@
         <tbody>
             <tr style="border-bottom: 1px solid #1C84EE; ">
                 <td colspan="10" style="font-weight: bold; text-align: center; padding-bottom: 15px; padding-top: 40px">
-                    Ventas desde {{ $fechai }} hasta {{ $fechaf }} @if ($vendedor != 'Todos') del vendedor {{ $vendedor }} @endif
+                    Ventas @if ($fechai != '' && $fechaf != '') desde {{ $fechai }} hasta {{ $fechaf }} @endif  @if ($vendedor != 'Todos') del vendedor {{ $vendedor }} @endif
                 </td>
             </tr>
             <tr>

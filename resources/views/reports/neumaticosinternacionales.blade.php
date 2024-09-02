@@ -141,8 +141,6 @@
     const numberFormat2 = new Intl.NumberFormat('de-DE');
 
     function totalNeumaticos() {
-        var day = $('#dateday').val();
-        var user_id = ($('#vendedor').val() == 'Todos') ? '' : $('#vendedor').val();
 
         $.ajax({
             url: "{{ route('reportes.totalneumaticos') }}",
@@ -155,7 +153,7 @@
             dataType: "JSON",
             success: function(data) {
                 $('#total').html(numberFormat2.format(data.total_neumaticos));
-                $('#totalpeso').html(data.total_peso + ' kg');
+                $('#totalpeso').html(data.total_peso.toFixed(2) + ' kg');
             }
         });
     }
@@ -241,39 +239,29 @@
         }
 
         table.draw();
+        totalNeumaticos();
     });
 
     $('#removefilter').on('click', function() {
         $('#startday').val('').trigger('change');
         $('#endday').val('').trigger('change');
         table.draw();
+        totalNeumaticos();
     });
 
     $('#informe').on('click', function() {
-        if ($('#startday').val() != '' && $('#endday').val() != '' ) {
-            if ($('#startday').val() > $('#endday').val()) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'La fecha inicial no puede ser mayor que la fecha final',
-                    timer: 1500
-                });
-                return false;
-            }
-            $('#startfilter').val($('#startday').val());
-            $('#endfilter').val($('#endday').val());
-            $('#formfilter').submit();
-
-        }
-        if ($('#startday').val() == '' && $('#endday').val() == '' ) {
+        if ($('#startday').val() > $('#endday').val()) {
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
-                text: 'Por favor, seleccione las fechas',
+                text: 'La fecha inicial no puede ser mayor que la fecha final',
                 timer: 1500
             });
             return false;
         }
+        $('#startfilter').val($('#startday').val());
+        $('#endfilter').val($('#endday').val());
+        $('#formfilter').submit();
 
     });
 

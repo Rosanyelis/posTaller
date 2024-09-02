@@ -35,7 +35,7 @@
 
 @section('content')
 <div class="row">
-    <div class="col-xl-12 col-lg-12 col-md-12">
+    <div class="col-xl-6 col-lg-6 col-md-6">
         <!-- card -->
         <div class="card card-h-100">
             <!-- card body -->
@@ -50,7 +50,7 @@
                                         <div id="lefttop" style="margin-bottom:5px;">
                                             <div class="form-group" style="margin-bottom:5px;">
                                                 <div class="input-group">
-                                                    <select class="form-select" name="customer" id="customer" style="width: 93%">
+                                                    <select class="form-select" name="customer" id="customer" style="width: 90%">
                                                         <option selected>Seleccione cliente</option>
                                                     </select>
                                                     <button class="btn btn-secondary" type="button" title="Añadir cliente"
@@ -65,7 +65,7 @@
                                                     <label for="note_ref" class="col-form-label" >Nota Ref.</label>
                                                 </div>
                                                 <div class="col-md-10">
-                                                    <input type="text" name="note_ref" value="" id="note_ref"
+                                                    <input type="text" name="note_ref" id="note_ref"
                                                     class="form-control kb-text" placeholder="Nota de Referencia" />
                                                 </div>
                                             </div>
@@ -80,7 +80,7 @@
                                             </div>
                                             <div class="form-group row" style="margin-bottom:5px;">
                                                 <div class="col-md-2">
-                                                    <label for="workorder" class="col-form-label" >O. Trabajo</label>
+                                                    <label for="workorder" class="col-form-label" >O. Trab.</label>
                                                 </div>
                                                 <div class="col-md-10">
                                                     <input type="text" name="workorder" id="workorder" class="form-control"
@@ -149,17 +149,10 @@
                                                 <button type="button" class="btn btn-danger" style="height:70px;"
                                                 id="salir">Salir de caja</button>
                                             </div>
-                                            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 d-grid" style="">
-                                                <a href="{{ route('ventas.generateTicket', $saleLast) }}" target="_blank"
-                                                class="btn btn-secondary"
-                                                style="height:70px;">
-                                                    Imprimir Ultima Factura
-                                                </a>
-                                            </div>
-                                            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 d-grid" >
+                                            <div class="col-lg-6 col-md-6 col-sm-3 col-xs-6 d-grid" >
                                                 <button type="button" class="btn btn-info" id="print_bill" style="height:70px;"
                                                 onclick="imprimir();">
-                                                    Imprimir Factura Actual
+                                                    Imprimir Venta Reciente
                                                 </button>
                                             </div>
                                             <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 d-grid" style="padding: 0;">
@@ -186,25 +179,6 @@
                                     <input type="hidden" name="notepayment" id="note_payment">
 
                                 </form>
-                            </div>
-                        </td>
-                        <td id="products" width="50%" style="padding: 8px; vertical-align: top">
-                            <div class="row gx-2 gy-0">
-                                <div class="col-12">
-                                    <div class="input-group">
-                                        <select class="form-select" name="category" id="categorys" style="width: 100%">
-                                            <option selected>Seleccione Categoria</option>
-                                            @foreach ($categories as $category)
-                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="productlist" class="row gx-2 gy-3"
-                                style="position: relative;overflow: auto;width: auto;
-                                    height: 610px;margin: 0; padding: 0">
-
                             </div>
                         </td>
                     </tr>
@@ -291,7 +265,7 @@
                                     <div class="col-md-12">
                                         <div class="mb-3">
                                             <label for="notepayment">Nota</label>
-                                            <textarea name="notepayment" id="notepayment" class="form-control"></textarea>
+                                            <textarea name="notepayment" id="note" class="form-control"></textarea>
                                         </div>
                                     </div>
 
@@ -397,7 +371,8 @@
                     </div><!-- /.modal-dialog -->
                 </div>
 
-                <table id="printFactura" class="table table-bordered table-condensed w-100 d-none">
+                <table id="printFactura" class="table table-bordered table-condensed w-100 d-none"
+                    style="width: 280px; font-size: 12px">
                     <thead>
                         <tr>
                             <th colspan="4" class="text-center">
@@ -410,29 +385,93 @@
                             </th>
                         </tr>
                         <tr>
+                            <th colspan="4" class="text-center">
+                                <h3>Documento #00000{{ $saleLast->id }}</h3>
+                            </th>
+                        </tr>
+                        <tr>
+                            <td colspan="4" style="text-align: left; font-weight: normal">
+                                <strong>Cliente:</strong> {{ $saleLast->customer->name }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" style="text-align: left; font-weight: normal">
+                                <strong>Rut:</strong> {{ $saleLast->customer->rut }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th colspan="4" style="text-align: left; font-weight: normal">
+                                <strong>Correo:</strong> {{ $saleLast->customer->email }}
+                            </th>
+                        </tr>
+                        <tr>
+                            <th colspan="4" style="text-align: left; font-weight: normal">
+                                <strong>Tlf:</strong> {{ $saleLast->customer->phone }}
+                            </th>
+                        </tr>
+                        <tr>
+                            <th colspan="4" style="text-align: left; font-weight: normal">
+                                <strong>Dirección:</strong> {{ $saleLast->customer->address }}
+                            </th>
+                        </tr>
+                        <tr>
+                            <th colspan="4" style="text-align: left; font-weight: normal">
+                                <strong>Fecha:</strong> {{ \Carbon\Carbon::parse($saleLast->created_at)->format('d/m/Y H:i A') }}
+                            </th>
+                        </tr>
+                        <tr>
+                            <th colspan="4" style="text-align: left; font-weight: normal">
+                                <strong>Vendedor:</strong> {{ $saleLast->user->name }}
+                            </th>
+                        </tr>
+                        <tr>
+                            <th colspan="4" style="text-align: left; font-weight: normal">
+                                <strong>Nota:</strong> {{ $saleLast->note }}
+                            </th>
+                        </tr>
+                        <tr>
+                            <th colspan="4" style="text-align: left; font-weight: normal">
+                                <strong>Nota de pago:</strong> {{ $saleLast->note_pay }}
+                            </th>
+                        </tr>
+                        <tr>
+                            <th colspan="4" style="text-align: left; font-weight: normal">
+                                &nbsp;
+                            </th>
+                        </tr>
+                        <tr>
                             <th>Producto</th>
                             <th>Cant.</th>
                             <th>Precio</th>
                             <th>SubTotal</th>
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody>
+                        @foreach ($saleLast->saleitems as $item)
+                            <tr>
+                                <td>{{ $item->product_name }}</td>
+                                <td>{{ number_format($item->quantity, 0, ',', '.') }}</td>
+                                <td>{{ number_format($item->unit_price, 0, ',', '.') }}</td>
+                                <td>{{ number_format($item->subtotal, 0, ',', '.') }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
                     <tfoot>
                         <tr>
-                            <th colspan="3" class="text-end">Subtotal</th>
-                            <th><span id="subtotalf"></span></th>
+                            <th colspan="3" style="text-align: right;">Subtotal</th>
+                            <th>{{ number_format($saleLast->total, 0, ',', '.') }}</th>
                         </tr>
                         <tr>
-                            <th colspan="3" class="text-end">Descuento </th>
-                            <th><span id="discountf"></span></th>
+                            <th colspan="3" style="text-align: right;">Descuento </th>
+                            <th>{{ number_format($saleLast->total_discount, 0, ',', '.') }}</th>
                         </tr>
                         <tr>
-                            <th colspan="3" class="text-end">Propina</th>
-                            <th><span id="perquisitef"></span></th>
+                            <th colspan="3" style="text-align: right;">Propina</th>
+                            <th>{{ number_format($saleLast->perquisite, 0, ',', '.') }}</th>
                         </tr>
                         <tr>
-                            <th colspan="3" class="text-end">Total</th>
-                            <th><span id="totalf"></span></th>
+                            <th colspan="3" style="text-align: right;">Total</th>
+                            <th>{{ number_format($saleLast->grand_total, 0, ',', '.') }}</th>
                         </tr>
                         <tr>
                             <th colspan="4" class="text-center pt-5 pb-5">
@@ -441,6 +480,37 @@
                             </th>
                         </tr>
                     </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-6 col-lg-6 col-md-6">
+        <!-- card -->
+        <div class="card card-h-100">
+            <!-- card body -->
+            <div class="card-body">
+                <table style="width:100%;" class="layout-table">
+                    <tr>
+                        <td id="products" width="50%" style="padding: 8px; vertical-align: top">
+                            <div class="row gx-2 gy-0">
+                                <div class="col-12">
+                                    <div class="input-group">
+                                        <select class="form-select" name="category" id="categorys" style="width: 100%">
+                                            <option selected>Seleccione Categoria</option>
+                                            @foreach ($categories as $category)
+                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="productlist" class="row gx-2 gy-3"
+                                style="position: relative;overflow: auto;width: auto;
+                                    height: 610px;margin: 0; padding: 0">
+
+                            </div>
+                        </td>
+                    </tr>
                 </table>
             </div>
         </div>
@@ -473,7 +543,6 @@
                 dataType: 'json',
                 delay: 250,
                 processResults: function (data) {
-
                     return {
                         results:  $.map(data, function (item) {
 
@@ -485,9 +554,7 @@
                     };
                 },
                 cache: true,
-
             },
-
         });
         // Inicializa el autocomplete de productos para ser seleccionados
         $('#productos').autocomplete({
@@ -512,66 +579,33 @@
                 let subtotalHtml = '#subtotal-' + ui.item.id;
                 let totalComplete = 0;
 
+                // Verifica si hay stock
                 if (ui.item.quantity == 0) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Oops!, no hay stock',
                         text: 'El producto no tiene stock disponible, favor de seleccionar otro!',
                     });
-                } else {
-                    if (dataProduct.length > 0) {
-                        let code = ui.item.code;
-                            code = code.trim();
-                        let index = dataProduct.findIndex((item) => item.code == code);
+                }
 
-                        if (index == -1) {
-
-                            let datosFila = {};
-                                datosFila.id = ui.item.id;
-                                datosFila.code = code;
-                                datosFila.name = ui.item.name;
-                                datosFila.quantity = 1;
-                                datosFila.price = ui.item.price;
-                                datosFila.subtotal = ui.item.price;
-                                datosFila.type = 'product';
-
-                                dataProduct.push(datosFila);
-
-                            $('#posTable').append(
-                                '<tr id="producto-' + code + '">' +
-                                '<td>' + select + '</td>' +
-                                '<td class="text-center">' + ui.item.quantity + '</td>' +
-                                '<td class="text-center">' + ui.item.price + '</td>' +
-                                '<td class="text-center"><input type="number" id="quantity-' + code + '" onchange="calculateQuantity(this)" data-id="' + code + '" class="form-control form-control-sm" min="1" value="1"></td>' +
-                                '<td class="text-center"><span id="subtotal-' + code + '" data-id="' + code + '">'+ ui.item.price +'</span></td>' +
-                                '<td><button type="button" id="btnDelete-' + code + '" class="btn btn-danger btn-sm" data-id="' + code + '" onclick="deleteRow(this)"><i class="mdi mdi-delete "></i></button></td>'
-                            );
-
-                        } else if (index != -1) {
-                            let qtyHtml = '#quantity-' + code;
-                            let subtotalHtml = '#subtotal-' + code;
-                            dataProduct[index].quantity = parseInt(dataProduct[index].quantity) + 1;
-                            dataProduct[index].price = parseFloat(dataProduct[index].price) + parseFloat(ui.item.price);
-                            dataProduct[index].subtotal = parseFloat(dataProduct[index].subtotal) + parseFloat(ui.item.price);
-
-                            $(qtyHtml).val(dataProduct[index].quantity);
-                            $(subtotalHtml).text(dataProduct[index].subtotal);
-
-                        }
-
-                    } else{
-                        let code = ui.item.code;
+                if (dataProduct.length > 0) {
+                    let code = ui.item.code;
                         code = code.trim();
-                        let datosFila = {};
-                        datosFila.id = ui.item.id;
-                        datosFila.code = code;
-                        datosFila.name = ui.item.name;
-                        datosFila.quantity = 1;
-                        datosFila.price = ui.item.price;
-                        datosFila.subtotal = ui.item.price;
-                        datosFila.type = 'product';
+                    let index = dataProduct.findIndex((item) => item.code == code);
 
-                        dataProduct.push(datosFila);
+                    if (index == -1) {
+
+                        let datosFila = {};
+                            datosFila.id = ui.item.id;
+                            datosFila.code = code;
+                            datosFila.name = ui.item.name;
+                            datosFila.stock = ui.item.quantity;
+                            datosFila.quantity = 1;
+                            datosFila.price = ui.item.price;
+                            datosFila.subtotal = ui.item.price;
+                            datosFila.type = 'product';
+
+                            dataProduct.push(datosFila);
 
                         $('#posTable').append(
                             '<tr id="producto-' + code + '">' +
@@ -583,17 +617,65 @@
                             '<td><button type="button" id="btnDelete-' + code + '" class="btn btn-danger btn-sm" data-id="' + code + '" onclick="deleteRow(this)"><i class="mdi mdi-delete "></i></button></td>'
                         );
 
-
                     }
-                    console.log(dataProduct);
-                    calculateTotal();
-                    calculateArticulos();
-                    calculateComplete();
-                    $('#productos').val('');
-                    return false;
+
+                    if (index != -1) {
+                        let qtyHtml = '#quantity-' + code;
+                        let subtotalHtml = '#subtotal-' + code;
+
+                        let sumaQty = parseInt(dataProduct[index].quantity) + 1;
+
+                        if (dataProduct[index].stock < sumaQty) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops!, no hay stock',
+                                text: 'El producto no tiene stock disponible, favor de seleccionar otro!',
+                            });
+
+                            return false;
+                        }
+
+                        dataProduct[index].quantity = parseInt(dataProduct[index].quantity) + 1;
+                        dataProduct[index].price = parseFloat(dataProduct[index].price) + parseFloat(ui.item.price);
+                        dataProduct[index].subtotal = parseFloat(dataProduct[index].subtotal) + parseFloat(ui.item.price);
+
+                        $(qtyHtml).val(dataProduct[index].quantity);
+                        $(subtotalHtml).text(dataProduct[index].subtotal);
+                    }
+
                 }
 
+                if (dataProduct.length == 0) {
+                    let code = ui.item.code;
+                    code = code.trim();
+                    let datosFila = {};
+                    datosFila.id = ui.item.id;
+                    datosFila.code = code;
+                    datosFila.name = ui.item.name;
+                    datosFila.quantity = 1;
+                    datosFila.stock = ui.item.quantity;
+                    datosFila.price = ui.item.price;
+                    datosFila.subtotal = ui.item.price;
+                    datosFila.type = 'product';
 
+                    dataProduct.push(datosFila);
+
+                    $('#posTable').append(
+                        '<tr id="producto-' + code + '">' +
+                        '<td>' + select + '</td>' +
+                        '<td class="text-center">' + ui.item.quantity + '</td>' +
+                        '<td class="text-center">' + ui.item.price + '</td>' +
+                        '<td class="text-center"><input type="number" id="quantity-' + code + '" onchange="calculateQuantity(this)" data-id="' + code + '" class="form-control form-control-sm" min="1" value="1"></td>' +
+                        '<td class="text-center"><span id="subtotal-' + code + '" data-id="' + code + '">'+ ui.item.price +'</span></td>' +
+                        '<td><button type="button" id="btnDelete-' + code + '" class="btn btn-danger btn-sm" data-id="' + code + '" onclick="deleteRow(this)"><i class="mdi mdi-delete "></i></button></td>'
+                    );
+                }
+
+                calculateTotal();
+                calculateArticulos();
+                calculateComplete();
+                $('#productos').val('');
+                return false;
             }
 
         }).data('ui-autocomplete')._renderItem = function(ul, item) {
@@ -622,6 +704,7 @@
                 let stock = 0;
                 let quantity = 0;
                 let select = 'Orden:' + ui.item.correlativo + ' - ' + ui.item.rut + ' - ' + ui.item.name;
+
                 if (dataProduct.length > 0) {
                     let index = dataProduct.findIndex((item) => item.code == ui.item.correlativo);
 
@@ -635,7 +718,9 @@
                             timer: 2500
                         });
                         $('#workorder').val('');
-                    } else {
+                    }
+
+                    if (index == -1) {
                         let datosFila = {};
                         datosFila.id = ui.item.id;
                         datosFila.code = ui.item.correlativo;
@@ -659,7 +744,9 @@
 
                     }
 
-                } else {
+                }
+
+                if (dataProduct.length == 0) {
 
                     let datosFila = {};
                     datosFila.id = ui.item.id;
@@ -767,30 +854,46 @@
                             let index = dataProduct.findIndex((item) => item.code == code);
 
                             if (index == -1) {
-                            let code = element.code;
-                            code = code.trim();
-                            let datosFila = {};
-                                datosFila.id = element.id;
-                                datosFila.code = code;
-                                datosFila.name = element.name;
-                                datosFila.quantity = 1;
-                                datosFila.price = element.price;
-                                datosFila.subtotal = element.price;
-                                datosFila.type = 'product';
+                                let code = element.code;
+                                code = code.trim();
+                                let datosFila = {};
+                                    datosFila.id = element.id;
+                                    datosFila.code = code;
+                                    datosFila.name = element.name;
+                                    datosFila.quantity = 1;
+                                    datosFila.stock = element.quantity;
+                                    datosFila.price = element.price;
+                                    datosFila.subtotal = element.price;
+                                    datosFila.type = 'product';
 
-                                dataProduct.push(datosFila);
+                                    dataProduct.push(datosFila);
 
-                                $('#posTable').append(
-                                    '<tr id="producto-' + code + '">' +
-                                    '<td>' + select + '</td>' +
-                                    '<td class="text-center">' + element.quantity + '</td>' +
-                                    '<td class="text-center">' + element.price + '</td>' +
-                                    '<td class="text-center"><input type="number" id="quantity-' + code + '" onchange="calculateQuantity(this)" data-id="' + code + '" class="form-control form-control-sm" min="1" value="1"></td>' +
-                                    '<td class="text-center"><span id="subtotal-' + code + '" data-id="' + code + '">'+ element.price +'</span></td>' +
-                                    '<td><button type="button" id="btnDelete-' + code + '" class="btn btn-danger btn-sm" data-id="' + code + '" onclick="deleteRow(this)"><i class="mdi mdi-delete "></i></button></td>'
-                                );
+                                    $('#posTable').append(
+                                        '<tr id="producto-' + code + '">' +
+                                        '<td>' + select + '</td>' +
+                                        '<td class="text-center">' + element.quantity + '</td>' +
+                                        '<td class="text-center">' + element.price + '</td>' +
+                                        '<td class="text-center"><input type="number" id="quantity-' + code + '" onchange="calculateQuantity(this)" data-id="' + code + '" class="form-control form-control-sm" min="1" value="1"></td>' +
+                                        '<td class="text-center"><span id="subtotal-' + code + '" data-id="' + code + '">'+ element.price +'</span></td>' +
+                                        '<td><button type="button" id="btnDelete-' + code + '" class="btn btn-danger btn-sm" data-id="' + code + '" onclick="deleteRow(this)"><i class="mdi mdi-delete "></i></button></td>'
+                                    );
 
-                            } else if (index != -1) {
+                            }
+
+                            if (index != -1) {
+
+                                let sumaQty = parseInt(dataProduct[index].quantity) + 1;
+
+                                if (dataProduct[index].stock < sumaQty) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Oops!, no hay stock',
+                                        text: 'El producto no tiene stock disponible, favor de seleccionar otro!',
+                                    });
+
+                                    return false;
+                                }
+
                                 dataProduct[index].quantity = parseInt(dataProduct[index].quantity) + 1;
                                 dataProduct[index].price = parseFloat(dataProduct[index].price) + parseFloat(element.price);
                                 dataProduct[index].subtotal = parseFloat(dataProduct[index].subtotal) + parseFloat(element.price);
@@ -807,6 +910,7 @@
                             datosFila.id = element.id;
                             datosFila.code = code;
                             datosFila.name = element.name;
+                            datosFila.stock = element.quantity;
                             datosFila.quantity = 1;
                             datosFila.price = element.price;
                             datosFila.subtotal = element.price;
@@ -826,8 +930,6 @@
 
 
                         }
-                        console.log(dataProduct);
-
                         calculateTotal();
                         calculateArticulos();
                         calculateComplete();
@@ -935,7 +1037,6 @@
 
         $('#methodPay').on('change', function() {
             var type = $(this).val();
-            console.log(type);
             if (type == 'Efectivo') {
                 $('#labelNote').text('Nota de Pago');
             } else if (type == 'Cheque') {
@@ -958,8 +1059,6 @@
                     position: 'top-end',
                     icon: 'error',
                     title: 'Por favor agregue los datos de venta',
-                    showConfirmButton: false,
-                    timer: 1500
                 });
                 $('#modalPayment').modal('hide');
 
@@ -980,8 +1079,6 @@
             $('#importe').val('');
             $('#notePayment').val('');
 
-            calculateBalance();
-
         });
         $('#save_payment').on('click', function() {
             // Variable para almacenar campos incompletos
@@ -991,8 +1088,6 @@
                     position: 'top-center',
                     icon: 'error',
                     title: 'Seleccione un cliente para procesar el pago',
-                    showConfirmButton: false,
-                    timer: 2500
                 });
 
                 missingFields.push('Cliente');
@@ -1002,12 +1097,17 @@
                     position: 'top-center',
                     icon: 'error',
                     title: 'Seleccione la forma de pago',
-                    showConfirmButton: false,
-                    timer: 2500
                 });
                 missingFields.push('metodo');
 
             }
+
+            dataProduct.forEach(element => {
+                if (element.stock < element.quantity) {
+                    missingFields.push('producto:' + element.name);
+                }
+            });
+
             var customer = $('#customer').val(), noteRef = $('#note_ref').val(),
             tax = $('#tax').text(),discount = $('#discount').val(),
             propina = $('#propina').val(), subtotal = parseFloat($('#totalComplete').text()),
@@ -1042,13 +1142,12 @@
             $('#paypartial').val(JSON.stringify(dataPartial));
             $('#note_payment').val(noteRef);
 
+
             if (missingFields.length > 0) {
                 Swal.fire({
                     position: 'top-center',
                     icon: 'error',
-                    title: 'Por favor verifique los datos para completar la venta',
-                    showConfirmButton: false,
-                    timer: 1500
+                    title: 'Por favor verifique los datos y productos para completar la venta',
                 });
                return false;
             }
@@ -1125,12 +1224,24 @@
 
         if (dataProduct.length > 0) {
             let index = dataProduct.findIndex((item) => item.code == productCode);
+
+            if (dataProduct[index].stock < quantity) {
+                Swal.fire({
+                    position: 'top-center',
+                    icon: 'error',
+                    title: 'No hay suficiente stock para el producto, que la cantidad sea igual o menor al stock',
+                });
+
+                $(id).val('1');
+                return false;
+            }
+
             dataProduct[index].quantity = quantity;
             dataProduct[index].subtotal = dataProduct[index].price * dataProduct[index].quantity;
             $(subtotal).text(dataProduct[index].subtotal);
         }
 
-
+        calculateArticulos();
         calculateTotal();
         calculateComplete();
     }
@@ -1141,29 +1252,6 @@
     }
 
     function imprimir() {
-        $('#printFactura tbody').empty();
-        $('#discountpercentf').text();
-        $('#taxpercentf').text();
-        $('#taxf').text();
-        $('#discountf').text();
-        $('#perquisitef').text();
-        $('#subtotalf').text();
-        $('#totalf').text();
-
-        dataProduct.forEach((item) => {
-            $('#printFactura tbody').append('<tr class="text-center" id="payment-' + item.id + '"><td>' + item.name + '</td><td>' + item.quantity + '</td><td>' + item.price + '</td><td>' + item.subtotal + '</td></tr>');
-        });
-
-        var tax = parseFloat($('#tax').text());
-        var discount = parseFloat($('#discount').val());
-        var propina = $('#propina').val();
-        var subtotal = parseFloat($('#totalComplete').text());
-        var total = parseFloat($('#totalpay').text());
-        var discounttotal = discount;
-        $('#discountf').text(discounttotal);
-        $('#perquisitef').text(propina);
-        $('#subtotalf').text(subtotal);
-        $('#totalf').text(total);
 
         printJS({
             printable: 'printFactura',

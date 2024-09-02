@@ -87,6 +87,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/productos/{product}/kardex-pdf', [ProductController::class, 'kardexpdf'])->name('products.kardexpdf');
     Route::post('/productos/{product}/kardex-pdf-filter', [ProductController::class, 'kardexpdffilter'])->name('products.kardexpdffilter');
     Route::get('/productos/productos-internacionales-excel', [ProductController::class, 'export'])->name('products.export');
+    Route::get('/productos/productos-excel', [ProductController::class, 'exportproduct'])->name('products.exportproduct');
+
 
     # Categorias
     Route::get('/categorias', [CategoryController::class, 'index'])->name('categorias.index');

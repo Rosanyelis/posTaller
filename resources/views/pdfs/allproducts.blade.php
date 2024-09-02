@@ -17,9 +17,9 @@
                 <th colspan="7" style="text-align: center"><h4>Listado de Productos</h4></th>
             </tr>
             <tr>
+                <th>Categoria</th>
                 <th>Codigo</th>
                 <th>Producto</th>
-                <th>Categoria</th>
                 <th>Tipo</th>
                 <th>Stock</th>
                 <th>Costo</th>
@@ -29,13 +29,13 @@
         <tbody>
             @foreach ($products as $product)
                 <tr style="text-align: center; font-size: 14px">
+                    <td>{{ $product->category_name }}</td>
                     <td>{{ $product->code }}</td>
                     <td>{{ $product->name }}</td>
-                    <td>{{ $product->category->name }}</td>
                     <td>{{ $product->type }}</td>
-                    <td>{{ $product->storeqty->quantity }}</td>
-                    <td>{{ $product->cost }}</td>
-                    <td>{{ $product->price }}</td>
+                    <td>{{ number_format($product->stock, 0, ',', '.') }}</td>
+                    <td>{{ number_format($product->cost, 0, ',', '.') }}</td>
+                    <td>{{ number_format($product->price, 0, ',', '.') }}</td>
                 </tr>
             @endforeach
         </tbody>

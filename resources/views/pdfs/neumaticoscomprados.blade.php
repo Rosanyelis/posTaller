@@ -38,6 +38,22 @@
         </tbody>
     </table>
 
+    <table border="1" cellspacing="0" cellpadding="0"
+        style="width: 100%;font-family: Helvetica, Arial, sans-serif; margin-top: 20px; border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th>Total Neumáticos Vendidos</th>
+                <th>Total en peso</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="text-align: center">
+                <td >{{ number_format($totales->total_neumaticos, 0, ',', '.') }}</td>
+                <td >{{ number_format($totales->total_peso, 2, ',', '.') }}</td>
+            </tr>
+        </tbody>
+    </table>
+
     <table border="1" cellspacing="0" cellpadding="0" style="width: 100%;font-family: Helvetica, Arial, sans-serif; margin-top: 20px; border-collapse: collapse; font-size: 14px">
         <thead>
             <tr>

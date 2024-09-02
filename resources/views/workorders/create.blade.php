@@ -83,19 +83,34 @@
                         <div class="w-100"></div>
                         <hr>
                         <div class="col-lg-12 col-md-12 col-sm-12">
-                            <p><strong>Nota Importante:</strong> La cantidad indicada en la tabla de abajo, es la cantidad de Servicios que se aplicaran en el vehículo, de igual forma para los productos standard</p>
+                            <p ><strong>Nota Importante:</strong> La cantidad indicada en la tabla, es la cantidad de Servicios o Productos que se aplicaran en el vehículo.
+                                Tomar consideración que la cantidad debe corresponder a lo que existe en el inventario</p>
                         </div>
-                        <div class="col-lg-4 col-md-4 col-sm-6">
+                        <div class="col-lg-6 col-md-6 col-sm-6">
                             <div class="mb-3">
                                 <label for="producto" class="form-label">Nombre de Producto</label>
                                 <select class="form-control" name="producto" id="producto" style="width: 100%">
                                     <option value="">-- Seleccione --</option>
                                     @foreach ($products as $item)
-                                    <option value="{{ $item->name }}">{{ $item->name }}   - ($ {{ number_format($item->price, 0, ',', '.') }})</option>
+                                    <option value="{{ $item->name }}">{{ $item->code }} - {{ $item->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
+                        <div class="col-lg-2 col-md-2 col-sm-6">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Stock</label>
+                                <input type="text" class="form-control" name="stock" id="stock" readonly>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-6">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Precio Actual</label>
+                                <input type="text" class="form-control" name="pa" id="pa" readonly>
+                            </div>
+                        </div>
+                        <div class="w-100"></div>
+
 
                         <div class="col-lg-2 col-md-2 col-sm-6">
                             <div class="mb-3">
@@ -159,8 +174,10 @@
 @section('scripts')
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
+    const numberFormat2 = new Intl.NumberFormat('de-DE');
     var datosTabla = [];
     $(document).ready(function() {
+
         $('#producto').select2();
         $('#customer').select2();
 
@@ -174,7 +191,8 @@
                     name: name
                 },
                 success: function(data) {
-                    $('#cost').val(data.price);
+                    $('#pa').val(numberFormat2.format(data.price));
+                    $('#stock').val(data.quantity);
                 }
             });
         });
@@ -184,6 +202,7 @@
             var details = $('#details').val();
             let cost = parseFloat($('#cost').val());
             let quantity = parseInt($('#quantity').val());
+            let stock = parseInt($('#stock').val());
             let subtotal = cost * quantity;
             let total = subtotal;
 
@@ -193,6 +212,14 @@
 
                 if (index == -1)
                 {
+                    if (stock < quantity) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'No hay suficiente stock de este producto! Por favor que la cantidad sea igual o menor al inventario actual'
+                        });
+                        return false;
+                    }
                     let datosFila = {};
                         datosFila.producto = producto;
                         datosFila.details = details;
@@ -219,9 +246,18 @@
                     $("#table_products tfoot #total").empty();
                     calculateTotal();
 
-                } else if (index != -1)
-                {
+                }
+                if (index != -1) {
+                    let sumQty = parseInt(quantity) + parseInt(datosTabla[index].quantity);
 
+                    if (stock < sumQty) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'No hay suficiente stock de este producto! Por favor que la cantidad sea igual o menor al inventario actual'
+                        });
+                        return false;
+                    }
                     datosTabla[index].quantity = parseInt(datosTabla[index].quantity) + quantity;
                     datosTabla[index].cost = parseFloat(cost);
                     datosTabla[index].total = parseFloat(datosTabla[index].total) + parseFloat(total);
@@ -230,10 +266,6 @@
                         if ($(this).find('td').eq(0).text() == producto) {
                             $(this).find('td').eq(2).text(datosTabla[index].quantity);
                             $(this).find('td').eq(4).text(datosTabla[index].total);
-
-                            console.log($(this).find('td').eq(2).text());
-                            console.log($(this).find('td').eq(4).text());
-
                         }
                     });
 
@@ -241,7 +273,18 @@
                     calculateTotal();
                 }
 
-            } else {
+            }
+
+            if (datosTabla.length == 0)
+            {
+                if (stock < quantity) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'No hay suficiente stock de este producto! Por favor que la cantidad sea igual o menor al inventario actual'
+                    });
+                    return false;
+                }
                 let datosFila = {};
                     datosFila.producto = producto;
                     datosFila.details = details;
@@ -269,7 +312,8 @@
 
                 calculateTotal();
             }
-
+            $('#stock').val('');
+            $('#pa').val('');
             $("#quantity").val('');
             $("#cost").val('');
             $("#details").val('');

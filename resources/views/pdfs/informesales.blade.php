@@ -30,7 +30,8 @@
         <tbody>
             <tr style="border-bottom: 1px solid #1C84EE; ">
                 <td colspan="10" style="font-weight: bold; text-align: center; padding-bottom: 15px; padding-top: 40px">
-                    Ventas del Vendedor {{ $vendedor }} en el día {{ $dia }}
+                    Ventas @if ($vendedor != '') del vendedor {{ $vendedor }} @endif
+                    @if ($dia != '') del dia {{ $dia }} @endif
                 </td>
             </tr>
             <tr>
@@ -60,11 +61,11 @@
         <tbody>
             <tr style="text-align: center">
                 <td >{{ number_format($total, 0, ',', '.') }}</td>
-                <td >{{ number_format($totalefectivo, 0, ',', '.') }}</td>
-                <td >{{ number_format($totalcredito, 0, ',', '.') }}</td>
-                <td >{{ number_format($totalcheque, 0, ',', '.') }}</td>
-                <td >{{ number_format($totaltransferencia, 0, ',', '.') }}</td>
-                <td >{{ number_format($totalpropina, 0, ',', '.') }}</td>
+                <td >{{ number_format($efectivo, 0, ',', '.') }}</td>
+                <td >{{ number_format($credito, 0, ',', '.') }}</td>
+                <td >{{ number_format($cheque, 0, ',', '.') }}</td>
+                <td >{{ number_format($transferencia, 0, ',', '.') }}</td>
+                <td >{{ number_format($propina, 0, ',', '.') }}</td>
             </tr>
         </tbody>
     </table>

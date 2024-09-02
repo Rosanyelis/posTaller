@@ -23,7 +23,7 @@ class PosController extends Controller
     public function index()
     {
         $categories = Category::all();
-        $saleLast = Sale::orderBy('id', 'desc')->first()->id;
+        $saleLast = Sale::with('customer', 'user', 'saleItems')->orderBy('id', 'desc')->first();
         return view('pos.index', compact('categories', 'saleLast'));
     }
 
@@ -40,7 +40,7 @@ class PosController extends Controller
     {
         $data = Product::join('product_store_qties', 'products.id', '=', 'product_store_qties.product_id')
                     ->select('products.id', 'products.name', 'products.code', 'products.price', 'product_store_qties.quantity')
-                    ->where('product_store_qties.quantity', '>', '1')
+                    ->where('product_store_qties.quantity', '>', '0')
                     ->where('products.name', 'like', '%' . $request->term . '%')
                     ->orWhere('products.code', 'like', '%' . $request->term . '%')
                     ->orderby('products.name', 'asc')
@@ -52,9 +52,14 @@ class PosController extends Controller
     public function getWorkorders(Request $request)
     {
         $data = WorkOrder::join('customers', 'work_orders.customer_id', '=', 'customers.id')
-                        ->where('correlativo', 'like', '%' . $request->term . '%')
-                        ->where('status', 'Completado')
                         ->select('work_orders.id', 'work_orders.correlativo', 'work_orders.total', 'customers.name', 'customers.rut')
+                        ->where('status', 'Completado')
+                        ->where('status_payments', 'Pendiente')
+                        ->where(function ($query) use ($request) {
+                            $query->where('customers.rut', 'like', '%' . $request->term . '%')
+                                ->orWhere('customers.name', 'like', '%' . $request->term . '%')
+                                ->orwhere('correlativo', 'like', '%' . $request->term . '%');
+                        })
                         ->get();
         return response()->json($data);
     }
@@ -112,6 +117,7 @@ class PosController extends Controller
             'grand_total'           => $request->grandtotal,
             'total_items'           => $request->total_items,
             'note'                  => $request->note_ref,
+            'note_pay'              => $request->note,
             'paid'                  => $request->amount,
             'payment_status'        => $status
         ]);
@@ -154,27 +160,25 @@ class PosController extends Controller
 
             if ($key->type == 'workorder') {
 
-                SaleItems::create([
-                    'sale_id'           => $sale->id,
-                    'work_order_id'     => $key->id,
-                    'product_name'      => $key->name,
-                    'product_code'      => $key->code,
-                    'quantity'          => $key->quantity,
-                    'unit_price'        => $key->price,
-                    'net_unit_price'    => $key->price,
-                    'subtotal'          => $key->subtotal,
-                    'cost'              => $key->price
-                ]);
+                $Work_Orders = WorkOrder::find($key->id);
+                $Work_Orders->update(['status_payments' => 'Pagado']);
 
                 $workorder = WorkOrderItems::where('work_order_id', $key->id)->get();
 
                 foreach ($workorder as $item) {
-                    $product = Product::where('id', $item->product_id)->first();
-                    # disminuimos el stock del proyecto
 
-                    $productqty = ProductStoreQty::where('product_id', $item->product_id)->first();
-                    $productqty->quantity = $productqty->quantity - $item->quantity;
-                    $productqty->save();
+                    $producto = Product::where('id', $item->product_id)->first();
+                    SaleItems::create([
+                        'sale_id'           => $sale->id,
+                        'work_order_id'     => $key->id,
+                        'product_name'      => $producto->name,
+                        'product_code'      => $producto->code,
+                        'quantity'          => $item->quantity,
+                        'unit_price'        => $item->price,
+                        'net_unit_price'    => $item->price,
+                        'subtotal'          => $item->total,
+                        'cost'              => $item->price
+                    ]);
 
                     # ingresamos informacion en kardex del producto
                     Kardex::create([
@@ -183,7 +187,7 @@ class PosController extends Controller
                         'price'         => $item->price,
                         'total'         => $item->total,
                         'type'          => 2,
-                        'description'   => 'Venta de ' . $product->name.' de la orden de trabajo ' . $key->name
+                        'description'   => 'Producto ' . $producto->name.' facturado en el POS, perteneciete de la orden de trabajo ' . $key->name
                     ]);
 
                 }

@@ -46,13 +46,14 @@ class SaleController extends Controller
         if ($request->ajax()) {
             $data = DB::table('sales')
                 ->join('users', 'users.id', '=', 'sales.user_id')
-                ->join('sale_payments', 'sales.id', '=', 'sale_payments.sale_id')
-                ->select('sales.*', 'users.name AS user_name', DB::raw("GROUP_CONCAT(sale_payments.payment_method SEPARATOR ', ') AS payment_method"))
+                ->leftjoin('sale_payments', 'sales.id', '=', 'sale_payments.sale_id')
+                ->select('sales.*', 'users.name AS user_name',
+                        DB::raw("GROUP_CONCAT(sale_payments.payment_method SEPARATOR ', ') AS payment_method"))
                 ->groupBy('sales.id', 'sales.created_at', 'sales.customer_name', 'sales.grand_total', 'users.name')
                 ->orderBy('id', 'desc');
             return DataTables::of($data)
                 ->filter(function ($query) use ($request) {
-                    if ($request->has('user_id') && $request->get('user_id') != '') {
+                    if ($request->has('user_id') && $request->get('user_id') != 'Todos') {
                         $query->where('sales.user_id', $request->get('user_id'));
                     }
 
@@ -84,7 +85,7 @@ class SaleController extends Controller
                 if ($request->has('day') && $request->get('day') != '') {
                     $query->whereDate('sales.created_at', '=', $request->get('day'));
                 }
-                if ($request->has('user_id') && $request->get('user_id') != '') {
+                if ($request->has('user_id') && $request->get('user_id') != 'Todos') {
                     $query->where('sales.user_id', $request->get('user_id'));
                 }
             })->get();
@@ -102,7 +103,7 @@ class SaleController extends Controller
                         if ($request->has('day') && $request->get('day') != '') {
                             $query->whereDate('sales.created_at', '=', $request->get('day'));
                         }
-                        if ($request->has('user_id') && $request->get('user_id') != '') {
+                        if ($request->has('user_id') && $request->get('user_id') != 'Todos') {
                             $query->where('sales.user_id', $request->get('user_id'));
                         }
                     })
@@ -142,26 +143,30 @@ class SaleController extends Controller
      */
     public function generateInforme( Request $request )
     {
-        $informe            = [];
-        $total              = 0;
-        $totalefectivo      = 0;
-        $totalcredito       = 0;
-        $totalcheque        = 0;
-        $totaltransferencia = 0;
-        $totalpropina       = 0;
-        $dia                = $request->get('day');
-        $vendedor           = ($request->get('user_id')) ? User::find($request->get('user_id'))->name : 'Todos';
 
-        $data = Sale::where(function ($query) use ($request) {
-            if ($request->has('day') && $request->get('day') != '') {
-                $query->whereDate('sales.created_at', '=', $request->get('day'));
-            }
-            if ($request->has('user_id') && $request->get('user_id') != '') {
-                $query->where('sales.user_id', $request->get('user_id'));
-            }
-        })->get();
+        $sales = Sale::join('users', 'sales.user_id', '=', 'users.id')
+                ->select('sales.*', 'users.name as user_name')
+                ->where(function ($query) use ($request) {
+                    if ($request->has('day') && $request->get('day') != '') {
+                        $query->whereDate('created_at', '=', $request->get('day'));
+                    }
+                    if ($request->has('user_id') && $request->get('user_id') != 'Todos') {
+                        $query->where('user_id', $request->get('user_id'));
+                    }
+                })
+                ->get();
 
-        foreach ($data as $sale) {
+        $vendedor = ($request->get('user_id') == 'Todos' ? '' : User::find($request->get('user_id'))->name);
+        $dia = $request->get('day');
+        $informe = [];
+        $total = 0;
+        $propina = 0;
+        $efectivo = 0;
+        $credito = 0;
+        $cheque = 0;
+        $transferencia = 0;
+
+        foreach ($sales as $sale) {
             $informe[] = [
                 'id'        => $sale->id,
                 'fecha'     => Carbon::parse($sale->created_at)->format('d/m/Y'),
@@ -171,7 +176,7 @@ class SaleController extends Controller
                 'total'     => $sale->grand_total,
             ];
             $total += $sale->grand_total;
-            $totalpropina += $sale->perquisite;
+            $propina += $sale->perquisite;
 
             $payments = DB::table('sales')
                 ->join('sale_payments', 'sales.id', '=', 'sale_payments.sale_id')
@@ -181,29 +186,28 @@ class SaleController extends Controller
                     if ($request->has('day') && $request->get('day') != '') {
                         $query->whereDate('sales.created_at', '=', $request->get('day'));
                     }
-                    if ($request->has('user_id') && $request->get('user_id') != '') {
+                    if ($request->has('user_id') && $request->get('user_id') != 'Todos') {
                         $query->where('sales.user_id', $request->get('user_id'));
                     }
                 })
                 ->get();
 
-            foreach ($payments as $key) {
-                if ($key->payment_method == 'Efectivo') {
-                    $totalefectivo = $key->total;
-                } else if ($key->payment_method == 'Tarjeta de credito') {
-                    $totalcredito = $key->total;
-                } else if ($key->payment_method == 'Cheque') {
-                    $totalcheque = $key->total;
-                } else if ($key->payment_method == 'Transferencia') {
-                    $totaltransferencia = $key->total;
+                foreach ($payments as $key) {
+                    if ($key->payment_method == 'Efectivo') {
+                        $efectivo = floatval($key->total);
+                    } else if ($key->payment_method == 'Tarjeta de credito') {
+                        $credito = floatval($key->total);
+                    } else if ($key->payment_method == 'Cheque') {
+                        $cheque = floatval($key->total);
+                    } else if ($key->payment_method == 'Transferencia') {
+                        $transferencia = floatval($key->total);
+                    }
                 }
-            }
-
         }
-        return Pdf::loadView('pdfs.informesales',
-                    compact('informe', 'total', 'totalefectivo', 'totalcredito',
-                        'totalcheque', 'totaltransferencia', 'totalpropina', 'dia', 'vendedor'))
-                ->stream(''.config('app.name', 'Laravel').'- Informe de ventas por vendedor y dia - '. Carbon::now('America/Santiago')->format('d/m/Y'). '.pdf');
+
+        return Pdf::loadView('pdfs.informesales', compact('informe', 'total', 'propina',
+            'efectivo', 'credito', 'cheque', 'transferencia', 'dia', 'vendedor'))
+            ->stream(''.config('app.name', 'Laravel').'- Informe de ventas por vendedor y dia - '. Carbon::now('America/Santiago')->format('d/m/Y'). '.pdf');
     }
     /**
      * Handles the index2 request for sales.
@@ -237,7 +241,7 @@ class SaleController extends Controller
                 ->orderBy('id', 'desc');
             return DataTables::of($data)
                 ->filter(function ($query) use ($request) {
-                    if ($request->has('user_id') && $request->get('user_id') != '') {
+                    if ($request->has('user_id') && $request->get('user_id') != 'Todos') {
                         $query->where('sales.user_id', $request->get('user_id'));
                     }
 
@@ -274,12 +278,16 @@ class SaleController extends Controller
                 if ($request->has('month') && $request->get('month') != '') {
                     $query->whereMonth('sales.created_at', '=', $request->get('month'));
                 }
-                if ($request->has('user_id') && $request->get('user_id') != '') {
+                if ($request->has('user_id') && $request->get('user_id') != 'Todos') {
                     $query->where('sales.user_id', $request->get('user_id'));
                 }
             })->get();
-            $total = 0; $totalefectivo = 0; $totalcredito = 0; $totalcheque = 0;
-            $totaltransferencia = 0; $totalpropina = 0;
+            $total = 0;
+            $totalefectivo = 0;
+            $totalcredito = 0;
+            $totalcheque = 0;
+            $totaltransferencia = 0;
+            $totalpropina = 0;
             foreach ($object as $sale) {
                 $total += $sale->grand_total;
                 $totalpropina += $sale->perquisite;
@@ -292,7 +300,7 @@ class SaleController extends Controller
                         if ($request->has('month') && $request->get('month') != '') {
                             $query->whereMonth('sales.created_at', '=', $request->get('month'));
                         }
-                        if ($request->has('user_id') && $request->get('user_id') != '') {
+                        if ($request->has('user_id') && $request->get('user_id') != 'Todos') {
                             $query->where('sales.user_id', $request->get('user_id'));
                         }
                     })
@@ -323,7 +331,6 @@ class SaleController extends Controller
     }
     public function generateInformexmes( Request $request )
     {
-        Carbon::setLocale('es');
         $informe            = [];
         $total              = 0;
         $totalefectivo      = 0;
@@ -331,14 +338,14 @@ class SaleController extends Controller
         $totalcheque        = 0;
         $totaltransferencia = 0;
         $totalpropina       = 0;
-        $mes                = Carbon::createFromFormat('!m', $request->get('month'))->translatedFormat('F');
-        $vendedor           = ($request->get('user_id')) ? User::find($request->get('user_id'))->name : 'Todos';
+        $mes                = ($request->get('month')) ? Carbon::createFromFormat('!m', $request->get('month'))->translatedFormat('F') : '';
+        $vendedor           = ($request->get('user_id') != 'Todos') ? User::find($request->get('user_id'))->name : 'Todos';
 
         $data = Sale::where(function ($query) use ($request) {
             if ($request->has('month') && $request->get('month') != '') {
                 $query->whereMonth('sales.created_at', '=', $request->get('month'));
             }
-            if ($request->has('user_id') && $request->get('user_id') != '') {
+            if ($request->has('user_id') && $request->get('user_id') != 'Todos') {
                 $query->where('sales.user_id', $request->get('user_id'));
             }
         })->get();
@@ -362,7 +369,7 @@ class SaleController extends Controller
                     if ($request->has('month') && $request->get('month') != '') {
                         $query->whereMonth('sales.created_at', '=', $request->get('month'));
                     }
-                    if ($request->has('user_id') && $request->get('user_id') != '') {
+                    if ($request->has('user_id') && $request->get('user_id') != 'Todos') {
                         $query->where('sales.user_id', $request->get('user_id'));
                     }
                 })
@@ -421,7 +428,7 @@ class SaleController extends Controller
                         $query->whereBetween('sales.created_at', [$request->get('start'), $request->get('end')]);
                     }
 
-                    if ($request->has('user_id') && $request->get('user_id') != '') {
+                    if ($request->has('user_id') && $request->get('user_id') != 'Todos') {
                         $query->where('sales.user_id', $request->get('user_id'));
                     }
 
@@ -457,7 +464,7 @@ class SaleController extends Controller
                 if ($request->has('start') && $request->has('end') && $request->get('start') != '' && $request->get('end') != '') {
                     $query->whereBetween('sales.created_at', [$request->get('start'), $request->get('end')]);
                 }
-                if ($request->has('user_id') && $request->get('user_id') != '') {
+                if ($request->has('user_id') && $request->get('user_id') != 'Todos') {
                     $query->where('sales.user_id', $request->get('user_id'));
                 }
             })->get();
@@ -478,7 +485,7 @@ class SaleController extends Controller
                         if ($request->has('start') && $request->has('end') && $request->get('start') != '' && $request->get('end') != '') {
                             $query->whereBetween('sales.created_at', [$request->get('start'), $request->get('end')]);
                         }
-                        if ($request->has('user_id') && $request->get('user_id') != '') {
+                        if ($request->has('user_id') && $request->get('user_id') != 'Todos') {
                             $query->where('sales.user_id', $request->get('user_id'));
                         }
                     })
@@ -522,15 +529,15 @@ class SaleController extends Controller
         $totalcheque        = 0;
         $totaltransferencia = 0;
         $totalpropina       = 0;
-        $fechai             = Carbon::parse($request->get('start'))->format('d/m/Y');
-        $fechaf             = Carbon::parse($request->get('end'))->format('d/m/Y');
-        $vendedor           = ($request->get('user_id')) ? User::find($request->get('user_id'))->name : 'Todos';
+        $fechai             = ($request->get('start') != '') ? Carbon::parse($request->get('start'))->format('d/m/Y') : '';
+        $fechaf             = ($request->get('end') != '') ? Carbon::parse($request->get('end'))->format('d/m/Y') : '';
+        $vendedor           = ($request->get('user_id') != 'Todos') ? User::find($request->get('user_id'))->name : 'Todos';
 
         $data = Sale::where(function ($query) use ($request) {
             if ($request->has('start') && $request->has('end') && $request->get('start') != '' && $request->get('end') != '') {
                 $query->whereBetween('sales.created_at', [$request->get('start'), $request->get('end')]);
             }
-            if ($request->has('user_id') && $request->get('user_id') != '') {
+            if ($request->has('user_id') && $request->get('user_id') != 'Todos') {
                 $query->where('sales.user_id', $request->get('user_id'));
             }
         })->get();
@@ -554,7 +561,7 @@ class SaleController extends Controller
                     if ($request->has('start') && $request->has('end') && $request->get('start') != '' && $request->get('end') != '') {
                         $query->whereBetween('sales.created_at', [$request->get('start'), $request->get('end')]);
                     }
-                    if ($request->has('user_id') && $request->get('user_id') != '') {
+                    if ($request->has('user_id') && $request->get('user_id') != 'Todos') {
                         $query->where('sales.user_id', $request->get('user_id'));
                     }
                 })
@@ -609,6 +616,8 @@ class SaleController extends Controller
 
         $nombreImpresora = "POS-58";
         $connector = new WindowsPrintConnector($nombreImpresora);
+
+
         $impresora = new Printer($connector);
         $impresora->setJustification(Printer::JUSTIFY_CENTER);
         /** Encabezado */
