@@ -89,7 +89,7 @@
                     <div class="col-md-2">
                         <input type="date" class="form-control" id="dateday" name="dateday">
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <select name="vendedor" id="vendedor" class="form-control">
                             <option value="Todos">Todos los vendedores</option>
                             @foreach ($users as $user)
@@ -97,7 +97,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-7">
                         <button type="button" class="btn btn-primary " id="filter">
                             <i class="mdi mdi-filter"></i> Filtrar
                         </button>
@@ -107,12 +107,22 @@
                         </button>
                         <button type="button" class="btn btn-success " onclick="generateReport()">
                             <i class="mdi mdi-file-pdf"></i>
-                            Generar Informe
+                            Generar pdf
+                        </button>
+
+                        <button type="button" class="btn btn-warning " onclick="generateReportexcel()">
+                            <i class="mdi mdi-file-excel"></i>
+                            Generar Excel
                         </button>
                         <form id="formfilter" action="{{ route('ventas.generateInforme') }}" method="post" target="_blank">
                             @csrf
                             <input type="hidden" name="day" id="dayfilter">
                             <input type="hidden" name="user_id" id="userfilter">
+                        </form>
+                        <form id="formexcelfilter" action="{{ route('ventas.exportSales') }}" method="post" target="_blank">
+                            @csrf
+                            <input type="hidden" name="day" id="dayfilter2">
+                            <input type="hidden" name="user_id" id="userfilter2">
                         </form>
                     </div>
                 </div>
@@ -177,6 +187,9 @@
                                     </div>
                                     <div class="col-md-12">
                                         <strong>Notas:</strong> <span id="note"></span>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <strong>Notas de pago:</strong> <span id="notepay"></span>
                                     </div>
                                     <div class="col-md-12 text-center">
                                         <table id="productstbl" class="table table-bordered table-striped table-sm dt-responsive nowrap w-100">
@@ -377,6 +390,12 @@
         $('#formfilter').submit();
     }
 
+    generateReportexcel = () => {
+        $('#dayfilter2').val($('#dateday').val());
+        $('#userfilter2').val($('#vendedor').val());
+        $('#formexcelfilter').submit();
+    }
+
     function viewRecord(id) {
         $.ajax({
             url: "{{ route('ventas.show', ':id') }}"
@@ -397,6 +416,7 @@
                 }
 
                 $('#note').text(res.note);
+                $('#notepay').text(res.note_pay);
                 $('#discount').text(numberFormat2.format(res.total_discount));
 
                 res.saleitems.forEach((value, index) => {
@@ -434,6 +454,7 @@
         $('#date').text('');
         $('#forma_pago').text('');
         $('#note').text('');
+        $('#notepay').text('');
         $('#tax').text('');
         $('#discount').text('');
 

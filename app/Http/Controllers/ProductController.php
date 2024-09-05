@@ -34,7 +34,7 @@ class ProductController extends Controller
     {
         if ($request->ajax()) {
             $data = Product::join('categories', 'products.category_id', '=', 'categories.id')
-            ->join('product_store_qties', 'products.id', '=', 'product_store_qties.product_id')
+            ->leftjoin('product_store_qties', 'products.id', '=', 'product_store_qties.product_id')
             ->select('products.*', 'product_store_qties.quantity as stock', 'categories.name as category_name')
             ->orderBy('categories.name', 'asc', 'products.code', 'asc');
             return DataTables::of($data)
@@ -46,9 +46,9 @@ class ProductController extends Controller
                     if ($request->has('search') && $request->get('search')['value'] != '') {
                         $searchValue = $request->get('search')['value'];
                         $query->where(function ($subQuery) use ($searchValue) {
-                            $subQuery->where('name', 'like', "%{$searchValue}%")
-                                     ->orWhere('code', 'like', "%{$searchValue}%")
-                                     ->orWhere('type', 'like', "%{$searchValue}%");
+                            $subQuery->where('products.name', 'like', "%{$searchValue}%")
+                                     ->orWhere('products.code', 'like', "%{$searchValue}%")
+                                     ->orWhere('products.type', 'like', "%{$searchValue}%");
                         });
                     }
                 })

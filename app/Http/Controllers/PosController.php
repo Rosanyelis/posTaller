@@ -38,12 +38,13 @@ class PosController extends Controller
 
     public function getProducts(Request $request)
     {
-        $data = Product::join('product_store_qties', 'products.id', '=', 'product_store_qties.product_id')
+        $data = Product::join('categories', 'products.category_id', '=', 'categories.id')
+                    ->join('product_store_qties', 'products.id', '=', 'product_store_qties.product_id')
                     ->select('products.id', 'products.name', 'products.code', 'products.price', 'product_store_qties.quantity')
                     ->where('product_store_qties.quantity', '>', '0')
                     ->where('products.name', 'like', '%' . $request->term . '%')
                     ->orWhere('products.code', 'like', '%' . $request->term . '%')
-                    ->orderby('products.name', 'asc')
+                    ->orderBy('categories.name', 'asc', 'products.code', 'asc')
                     ->get();
 
         return response()->json($data);
@@ -77,10 +78,11 @@ class PosController extends Controller
      */
     public function getProductPos(Request $request)
     {
-        $query = Product::join('product_store_qties', 'products.id', '=', 'product_store_qties.product_id')
+        $query = Product::join('categories', 'products.category_id', '=', 'categories.id')
+                        ->join('product_store_qties', 'products.id', '=', 'product_store_qties.product_id')
                         ->select('products.id', 'products.name', 'products.image', 'products.code', 'products.price', 'product_store_qties.quantity')
                         ->where('product_store_qties.quantity', '>', '0')
-                        ->orderby('products.name', 'asc');
+                        ->orderBy('categories.name', 'asc', 'products.code', 'asc');
         // Si se proporciona un ID de categoría, se filtra por esa categoría
         if ($request->has('category_id')) {
             $query->where('category_id', $request->category_id);
@@ -171,6 +173,7 @@ class PosController extends Controller
                     SaleItems::create([
                         'sale_id'           => $sale->id,
                         'work_order_id'     => $key->id,
+                        'product_id'        => $producto->id,
                         'product_name'      => $producto->name,
                         'product_code'      => $producto->code,
                         'quantity'          => $item->quantity,

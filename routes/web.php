@@ -106,6 +106,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/ventas/datatable', [SaleController::class, 'datatable'])->name('ventas.datatable');
     Route::post('/ventas/total-ventas-por-caja', [SaleController::class, 'totalSales'])->name('ventas.totalSales');
     Route::post('/ventas/generar-informe', [SaleController::class, 'generateInforme'])->name('ventas.generateInforme');
+    Route::post('/ventas/generar-informe-excel', [SaleController::class, 'exportSales'])->name('ventas.exportSales');
 
     Route::get('/ventas-por-mes', [SaleController::class, 'indexmonth'])->name('ventas.indexmonth');
     Route::get('/ventas/datatable-por-mes', [SaleController::class, 'datatablexmonth'])->name('ventas.datatablexmonth');

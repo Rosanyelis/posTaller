@@ -97,6 +97,10 @@
             <strong>Fecha:</strong> {{ \Carbon\Carbon::parse($sale->created_at)->format('d/m/Y H:i A') }}
             <br>
             <strong>Vendedor:</strong> {{ $sale->user->name }}
+            <br>
+            <strong>Notas:</strong> {{ $sale->note }}
+            <br>
+            <strong>Nota de pago:</strong> {{ $sale->note_pay }}
         </h3>
         <br>
         <table>
@@ -124,8 +128,12 @@
                     <td style="text-align: center;">{{ number_format($sale->total, 0, ',', '.') }}</td>
                 </tr>
                 <tr>
-                    <td colspan="3" style="text-align: right; font-weight: bold">Descuento(%{{ $sale->order_discount_id }}):</td>
-                    <td style="text-align: center;">{{ number_format($sale->total * ($sale->order_discount_id / 100), 0, ',', '.') }}</td>
+                    <td colspan="3" style="text-align: right; font-weight: bold">Descuento:</td>
+                    <td style="text-align: center;">{{ number_format($sale->total_discount, 0, ',', '.') }}</td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="text-align: right; font-weight: bold">Propina:</td>
+                    <td style="text-align: center;">{{ number_format($sale->perquisite, 0, ',', '.') }}</td>
                 </tr>
                 <tr>
                     <td colspan="3" style="text-align: right; font-weight: bold">Total:</td>

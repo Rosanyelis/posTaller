@@ -23,7 +23,7 @@ class StoreSupplierRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['lowercase', 'email', 'max:255', 'unique:suppliers'],
+            'email' => ['nullable','email', 'unique:suppliers'],
         ];
     }
 
@@ -32,8 +32,6 @@ class StoreSupplierRequest extends FormRequest
         return [
             'name.required' => 'El nombre es requerido',
             'email.email' => 'El correo no es válido',
-            'email.max' => 'El correo es demasiado extenso',
-            'email.lowercase' => 'El correo debe estar en minúsculas',
             'email.unique' => 'El correo ya existe',
         ];
     }

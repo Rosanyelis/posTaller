@@ -33,7 +33,7 @@
             </div>
             <div class="card-body p-4">
                 <form action="{{ route('proveedor.update', $supplier->id) }}" method="POST" enctype="multipart/form-data"
-                    class="needs-validation @if ($errors->any()) was-validated @endif"
+                    class="needs-validation"
                     novalidate >
                     @csrf
                     @method('PUT')
@@ -41,7 +41,7 @@
                         <div class="col-lg-4 col-md-4 col-sm-6">
                             <div class="mb-3">
                                 <label for="name" class="form-label">Nombre de Proveedor</label>
-                                <input class="form-control" type="text" name="name" id="name" required value="{{ $supplier->name }}">
+                                <input class="form-control  @if ($errors->has('name')) is-invalid @endif " type="text" name="name" id="name" required value="{{ $supplier->name }}">
                                 @if ($errors->has('name'))
                                 <div class="invalid-feedback">
                                     {{ $errors->first('name') }}
@@ -52,7 +52,7 @@
                         <div class="col-lg-4 col-md-4 col-sm-6">
                             <div class="mb-3">
                                 <label for="email" class="form-label">Correo</label>
-                                <input class="form-control" type="email" name="email" id="email" required value="{{ $supplier->email }}">
+                                <input class="form-control @if ($errors->has('email')) is-invalid @endif" type="email" name="email" id="email"  value="{{ $supplier->email }}">
                                 @if ($errors->has('email'))
                                 <div class="invalid-feedback">
                                     {{ $errors->first('email') }}
@@ -63,7 +63,7 @@
                         <div class="col-lg-4 col-md-4 col-sm-6">
                             <div class="mb-3">
                                 <label for="phone" class="form-label">Celular</label>
-                                <input class="form-control" type="text" name="phone" id="phone" required value="{{ $supplier->phone }}">
+                                <input class="form-control @if ($errors->has('phone')) is-invalid @endif" type="text" name="phone" id="phone"  value="{{ $supplier->phone }}">
                                 @if ($errors->has('phone'))
                                 <div class="invalid-feedback">
                                     {{ $errors->first('phone') }}

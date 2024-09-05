@@ -182,6 +182,9 @@
                                     <div class="col-md-12">
                                         <strong>Notas:</strong> <span id="note"></span>
                                     </div>
+                                    <div class="col-md-12">
+                                        <strong>Notas de pago:</strong> <span id="notepay"></span>
+                                    </div>
                                     <div class="col-md-12 text-center">
                                         <table id="productstbl" class="table table-bordered table-striped table-sm dt-responsive nowrap w-100">
                                             <thead>
@@ -409,6 +412,7 @@
                 }
 
                 $('#note').text(res.note);
+                $('#notepay').text(res.note_pay);
                 $('#discount').text(numberFormat2.format(res.total_discount));
 
                 res.saleitems.forEach((value, index) => {
@@ -446,6 +450,7 @@
         $('#date').text('');
         $('#forma_pago').text('');
         $('#note').text('');
+        $('#notepay').text('');
         $('#tax').text('');
         $('#discount').text('');
 

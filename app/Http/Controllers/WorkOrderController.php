@@ -31,8 +31,18 @@ class WorkOrderController extends Controller
                 ->join('users', 'work_orders.user_id', '=', 'users.id')
                 ->join('customers', 'work_orders.customer_id', '=', 'customers.id')
                 ->select('work_orders.*', 'users.name as user', 'customers.name as customer')
-                ->get();
+                ->orderBy('id', 'desc');
             return DataTables::of($data)
+                ->filter(function ($query) use ($request) {
+                    if ($request->has('search') && $request->get('search')['value'] != '') {
+                        $searchValue = $request->get('search')['value'];
+                        $query->where(function ($subQuery) use ($searchValue) {
+                            $subQuery->where('users.name', 'like', "%{$searchValue}%")
+                                    ->orWhere('customers.name', 'like', "%{$searchValue}%")
+                                    ->orWhere('work_orders.correlativo', 'like', "%{$searchValue}%");
+                        });
+                    }
+                })
                 ->addColumn('actions', function ($data) {
                     return view('workorders.partials.actions', ['id' => $data->id]);
                 })

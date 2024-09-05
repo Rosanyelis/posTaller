@@ -57,7 +57,16 @@
                     <strong>Dirección:</strong> {{ $sale->customer->address }}
                 </td>
             </tr>
-
+            <tr>
+                <td colspan="10" style="padding: 5px;font-size: 14px">
+                    <strong>Nota:</strong> {{ $sale->note }}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="10" style="padding: 5px;font-size: 14px">
+                    <strong>Nota de pago:</strong> {{ $sale->note_pay }}
+                </td>
+            </tr>
         </tbody>
     </table>
     <table border="1" cellspacing="0" style="width: 100%; margin-top: 40px; border-collapse: collapse; font-family: Arial, Helvetica, sans-serif">
@@ -92,12 +101,12 @@
                 <td style="text-align: center;">{{ number_format($sale->total, 0, ',', '.') }}</td>
             </tr>
             <tr>
-                <td colspan="4" style="text-align: right; font-weight: bold">Descuento(%{{ $sale->order_discount_id }}):</td>
-                <td style="text-align: center;">{{ number_format($sale->total * ($sale->order_discount_id / 100), 0, ',', '.') }}</td>
+                <td colspan="4" style="text-align: right; font-weight: bold">Descuento:</td>
+                <td style="text-align: center;">{{ number_format($sale->total_discount, 0, ',', '.') }}</td>
             </tr>
             <tr>
-                <td colspan="4" style="text-align: right; font-weight: bold">Impuesto (%{{ $sale->order_tax_id }}):</td>
-                <td style="text-align: center;">{{ number_format($sale->total * ($sale->order_tax_id / 100), 0, ',', '.') }}</td>
+                <td colspan="4" style="text-align: right; font-weight: bold">Propina:</td>
+                <td style="text-align: center;">{{ number_format($sale->perquisite, 0, ',', '.') }}</td>
             </tr>
             <tr>
                 <td colspan="4" style="text-align: right; font-weight: bold">Total:</td>

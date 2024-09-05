@@ -11,6 +11,8 @@ use Mike42\Escpos\EscposImage;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\SalesDaySellerExport;
 use App\Http\Requests\StoreSaleRequest;
 use App\Http\Requests\UpdateSaleRequest;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
@@ -208,6 +210,14 @@ class SaleController extends Controller
         return Pdf::loadView('pdfs.informesales', compact('informe', 'total', 'propina',
             'efectivo', 'credito', 'cheque', 'transferencia', 'dia', 'vendedor'))
             ->stream(''.config('app.name', 'Laravel').'- Informe de ventas por vendedor y dia - '. Carbon::now('America/Santiago')->format('d/m/Y'). '.pdf');
+    }
+
+    public function exportSales( Request $request )
+    {
+        $vendedor = ($request->get('user_id') == 'Todos' ? '' : User::find($request->get('user_id'))->name);
+        $dia = $request->get('day');
+
+        return Excel::download(new SalesDaySellerExport($dia, $vendedor), 'ventas por vendedor y dia.xlsx');
     }
     /**
      * Handles the index2 request for sales.
