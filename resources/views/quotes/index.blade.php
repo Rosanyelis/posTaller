@@ -38,10 +38,50 @@
         <div class="card">
             <div class="card-header ">
                 <div class="row">
-                    <div class="col-md-6">
-                        <h4 class="card-title">Listado de Cotizaciones</h4>
+                    <div class="col-md-9">
+                        <div class="row g-1">
+                            <div class="col-md-2">
+                                <input type="date" class="form-control form-control-sm" id="startday" name="startday">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="date" class="form-control form-control-sm" id="endday" name="endday">
+                            </div>
+                            <div class="col-md-2">
+                                <select name="vendedor" id="vendedor" class="form-control form-control-sm">
+                                    <option value="">Vendedores</option>
+                                    @foreach ($users as $user)
+                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <select name="cliente" id="cliente" class="form-control form-control-sm">
+                                    <option value="">Clientes</option>
+                                    @foreach ($clients as $client)
+                                        <option value="{{ $client->id }}">{{ $client->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <select name="status" id="status" class="form-control form-control-sm">
+                                    <option value="">Estatus</option>
+                                    <option value="Cotizado">Cotizado</option>
+                                    <option value="Facturado">Facturado</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="button" class="btn btn-primary btn-sm" id="filter"
+                                    title="Filtrar">
+                                    <i class="mdi mdi-filter"></i>
+                                </button>
+                                <button type="button" class="btn btn-danger btn-sm" id="removefilter"
+                                    title="Quitar filtro">
+                                    <i class="mdi mdi-filter-remove"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-6 text-end">
+                    <div class="col-md-3 text-end">
                         <a href="{{ route('cotizaciones.create') }}"
                             class="btn btn-primary btn-sm ">
                             <i class="mdi mdi-plus"></i>
@@ -51,45 +91,19 @@
                 </div>
             </div>
             <div class="card-body">
-                <div class="row">
 
-                    <div class="col-md-3">
-                        <div class="mb-3">
-                            <label for="startday">Fecha de Inicio</label>
-                            <input type="date" class="form-control" id="startday" name="startday">
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="mb-3">
-                            <label for="endday">Fecha Final</label>
-                            <input type="date" class="form-control" id="endday" name="endday">
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="mb-3">
-                            <label for="vendedor">Vendedor</label>
-                            <select name="vendedor" id="vendedor" class="form-control">
-                                <option value="">Todos</option>
-                                @foreach ($users as $user)
-                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <button type="button" class="btn btn-primary mt-4" id="filter">Filtrar</button>
-                    </div>
-                </div>
                 <div class="table-responsive">
-                    <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
+                    <table id="datatable" class="table table-bordered dt-responsive w-100">
                         <thead>
                             <tr>
                                 <th>Fecha</th>
+                                <th>N° Coti</th>
                                 <th>Cliente</th>
-                                <th>Rut Cliente</th>
-                                <th>Total</th>
-                                <th>Descuento</th>
-                                <th>Gran Total</th>
+                                <th>Vendedor</th>
+                                <th>Valor Neto</th>
+                                <th>F. Cierre</th>
+                                <th>Profit Neto</th>
+                                <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -109,50 +123,60 @@
                                     aria-label="Close" id="close"></button>
                             </div>
                             <div class="modal-body">
-                                <div class="row">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <strong>Cliente:</strong><br>
+                                        <span id="name"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <strong>Total :</strong><br>
+                                        <span id="totalfinal"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <strong>Fecha de Cotización:</strong><br>
+                                        <span id="date"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <strong>Archivo de Propuesta detallada:</strong><br>
+                                        <span id="file"></span>
+                                    </div>
+
                                     <div class="col-md-12">
-                                        <strong>Cliente:</strong> <span id="name"></span>
+                                        <strong>Notas:</strong><br>
+                                        <span id="note"></span>
                                     </div>
-                                    <div class="col-md-6">
-                                        <strong>Fecha de Cotización:</strong> <span id="date"></span>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <strong>Total :</strong> <span id="total"></span>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <strong>Notas:</strong> <span id="note"></span>
-                                    </div>
-                                    <hr>
+
                                     <div class="col-md-12 text-center">
-                                        <h4>Productos</h4>
+                                        <h4>Detalles de Cotización</h4>
                                     </div>
-                                    <hr>
+
                                     <div class="col-md-12">
-                                        <table class="table table-bordered nowrap w-100">
+                                        <table class="table table-sm table-striped table-bordered nowrap w-100">
                                             <thead>
-                                                <tr class="text-center">
+                                                <tr class="text-center text-uppercase fw-semibold">
                                                     <th>Código</th>
                                                     <th>Articulo</th>
                                                     <th>Cantidad</th>
                                                     <th>Precio</th>
-                                                    <th>Descuento</th>
-                                                    <th>Total</th>
+                                                    <th>Profit</th>
+                                                    <th>Margen</th>
+                                                    <th>Subtotal</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="details" class="text-center">
                                             </tbody>
                                             <tfoot>
                                                 <tr>
-                                                    <td colspan="5" class="text-end">Descuento (% <span id="discount1"></span>)</td>
-                                                    <td id="discount2" class="text-center"></td>
+                                                    <td colspan="6" class="text-end fw-semibold">Subtotal</td>
+                                                    <td id="subtotal" class="text-center fw-semibold"></td>
                                                 </tr>
                                                 <tr>
-                                                    <td colspan="5" class="text-end">Impuesto (% <span id="tax1"></span>)</td>
-                                                    <td id="tax2" class="text-center"></td>
+                                                    <td colspan="6" class="text-end fw-semibold">IVA (% 19)</td>
+                                                    <td id="iva" class="text-center fw-semibold"></td>
                                                 </tr>
                                                 <tr>
-                                                    <td colspan="5" class="text-end">Total</td>
-                                                    <td id="total2" class="text-center"></td>
+                                                    <td colspan="6" class="text-end fw-semibold">Total</td>
+                                                    <td id="total" class="text-center fw-semibold"></td>
                                                 </tr>
                                             </tfoot>
                                         </table>
@@ -166,6 +190,48 @@
                         </div><!-- /.modal-content -->
                     </div><!-- /.modal-dialog -->
                 </div><!-- /.modal -->
+
+                <div id="myModalFactura" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false"
+                    tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true"
+                    data-bs-scroll="true">
+                    <div class="modal-dialog modal-md">
+                        <div class="modal-content">
+                            <form id="myFormFactura" action="{{ route('cotizaciones.addReferencias') }}" method="post">
+                                @csrf
+
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="myModalLabel">Agregar Número de Factura </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close" id="close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row g-3">
+                                        <div class="col-md-12">
+                                            <strong>N° de Factura:</strong>
+                                            <input type="number" class="form-control" id="invoice_number" name="invoice_number" placeholder="N° de Factura">
+
+                                            <input type="hidden" id="id" name="id" value="">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary waves-effect"
+                                        data-bs-dismiss="modal" id="close">Cerrar</button>
+
+                                    <button type="submit" class="btn btn-primary waves-effect"
+                                     >Guardar</button>
+                                </div>
+                            </form>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div>
+
+                <form id="my-form" action="{{ route('cotizaciones.cambiarStatus') }}" method="POST">
+                    @csrf
+                    <input type="hidden" id="id" name="id" >
+                    <input type="hidden" id="status" name="status">
+                </form>
+
             </div>
         </div>
     </div> <!-- end col -->
@@ -217,6 +283,8 @@
                 d.start = $('#startday').val();
                 d.end = $('#endday').val();
                 d.user_id = $('#vendedor').val();
+                d.customer_id = $('#cliente').val();
+                d.status = $('#status').val();
             }
         },
         dataType: 'json',
@@ -235,24 +303,32 @@
                 name: 'created_at'
             },
             {
+                data: 'correlativo',
+                name: 'correlativo'
+            },
+            {
                 data: 'customer',
                 name: 'customer'
             },
             {
-                data: 'rut',
-                name: 'rut'
+                data: 'user',
+                name: 'user'
             },
             {
-                data: 'total',
-                name: 'total'
+                data: 'subtotal',
+                name: 'subtotal'
             },
             {
-                data: 'total_discount',
-                name: 'total_discount'
+                data: 'closing_date',
+                name: 'closing_date'
             },
             {
                 data: 'grand_total',
                 name: 'grand_total'
+            },
+            {
+                data: 'status',
+                name: 'status'
             },
             {
                 data: 'actions',
@@ -262,27 +338,75 @@
             },
         ],
         columnDefs: [{
-            targets: 0,
+            targets: [0, 5],
             render: function (data) {
-                return moment(data).format('DD/MM/YYYY hh:mm A');
+                return moment(data).format('DD/MM/YYYY');
             }
         },
         {
-            targets: 3,
+            targets:[4, 6],
             render: function (data) {
                 return '$ ' + numberFormat2.format(data);
             }
         },
         {
-            targets:[3, 4, 5],
-            render: function (data) {
-                return '$ ' + numberFormat2.format(data);
-            }
-        },
-        {
-            targets: 5,
-            render: function (data) {
-                return '$ ' + numberFormat2.format(data);
+            targets: [7],
+            render: function (data, type, row) {
+                if (data == 'Cotizado') {
+                    return `<div class="btn-group">
+                                <button type="button" class="btn btn-primary btn-sm dropdown-toggle"
+                                    data-bs-toggle="dropdown" aria-expanded="false">`+data+`
+                                    <i class="mdi mdi-chevron-down"></i>
+                                </button>
+                                <div class="dropdown-menu dropdownmenu-primary" style="">
+                                    <div class="dropdown-header noti-title">
+                                        <h5 class="font-size-13 text-muted text-truncate mn-0">
+                                            Cambiar a
+                                        </h5>
+                                    </div>
+                                    <a class="dropdown-item" href="#" onclick="changeStatus('Facturado', ${row.id})">Facturado</a>
+                                    <a class="dropdown-item" href="#" onclick="changeStatus('Pagado', ${row.id})">Pagado</a>
+                                </div>
+                            </div>`;
+                }
+                if (data == 'Facturado') {
+                    if (row.invoice_number == null) {
+                        $botones = `<div class="btn-group">
+                                <button type="button" class="btn btn-warning btn-sm dropdown-toggle"
+                                    data-bs-toggle="dropdown" aria-expanded="false">`+data+`
+                                    <i class="mdi mdi-chevron-down"></i>
+                                </button>
+                                <div class="dropdown-menu dropdownmenu-warning" style="">
+                                    <div class="dropdown-header noti-title">
+                                        <h5 class="font-size-13 text-muted text-truncate mn-0">
+                                            Cambiar a
+                                        </h5>
+                                    </div>
+                                    <a class="dropdown-item" href="#" onclick="addReferencia(${row.id})">Agregar Nro. de factura</a>
+                                    <a class="dropdown-item" href="#" onclick="changeStatus('Pagado', ${row.id})">Pagado</a>
+                                </div>
+                            </div>`;
+                    }
+
+                    if (row.invoice_number != null) {
+                        $botones = `<div class="btn-group">
+                                <button type="button" class="btn btn-warning btn-sm dropdown-toggle"
+                                    data-bs-toggle="dropdown" aria-expanded="false">`+data+`
+                                    <i class="mdi mdi-chevron-down"></i>
+                                </button>
+                                <div class="dropdown-menu dropdownmenu-warning" style="">
+                                    <div class="dropdown-header noti-title">
+                                        <h5 class="font-size-13 text-muted text-truncate mn-0">
+                                            Cambiar a
+                                        </h5>
+                                    </div>
+                                    <a class="dropdown-item" href="#" onclick="changeStatus('Pagado', ${row.id})">Pagado</a>
+                                </div>
+                            </div>`;
+                    }
+
+                    return $botones;
+                }
             }
         }],
     });
@@ -299,25 +423,32 @@
             success: function(res) {
                 $('#name').text(res.customer_name);
                 $('#date').text(moment(res.created_at).format('DD/MM/YYYY hh:mm A'));
-                $('#total').text(res.grand_total);
+                $('#totalfinal').text(numberFormat2.format(res.grand_total));
+                $('#subtotal').text(numberFormat2.format(res.subtotal));
+                $('#iva').text(numberFormat2.format(res.iva));
+                $('#total').text(numberFormat2.format(res.grand_total));
                 $('#note').text(res.note);
-                $('#total2').text(res.grand_total);
-                $('#discount1').text(res.order_discount_id);
-                $('#discount2').text(res.total_discount);
-                $('#tax1').text(res.order_tax_id);
-                $('#tax2').text(res.total_tax);
+                if (res.file_propuesta != '') {
+                    $('#file').empty();
+                    $('#file').append('<a href="' + baseStorage + res.file_propuesta + '" target="_blank">Ver propuesta</a>');
+                }
+                if (res.file_propuesta == null){
+                    $('#file').empty();
+                    $('#file').append('Sin archivo');
+                }
+
 
                 $('#details').empty();
-
                 res.items.forEach((value, index) => {
                     $('#details')
                         .append('<tr>')
                         .append('<td>' + value.product_code + '</td>')
                         .append('<td>' + value.product_name + '</td>')
                         .append('<td>' + value.quantity + '</td>')
-                        .append('<td>' + value.unit_price + '</td>')
-                        .append('<td>' + value.discount + '</td>')
-                        .append('<td>' + value.subtotal + '</td>')
+                        .append('<td>' + numberFormat2.format(value.price) + '</td>')
+                        .append('<td>' + numberFormat2.format(value.profit) + '</td>')
+                        .append('<td>' + numberFormat2.format(value.margen) + '</td>')
+                        .append('<td>' + numberFormat2.format(value.subtotal) + '</td>')
                         .append('</tr>');
                 })
 
@@ -344,15 +475,49 @@
             }
         })
     }
+    function changeStatus(status, id) {
+        $('#my-form #status').val(status);
+        $('#my-form #id').val(id);
+
+        Swal.fire({
+            title: '¿Esta seguro de cambiar el estado a "' + status + '" de la Cotizacion?',
+            text: "No podra cambiar el estado si es Pagado!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, cambiar!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $('#my-form').submit();
+            }
+        })
+    }
+
+    function addReferencia(id) {
+        $('#myFormFactura #id').val(id);
+        $('#myFormFactura #nro_factura').val('');
+        $('#myModalFactura').modal('show');
+    }
 
     $('#close').on('click', function() {
         $('#myModal').modal('hide');
         $('#name').text('');
         $('#date').text('');
+        $('#totalfinal').text('');
+        $('#subtotal').text('');
+        $('#iva').text('');
         $('#total').text('');
         $('#note').text('');
-        $('#total2').text('');
         $('#details').empty();
-    })
+    });
+    $('#removefilter').on('click', function() {
+        $('#startday').val('').trigger('change');
+        $('#endday').val('').trigger('change');
+        $('#vendedor').val('').trigger('change');
+        $('#status').val('').trigger('change');
+        $('#cliente').val('').trigger('change');
+        table.draw();
+    });
 </script>
 @endSection

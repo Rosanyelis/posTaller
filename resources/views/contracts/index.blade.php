@@ -42,16 +42,16 @@
                         <h4 class="card-title">Listado de Contratos o Suscripciones</h4>
                     </div>
                     <div class="col-md-6 text-end">
-                        <a href="{{ route('compras.create') }}"
+                        <a href="{{ route('contratos.create') }}"
                             class="btn btn-primary btn-sm ">
                             <i class="mdi mdi-plus"></i>
-                            Nueva Contrato o Suscripción
+                            Nuevo Contrato o Suscripción
                         </a>
                     </div>
                 </div>
             </div>
             <div class="card-body">
-                <div class="row">
+                <!-- <div class="row">
                     <div class="col-md-12">
                         <p>El informe se genera solo si aplica el filtro, sino hay datos no podra generarse
                             el informe.
@@ -87,7 +87,7 @@
                             <input type="hidden" name="hasta" id="hastafilter">
                         </form>
                     </div>
-                </div>
+                </div> -->
                 <div class="table-responsive">
                     <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
                         <thead>
@@ -113,7 +113,7 @@
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="myModalLabel">Ver Compra</h5>
+                                <h5 class="modal-title" id="myModalLabel">Ver Contrato</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close" id="close"></button>
                             </div>
@@ -225,12 +225,7 @@
         processing: true,
         serverSide: true,
         ajax: {
-            url: "{{ route('compras.datatable') }}",
-            data: function (d) {
-                d.supplier_id = $('#proveedor').val();
-                d.start = $('#startday').val();
-                d.end = $('#endday').val();
-            }
+            url: "{{ route('contratos.datatable') }}",
         },
         dataType: 'json',
         type: "POST",
@@ -248,24 +243,28 @@
                 name: 'created_at'
             },
             {
-                data: 'supplier',
-                name: 'supplier'
+                data: 'customer',
+                name: 'customer'
             },
             {
-                data: 'reference',
-                name: 'reference'
+                data: 'correlativo',
+                name: 'correlativo'
+            },
+            {
+                data: 'start_date',
+                name: 'start_date'
+            },
+            {
+                data: 'end_date',
+                name: 'end_date'
             },
             {
                 data: 'total',
                 name: 'total'
             },
             {
-                data: 'note',
-                name: 'note'
-            },
-            {
-                data: 'received',
-                name: 'received'
+                data: 'status',
+                name: 'status'
             },
             {
                 data: 'actions',

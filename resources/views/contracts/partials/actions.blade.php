@@ -1,7 +1,7 @@
-<a href="{{ route('compras.purchasepdf', $id) }}" class="btn btn-warning btn-sm"
+<!-- <a href="{{ route('compras.purchasepdf', $id) }}" class="btn btn-warning btn-sm"
     title="Compras PDF" target="_blank">
     <i class="mdi mdi-file-pdf"></i>
-</a>
+</a> -->
 
 <button type="button" class="btn btn-info btn-sm" onclick="viewRecord({{ $id }})">
     <i class="mdi mdi-eye"></i>

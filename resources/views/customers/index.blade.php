@@ -55,8 +55,6 @@
                     <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Tienda</th>
                                 <th>Cliente</th>
                                 <th>RUT</th>
                                 <th>Celular</th>
@@ -83,9 +81,6 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <strong>Cliente:</strong> <span id="name"></span>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <strong>Tienda:</strong> <span id="store"></span>
                                     </div>
                                     <div class="col-md-6">
                                         <strong>RUT:</strong> <span id="rut"></span>
@@ -161,14 +156,7 @@
         language: {
             url: "https://cdn.datatables.net/plug-ins/2.0.8/i18n/es-ES.json",
         },
-        columns: [{
-                data: 'id',
-                name: 'id'
-            },
-            {
-                data: 'store_name',
-                name: 'store_name'
-            },
+        columns: [
             {
                 data: 'name',
                 name: 'name'
@@ -191,11 +179,7 @@
                 orderable: false,
                 searchable: false
             },
-        ],
-        columnDefs: [{
-            targets: 0,
-            visible: false
-        }, ]
+        ]
     });
 
 
@@ -207,7 +191,6 @@
             type: 'GET',
             success: function(res) {
                 $('#name').text(res.name);
-                $('#store').text(res.store_name);
                 $('#rut').text(res.rut);
                 $('#phone').text(res.phone);
                 $('#email').text(res.email);

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title') Compras @endsection
+@section('title') Contratos @endsection
 
 @section('css')
 <!-- choices css -->
@@ -14,13 +14,13 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0 font-size-18">Compras </h4>
+            <h4 class="mb-sm-0 font-size-18">Contratos </h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="{{ route('compras.index') }}">Compras</a>
+                    <li class="breadcrumb-item"><a href="{{ route('contratos.index') }}">Contratos</a>
                     </li>
-                    <li class="breadcrumb-item active">Nueva Compra</li>
+                    <li class="breadcrumb-item active">Nuevo Contrato</li>
                 </ol>
             </div>
 
@@ -32,21 +32,20 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h4 class="card-title">Nueva Compra</h4>
-                <p class="card-title-desc">Verifique la información al registrar, ya que si recarga la página, esta se perderá.</p>
+                <h4 class="card-title">Nueva Contrato</h4>
             </div>
             <div class="card-body p-4">
-                <form id="formQuotation" action="{{ route('compras.store') }}" method="POST"
-                    enctype="multipart/form-data" class="needs-validation @if ($errors->any()) was-validated @endif"
+                <form id="formQuotation" action="{{ route('contratos.store') }}" method="POST"
+                    enctype="multipart/form-data" class="needs-validation"
                     novalidate>
                     @csrf
                     <div class="row">
                         <div class="col-lg-4 col-md-4 col-sm-6">
                             <div class="mb-3">
-                                <label for="supplier" class="form-label">Proveedores</label>
+                                <label for="supplier" class="form-label">Clientes</label>
                                 <select class="form-control" name="supplier" id="supplier" style="width: 100%">
                                     <option value="">-- Seleccione --</option>
-                                    @foreach ($suppliers as $item)
+                                    @foreach ($clients as $item)
                                     <option value="{{ $item->id }}">{{ $item->name }}</option>
                                     @endforeach
                                 </select>

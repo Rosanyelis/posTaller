@@ -18,10 +18,7 @@ class CustomerController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = DB::table('customers')
-                    ->join('stores', 'customers.store_id', '=', 'stores.id')
-                    ->select('customers.*', 'stores.name as store_name')
-                    ->get();
+            $data = Customer::all();
             return DataTables::of($data)
                 ->addColumn('actions', function ($data) {
                     return view('customers.partials.actions', ['id' => $data->id]);
@@ -37,8 +34,7 @@ class CustomerController extends Controller
      */
     public function create()
     {
-        $stores = Store::all();
-        return view('customers.create', compact('stores'));
+        return view('customers.create');
     }
 
     /**
@@ -47,8 +43,6 @@ class CustomerController extends Controller
     public function store(StoreCustomerRequest $request)
     {
         $data = $request->all();
-        $data['store_id'] = 1;
-
         $customer = Customer::create($data);
         return redirect()->route('clientes.index')->with('success', 'Cliente creado con exito');
     }
@@ -58,11 +52,8 @@ class CustomerController extends Controller
      */
     public function show($customer)
     {
-        $customer = DB::table('customers')
-                    ->join('stores', 'customers.store_id', '=', 'stores.id')
-                    ->select('customers.*', 'stores.name as store_name')
-                    ->where('customers.id', $customer)
-                    ->first();
+        $customer = Customer::find($customer);
+
         return response()->json($customer);
     }
 
@@ -71,9 +62,8 @@ class CustomerController extends Controller
      */
     public function edit($customer)
     {
-        $stores = Store::all();
         $customer = Customer::find($customer);
-        return view('customers.edit', compact('stores', 'customer'));
+        return view('customers.edit', compact('customer'));
     }
 
     /**

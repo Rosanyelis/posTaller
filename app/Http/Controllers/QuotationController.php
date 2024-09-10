@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\Customer;
 use App\Models\Quotation;
 use App\Mail\SendQuotation;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\QuotationItems;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -26,7 +27,8 @@ class QuotationController extends Controller
     public function index()
     {
         $users = User::where('rol_id', '!=' ,'1')->get();
-        return view('quotes.index', compact('users'));
+        $clients = Customer::all();
+        return view('quotes.index', compact('users', 'clients'));
     }
 
     public function datatable(Request $request)
@@ -35,15 +37,25 @@ class QuotationController extends Controller
             $data = DB::table('quotations')
                 ->join('users', 'quotations.user_id', '=', 'users.id')
                 ->join('customers', 'quotations.customer_id', '=', 'customers.id')
-                ->select('quotations.*', 'users.name as user', 'customers.name as customer', 'customers.rut as rut');
+                ->select('quotations.*', 'users.name as user', 'customers.name as customer', 'customers.rut as rut')
+                ->orderBy('quotations.created_at', 'desc')
+                ->where('quotations.status', '!=', 'Pagado');
             return DataTables::of($data)
                 ->filter(function ($query) use ($request) {
                     if ($request->has('user_id') && $request->get('user_id') != '') {
                         $query->where('quotations.user_id', $request->get('user_id'));
                     }
 
+                    if ($request->has('customer_id') && $request->get('customer_id') != '') {
+                        $query->where('quotations.customer_id', $request->get('customer_id'));
+                    }
+
                     if ($request->has('start') && $request->has('end') && $request->get('start') != '' && $request->get('end') != '') {
                         $query->whereBetween('quotations.created_at', [$request->get('start'), $request->get('end')]);
+                    }
+
+                    if ($request->has('status') && $request->get('status') != '') {
+                        $query->where('quotations.status', $request->get('status'));
                     }
 
                     if ($request->has('search') && $request->get('search')['value'] != '') {
@@ -56,7 +68,7 @@ class QuotationController extends Controller
                     }
                 })
                 ->addColumn('actions', function ($data) {
-                    return view('quotes.partials.actions', ['id' => $data->id]);
+                    return view('quotes.partials.actions', ['data' => $data]);
                 })
                 ->rawColumns(['actions'])
                 ->make(true);
@@ -80,37 +92,54 @@ class QuotationController extends Controller
     {
         $customer = Customer::where('name', $request->customer)->first();
         $productos = json_decode($request->array_products);
-        $descuento = $request->total * ($request->order_discount_id / 100);
-        $impuesto = $request->total * ($request->order_tax_id / 100);
-        $grandtotal = $request->total - $descuento + $impuesto;
+        $file_propuesta = null;
+        $correlativoInicial = 1001;
+        $nroOrden = 0;
+        $count = Quotation::count();
+        if ($count > 0) {
+            $data = Quotation::latest()->first();
+            $nroOrden = $data->correlativo + 1;
+        } else {
+            $nroOrden = 1001;
+        }
+        if ($request->hasFile('file_propuesta')) {
+            $uploadPath = public_path('/storage/cotizaciones/');
+            $file = $request->file('file_propuesta');
+            $extension = $file->getClientOriginalExtension();
+            $uuid = Str::uuid(4);
+            $fileName = $uuid . '.' . $extension;
+            $file->move($uploadPath, $fileName);
+            $url = '/storage/cotizaciones/'.$fileName;
+            $foto = $url;
+            $file_propuesta = $url;
+        }
+
         $quote = Quotation::create([
             'customer_id'    => $customer->id,
             'user_id'        => auth()->user()->id,
-            'store_id'       => 1,
             'customer_name'  => $request->customer,
-            'order_discount_id' => $request->order_discount_id,
-            'order_tax_id' => $request->order_tax_id,
-            'total_discount' => $descuento,
-            'total_tax'      => $impuesto,
-            'total'          => $request->total,
-            'grand_total'    => $grandtotal,
-            'total_items'    => count($productos),
-            'note'           => $request->note
+            'subtotal'       => $request->subtotal,
+            'iva'            => $request->iva,
+            'grand_total'    => $request->total,
+            'file_propuesta' => $file_propuesta,
+            'note'           => $request->note,
+            'correlativo'    => $nroOrden,
+            'closing_date'   => $request->closing_date,
+            'closing_percentage' => $request->closing_percentage,
         ]);
 
         foreach ($productos as $key) {
-            $product = Product::where('name', $key->producto)->first();
+            $product = Product::where('code', $key->code)->first();
             QuotationItems::create([
                 'quotation_id'   => $quote->id,
                 'product_id'     => $product->id,
-                'product_name'   => $key->producto,
+                'product_name'   => $product->name,
                 'product_code'   => $product->code,
                 'quantity'       => $key->quantity,
-                'unit_price'     => $key->price,
-                'net_unit_price' => $key->price,
-                'discount'       => $key->discount,
-                'subtotal'       => $key->total,
-                'real_unit_price' => $key->total,
+                'price'          => $key->price,
+                'profit'         => $key->profit,
+                'margen'         => $key->margen,
+                'subtotal'       => $key->subtotal,
             ]);
         }
 
@@ -144,40 +173,45 @@ class QuotationController extends Controller
     {
         $customer = Customer::where('name', $request->customer)->first();
         $productos = json_decode($request->array_products);
-        $descuento = $request->total * ($request->order_discount_id / 100);
-        $impuesto = $request->total * ($request->order_tax_id / 100);
-        $grandtotal = $request->total - $descuento + $impuesto;
+        $file_propuesta = null;
+        if ($request->hasFile('file_propuesta')) {
+            $uploadPath = public_path('/storage/cotizaciones/');
+            $file = $request->file('file_propuesta');
+            $extension = $file->getClientOriginalExtension();
+            $uuid = Str::uuid(4);
+            $fileName = $uuid . '.' . $extension;
+            $file->move($uploadPath, $fileName);
+            $url = '/storage/cotizaciones/'.$fileName;
+            $foto = $url;
+            $file_propuesta = $url;
+        }
+
         $quote = Quotation::find($quotation);
         $quote->update([
             'customer_id'    => $customer->id,
-            'user_id'        => auth()->user()->id,
-            'store_id'       => 1,
+           'user_id'        => auth()->user()->id,
             'customer_name'  => $request->customer,
-            'order_discount_id' => $request->order_discount_id,
-            'order_tax_id' => $request->order_tax_id,
-            'total_discount' => $descuento,
-            'total_tax'      => $impuesto,
-            'total'          => $request->total,
-            'grand_total'    => $grandtotal,
-            'total_items'    => count($productos),
+            'subtotal'       => $request->subtotal,
+            'iva'            => $request->iva,
+            'grand_total'    => $request->total,
+            'file_propuesta' => $file_propuesta,
             'note'           => $request->note
         ]);
 
         $quote->items()->delete();
 
         foreach ($productos as $key) {
-            $product = Product::where('name', $key->producto)->first();
+            $product = Product::where('code', $key->code)->first();
             QuotationItems::create([
                 'quotation_id'   => $quote->id,
                 'product_id'     => $product->id,
-                'product_name'   => $key->producto,
+                'product_name'   => $product->name,
                 'product_code'   => $product->code,
                 'quantity'       => $key->quantity,
-                'unit_price'     => $key->price,
-                'net_unit_price' => $key->price,
-                'discount'       => $key->discount,
-                'subtotal'       => $key->total,
-                'real_unit_price' => $key->total,
+                'price'          => $key->price,
+                'profit'         => $key->profit,
+                'margen'         => $key->margen,
+                'subtotal'       => $key->subtotal,
             ]);
         }
 
@@ -239,5 +273,25 @@ class QuotationController extends Controller
             return redirect()->route('cotizaciones.index')->with('error', 'Error al enviar la cotizacion, verifique su correo');
         }
 
+    }
+
+    public function cambiarStatus(Request $request)
+    {
+        $quote = Quotation::find($request->id);
+        $quote->update([
+            'status' => $request->status
+        ]);
+
+        return redirect()->route('cotizaciones.index')->with('success', 'Status de Cotización Actualizada Correctamente');
+    }
+
+    public function addReferencias(Request $request)
+    {
+        $quotation = Quotation::find($request->id);
+        $quotation->update([
+            'invoice_number' => $request->invoice_number
+        ]);
+
+        return redirect()->route('cotizaciones.index')->with('success', 'Número de Factura de Cotización agregada Correctamente');
     }
 }

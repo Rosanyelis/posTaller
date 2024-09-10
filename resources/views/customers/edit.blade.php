@@ -34,31 +34,15 @@
             </div>
             <div class="card-body p-4">
                 <form action="{{ route('clientes.update', $customer->id) }}" method="POST"
-                    enctype="multipart/form-data" class="needs-validation @if ($errors->any()) was-validated @endif"
+                    enctype="multipart/form-data" class="needs-validation"
                     novalidate>
                     @csrf
                     @method('PUT')
                     <div class="row">
                         <div class="col-lg-4 col-md-4 col-sm-6">
                             <div class="mb-3">
-                                <label for="store_id" class="form-label">Tienda</label>
-                                <select class="form-select" name="store_id" id="store_id" required>
-                                    <option value="">Seleccionar</option>
-                                    @foreach($stores as $store)
-                                        <option value="{{ $store->id }}" {{ $customer->store_id == $store->id ? 'selected' : '' }}>{{ $store->name }}</option>
-                                    @endforeach
-                                </select>
-                                @if($errors->has('store_id'))
-                                    <div class="invalid-feedback">
-                                        {{ $errors->first('store_id') }}
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-4 col-sm-6">
-                            <div class="mb-3">
                                 <label for="name" class="form-label">Nombre de Cliente</label>
-                                <input class="form-control" type="text" name="name" id="name" required
+                                <input class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }} " type="text" name="name" id="name" required
                                     value="{{ $customer->name }}">
                                 @if($errors->has('name'))
                                     <div class="invalid-feedback">
@@ -70,7 +54,7 @@
                         <div class="col-lg-4 col-md-4 col-sm-6">
                             <div class="mb-3">
                                 <label for="rut" class="form-label">Rut de Cliente</label>
-                                <input class="form-control" type="text" name="rut" id="rut" required
+                                <input class="form-control {{ $errors->has('rut') ? 'is-invalid' : '' }}" type="text" name="rut" id="rut" required
                                     value="{{ $customer->rut }}" placeholder="00000000-0">
                                 @if($errors->has('rut'))
                                     <div class="invalid-feedback">
@@ -82,7 +66,7 @@
                         <div class="col-lg-4 col-md-4 col-sm-6">
                             <div class="mb-3">
                                 <label for="email" class="form-label">Correo</label>
-                                <input class="form-control" type="email" name="email" id="email" required
+                                <input class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" type="email" name="email" id="email" required
                                     value="{{ $customer->email }}" placeholder="test@example.com">
                                 @if($errors->has('email'))
                                     <div class="invalid-feedback">
@@ -94,7 +78,7 @@
                         <div class="col-lg-4 col-md-4 col-sm-6">
                             <div class="mb-3">
                                 <label for="phone" class="form-label">Celular</label>
-                                <input class="form-control" type="text" name="phone" id="phone" required
+                                <input class="form-control {{ $errors->has('phone') ? 'is-invalid' : '' }}" type="text" name="phone" id="phone" required
                                     value="{{ $customer->phone }}">
                                 @if($errors->has('phone'))
                                     <div class="invalid-feedback">
@@ -106,7 +90,7 @@
                         <div class="col-lg-4 col-md-4 col-sm-6">
                             <div class="mb-3">
                                 <label for="address" class="form-label">Dirección</label>
-                                <input class="form-control" type="text" name="address" id="address" required
+                                <input class="form-control {{ $errors->has('address') ? 'is-invalid' : '' }}" type="text" name="address" id="address" required
                                     value="{{ $customer->address }}">
                                 @if($errors->has('address'))
                                     <div class="invalid-feedback">

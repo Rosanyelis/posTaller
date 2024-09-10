@@ -10,7 +10,25 @@
                                 </a>
                             </li>
                             <li class="menu-title" data-key="t-apps">Admin</li>
-
+                            <li>
+                                <a href="javascript: void(0);" class="has-arrow">
+                                    <i data-feather="file-text"></i>
+                                    <span data-key="cotizacion">Tareas</span>
+                                </a>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    <li><a href="{{ route('tareas.index') }}" key="t-Cotizacion">Lista Tareas</a></li>
+                                </ul>
+                            </li>
+                            <!-- <li>
+                                <a href="javascript: void(0);" class="has-arrow">
+                                    <i data-feather="file-text"></i>
+                                    <span data-key="cotizacion">Contratos</span>
+                                </a>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    <li><a href="{{ route('contratos.index') }}" key="t-Cotizacion">Lista Contratos</a></li>
+                                    <li><a href="{{ route('contratos.create') }}" data-key="t-Cotizacion-add">Agregar Contrato</a></li>
+                                </ul>
+                            </li> -->
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow">
                                     <i data-feather="shopping-cart"></i>
@@ -33,7 +51,7 @@
                                     <li><a href="{{ route('categorias.create') }}" data-key="t-categories-add">Agregar Categoría</a></li>
                                 </ul>
                             </li>
-                            <li>
+                            <!-- <li>
                                 <a href="javascript: void(0);" class="has-arrow">
                                     <i data-feather="shopping-bag"></i>
                                     <span data-key="ventas">Ventas</span>
@@ -41,7 +59,7 @@
                                 <ul class="sub-menu" aria-expanded="false">
                                     <li><a href="{{ route('ventas.index') }}" key="t-sales">Lista Ventas</a></li>
                                 </ul>
-                            </li>
+                            </li> -->
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow">
                                     <i data-feather="file-text"></i>
@@ -52,7 +70,7 @@
                                     <li><a href="{{ route('cotizaciones.create') }}" data-key="t-Cotizacion-add">Agregar Cotización</a></li>
                                 </ul>
                             </li>
-                            <li>
+                            <!-- <li>
                                 <a href="javascript: void(0);" class="has-arrow">
                                     <i data-feather="briefcase"></i>
                                     <span data-key="Ordenes de Trabajo">Ordenes de Trabajo</span>
@@ -71,7 +89,7 @@
                                     <li><a href="{{ route('compras.index') }}" key="t-Compras">Lista Compras</a></li>
                                     <li><a href="{{ route('compras.create') }}" data-key="t-Compras-add">Agregar Compras</a></li>
                                 </ul>
-                            </li>
+                            </li> -->
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow">
                                     <i data-feather="credit-card"></i>
@@ -134,7 +152,7 @@
                                     <li><a href="{{ route('cotizaciones.create') }}" data-key="t-Cotizacion-add">Agregar Cotización</a></li>
                                 </ul>
                             </li>
-                            <li>
+                            <!-- <li>
                                 <a href="javascript: void(0);" class="has-arrow">
                                     <i data-feather="briefcase"></i>
                                     <span data-key="Ordenes de Trabajo">Ordenes de Trabajo</span>
@@ -143,7 +161,7 @@
                                     <li><a href="{{ route('ordenes-trabajo.index') }}" key="t-work-orders">Lista Ordenes de Trabajo</a></li>
                                     <li><a href="{{ route('ordenes-trabajo.create') }}" data-key="t-work-orders-add">Agregar OT</a></li>
                                 </ul>
-                            </li>
+                            </li> -->
                             @endif
                         </ul>
                     </div>

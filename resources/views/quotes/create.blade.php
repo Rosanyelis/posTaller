@@ -31,9 +31,8 @@
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <div class="card-header">
+            <div class="card-header py-3">
                 <h4 class="card-title">Nuevo Cotización</h4>
-                <p class="card-title-desc">Verifique la información al registrar, ya que si recarga la página, esta se perderá.</p>
             </div>
             <div class="card-body p-4">
                 <form id="formQuotation" action="{{ route('cotizaciones.store') }}" method="POST"
@@ -53,49 +52,60 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-8 col-md-8 col-sm-6">
+                        <div class="col-lg-4 col-md-4 col-sm-6">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Archivo de Propuesta detallada</label>
+                                <input type="file" class="form-control" name="file_propuesta">
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-4 col-sm-6">
                             <div class="mb-3">
                                 <label for="note" class="form-label">Notas</label>
-                                <input type="text" class="form-control" name="note" id="note" >
-                            </div>
-                        </div>
-
-                        <div class="col-lg-3 col-md-3 col-sm-6">
-                            <div class="mb-3">
-                                <label for="order_discount_id" class="form-label">Descuento (%) (opcional)</label>
-                                <input type="number" class="form-control" name="order_discount_id"
-                                id="order_discount_id" value="0">
-                            </div>
-                        </div>
-
-                        <div class="col-lg-3 col-md-3 col-sm-6">
-                            <div class="mb-3">
-                                <label for="order_tax_id" class="form-label">Impuesto (%) (opcional)</label>
-                                <input type="number" class="form-control" name="order_tax_id" id="order_tax_id" value="0" >
+                                <input type="text" class="form-control" name="note" >
                             </div>
                         </div>
 
                         <div class="w-100"></div>
-
+                        <div class="col-lg-2 col-md-2 col-sm-6">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Fecha de Cierre</label>
+                                <input type="date" class="form-control" name="closing_date" id="closing_date">
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-6">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">% de Cierre</label>
+                                <input type="text" class="form-control" name="closing_percentage" id="closing_percentage">
+                            </div>
+                        </div>
                         <div class="col-lg-4 col-md-4 col-sm-6">
                             <div class="mb-3">
                                 <label for="producto" class="form-label">Nombre de Producto</label>
                                 <select class="form-control" name="producto" id="producto" style="width: 100%">
                                     <option value="">-- Seleccione --</option>
                                     @foreach ($products as $item)
-                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                    <option value="{{ $item->id }}">{{ $item->name }} - {{ $item->category->name }}</option>
                                     @endforeach
                                 </select>
                                 <input type="hidden" name="product_name" id="product_name">
+                                <input type="hidden" name="product_code" id="product_code">
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-6">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Precio de Costo</label>
+                                <input type="text" class="form-control" name="priceCost" id="priceCost" readonly>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-6">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Precio de Venta</label>
+                                <input type="text" class="form-control" name="priceVent" id="priceVent" readonly>
                             </div>
                         </div>
 
-                        <div class="col-lg-2 col-md-2 col-sm-6">
-                            <div class="mb-3">
-                                <label for="name" class="form-label">Precio del Producto</label>
-                                <input type="text" class="form-control" name="price" id="price" >
-                            </div>
-                        </div>
+                        <div class="w-100"></div>
 
                         <div class="col-lg-2 col-md-2 col-sm-6">
                             <div class="mb-3">
@@ -103,11 +113,16 @@
                                 <input type="text" class="form-control" name="quantity" id="quantity" >
                             </div>
                         </div>
-
                         <div class="col-lg-2 col-md-2 col-sm-6">
                             <div class="mb-3">
-                                <label for="name" class="form-label">Desc. del Producto</label>
-                                <input type="text" class="form-control" name="discount" id="discount" >
+                                <label for="name" class="form-label">Precio</label>
+                                <input type="text" class="form-control" name="costo_venta" id="costo_venta" >
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-6">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Profit (%)</label>
+                                <input type="text" class="form-control" name="profit" id="profit" >
                             </div>
                         </div>
 
@@ -121,9 +136,10 @@
                                     <tr>
                                         <th>Producto</th>
                                         <th>Cantidad</th>
-                                        <th>Precio</th>
-                                        <th>Descuento</th>
-                                        <th>Total</th>
+                                        <th>Costo Neto</th>
+                                        <th>Profit</th>
+                                        <th>Margen</th>
+                                        <th>Precio Venta</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
@@ -131,14 +147,24 @@
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <td colspan="4" class="text-end"><h4>Total</h4></td>
+                                        <td colspan="5" class="text-end"><h4>SubTotal</h4></td>
+                                        <td colspan="2" ><h4 id="subtotal">0</h4></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5" class="text-end"><h4>IVA (19%)</h4></td>
+                                        <td colspan="2" ><h4 id="iva">0</h4></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5" class="text-end"><h4>Total</h4></td>
                                         <td colspan="2" ><h4 id="total">0</h4></td>
                                     </tr>
                                 </tfoot>
                             </table>
                         </div>
                     </div>
-                    <input type="hidden" name="total" id="totalform">
+                    <input type="hidden" name="subtotal" id="subtotalcomplete">
+                    <input type="hidden" name="total" id="totalcomplete">
+                    <input type="hidden" name="iva" id="ivacomplete">
                     <input type="hidden" name="array_products" id="array_products">
                     <button type="button" id="guardar" class="btn btn-primary w-md float-end">Guardar Cotización</button>
                 </form>
@@ -152,15 +178,16 @@
 @section('scripts')
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
+    var totalfinal = 0;
+    var totalIVA = 0;
+    var datosTabla = [];
 
     $(document).ready(function() {
         $('#producto').select2();
         $('#customer').select2();
-        var datosTabla = [];
 
         $('#producto').on('select2:select', function(e) {
             var id = $('#producto').val();
-            console.log(id);
             $.ajax({
                 type: 'GET',
                 url: "{{ route('cotizaciones.productjson', ':id') }}".replace(':id', id),
@@ -168,97 +195,169 @@
                     id: id
                 },
                 success: function(data) {
-                    $('#price').val(data.price);
+                    let costo = parseFloat(data.cost).toFixed(0);
+                    let precio = parseFloat(data.price).toFixed(0);
+                    $('#priceCost').val(costo);
+                    $('#priceVent').val(precio);
                     $('#product_name').val(data.name);
+                    $('#product_code').val(data.code);
                 }
             });
         });
 
         $('#add_product').on('click', function() {
-            var producto = $('#product_name').val();
-            let price = parseFloat($('#price').val());
+            let producto = $('#product_name').val();
+            let code = $('#product_code').val();
+            let price = parseFloat($('#costo_venta').val());
             let quantity = parseFloat($('#quantity').val());
-            let discountPercent = 0;
-            if ($('#discount').val() == '') {
-                discountPercent = 0
-            } else {
-                discountPercent = parseFloat($('#discount').val());
+            let profit = parseFloat($('#profit').val());
+            let totalp = price * quantity;
+            let margen = totalp * (profit / 100);
+            let subtotal = totalp + margen;
+
+            if (datosTabla.length > 0) {
+                let index = datosTabla.findIndex((item) => item.code == code);
+
+                if (index == -1) {
+                    datosTabla.push({
+                        'code': code,
+                        'product': producto,
+                        'quantity': quantity,
+                        'price': price,
+                        'profit': profit,
+                        'margen': margen.toFixed(0),
+                        'subtotal': subtotal.toFixed(0)
+                    });
+
+                    $("#table_products tbody").append(
+                    `<tr id="row-`+code+`">
+                        <td>`+producto+`</td>
+                        <td id="quantity-`+code+`">`+quantity+`</td>
+                        <td id="price-`+code+`">`+price+`</td>
+                        <td id="profit-`+code+`">`+profit+`</td>
+                        <td id="margen-`+code+`">`+margen.toFixed(0)+`</td>
+                        <td id="subtotal-`+code+`">`+subtotal.toFixed(0)+`</td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm"
+                                id="delete_product" data-code="`+code+`">
+                                <i class="mdi mdi-delete"></i>
+                            </button>
+                        </td>
+                    </tr>`);
+
+                }
+
+                if (index != -1) {
+                    datosTabla[index].quantity += quantity;
+                    datosTabla[index].price = price;
+                    datosTabla[index].profit = profit;
+                    datosTabla[index].margen = datosTabla[index].price * (profit / 100);
+                    datosTabla[index].subtotal = (datosTabla[index].quantity * datosTabla[index].price) + datosTabla[index].margen;
+
+                    let IDqty = "#quantity-"+code;
+                    let IDprice = "#price-"+code;
+                    let IDprofit = "#profit-"+code;
+                    let IDmargen = "#margen-"+code;
+                    let IDsubtotal = "#subtotal-"+code;
+
+                    $(IDqty).text(datosTabla[index].quantity);
+                    $(IDprice).text(datosTabla[index].price);
+                    $(IDprofit).text(datosTabla[index].profit);
+                    $(IDmargen).text(datosTabla[index].margen);
+                    $(IDsubtotal).text(datosTabla[index].subtotal);
+                }
             }
-            let discount = 0;
-            let subtotal = price * quantity;
-            if (discountPercent != '') {
-                discount = subtotal * (discountPercent / 100) ;
-            }
 
-            let total = subtotal - discount;
+            if (datosTabla.length == 0 ) {
+                datosTabla.push({
+                    'code': code,
+                    'product': producto,
+                    'quantity': quantity,
+                    'price': price,
+                    'profit': profit,
+                    'margen': margen.toFixed(0),
+                    'subtotal': subtotal.toFixed(0)
+                });
 
-            let datosFila = {};
-                datosFila.producto = producto;
-                datosFila.quantity = quantity;
-                datosFila.price = price;
-                datosFila.discount = discount;
-                datosFila.total = total;
-                datosTabla.push(datosFila);
-
-            $("#table_products tbody").append(
-                `<tr>
+                $("#table_products tbody").append(
+                `<tr id="row-`+code+`">
                     <td>`+producto+`</td>
-                    <td>`+quantity+`</td>
-                    <td>`+price+`</td>
-                    <td>`+discountPercent+`</td>
-                    <td>`+total+`</td>
+                    <td id="quantity-`+code+`">`+quantity+`</td>
+                    <td id="price-`+code+`">`+price+`</td>
+                    <td id="profit-`+code+`">`+profit+`</td>
+                    <td id="margen-`+code+`">`+margen.toFixed(0)+`</td>
+                    <td id="subtotal-`+code+`">`+subtotal.toFixed(0)+`</td>
                     <td>
                         <button type="button" class="btn btn-danger btn-sm"
-                            id="delete_product" data-name="`+producto+`">
+                            id="delete_product" data-code="`+code+`">
                             <i class="mdi mdi-delete"></i>
                         </button>
                     </td>
                 </tr>`);
 
-
-            $("#total").empty();
-            let totalfinal = 0;
-            for (let i = 0; i < datosTabla.length; i++) {
-                totalfinal += datosTabla[i].total;
             }
-            $("#total").append(totalfinal);
-
-            console.log(datosTabla);
-
-            $("#discount").val('');
-            $("#quantity").val('');
-            $("#price").val('');
-            $("#product_name").val("");
+            calcular();
             $("#producto").val(null).trigger("change");
+            $("#product_name").val("");
+            $("#costo_venta").val('');
+            $("#quantity").val('');
+            $("#profit").val('');
+            $("#price").val('');
+            $('#priceCost').val('');
+            $('#priceVent').val('');
+            $('#product_name').val('');
+            $('#product_code').val('');
+
         });
 
-        $('#table_products').on('click', '#delete_product', function() {
-            let product = $(this).data('name');
-            $("#table_products tbody").find('tr').each(function() {
-                if ($(this).find('td').eq(0).text() == product) {
-                    $(this).remove();
-                }
-            });
+        $('#table_products tbody').on('click', '#delete_product', function() {
+            let product = $(this).data('code');
+            let id = "#row-" + product;
 
             datosTabla = datosTabla.filter(function(item) {
-                return item.producto !== product;
+                return item.code !== product;
             });
-            console.log(datosTabla);
-            $("#total").empty();
-            let totalfinal = 0;
-            for (let i = 0; i < datosTabla.length; i++) {
-                totalfinal += datosTabla[i].total;
-            }
-            $("#total").append(totalfinal);
+
+            $(id).remove();
+
+            calcular();
         });
 
         $('#guardar').on('click', function() {
+            if (datosTabla.length == 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'No hay productos agregados, por favor agrega uno',
+                });
+                return false;
+            }
+
             $('#array_products').val(JSON.stringify(datosTabla));
-            $('#totalform').val($('#total').text());
-            $('guardar').prop('disabled', true);
-            $('guardar').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Por favor, espere...');
+            $('#subtotalcomplete').val(parseFloat($('#subtotal').text()));
+            $('#totalcomplete').val(parseFloat($('#total').text()));
+            $('#ivacomplete').val(parseFloat($('#iva').text()));
+            $('#guardar').prop('disabled', true);
+            $('#guardar').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Por favor, espere...');
             $('#formQuotation').submit();
         });
-    })
+    });
+
+    function calcular() {
+        totalfinal = 0;
+        totalIVA = 0;
+        total = 0;
+        for (let i = 0; i < datosTabla.length; i++) {
+            totalfinal += parseInt(datosTabla[i].subtotal);
+        }
+        totalIVA = parseFloat(totalfinal) * 0.19;
+        total = totalfinal + totalIVA;
+        $("#subtotal").empty();
+        $("#subtotal").text(parseFloat(totalfinal).toFixed(0));
+        $("#iva").empty();
+        $("#iva").text(totalIVA.toFixed(0));
+        $("#total").empty();
+        $("#total").text(total.toFixed(0));
+    }
 </script>
 @endSection
