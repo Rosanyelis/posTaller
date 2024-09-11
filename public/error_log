@@ -1,0 +1,80 @@
+[02-Sep-2024 14:13:37 UTC] PHP Warning:  require_once(/home/sisrey/public_html/public/../bootstrap/app.php): Failed to open stream: No such file or directory in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:13:37 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/sisrey/public_html/public/../bootstrap/app.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/sisrey/public_html/public/index.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:13:45 UTC] PHP Warning:  require_once(/home/sisrey/public_html/public/../bootstrap/app.php): Failed to open stream: No such file or directory in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:13:45 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/sisrey/public_html/public/../bootstrap/app.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/sisrey/public_html/public/index.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:13:51 UTC] PHP Warning:  require_once(/home/sisrey/public_html/public/../bootstrap/app.php): Failed to open stream: No such file or directory in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:13:51 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/sisrey/public_html/public/../bootstrap/app.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/sisrey/public_html/public/index.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:14:14 UTC] PHP Warning:  require_once(/home/sisrey/public_html/public/../bootstrap/app.php): Failed to open stream: No such file or directory in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:14:14 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/sisrey/public_html/public/../bootstrap/app.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/sisrey/public_html/public/index.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:14:19 UTC] PHP Warning:  require_once(/home/sisrey/public_html/public/../bootstrap/app.php): Failed to open stream: No such file or directory in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:14:19 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/sisrey/public_html/public/../bootstrap/app.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/sisrey/public_html/public/index.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:14:23 UTC] PHP Warning:  require_once(/home/sisrey/public_html/public/../bootstrap/app.php): Failed to open stream: No such file or directory in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:14:23 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/sisrey/public_html/public/../bootstrap/app.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/sisrey/public_html/public/index.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:14:29 UTC] PHP Warning:  require_once(/home/sisrey/public_html/public/../bootstrap/app.php): Failed to open stream: No such file or directory in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:14:29 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/sisrey/public_html/public/../bootstrap/app.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/sisrey/public_html/public/index.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:14:38 UTC] PHP Warning:  require_once(/home/sisrey/public_html/public/../bootstrap/app.php): Failed to open stream: No such file or directory in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:14:38 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/sisrey/public_html/public/../bootstrap/app.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/sisrey/public_html/public/index.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:14:39 UTC] PHP Warning:  require_once(/home/sisrey/public_html/public/../bootstrap/app.php): Failed to open stream: No such file or directory in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:14:39 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/sisrey/public_html/public/../bootstrap/app.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/sisrey/public_html/public/index.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:14:40 UTC] PHP Warning:  require_once(/home/sisrey/public_html/public/../bootstrap/app.php): Failed to open stream: No such file or directory in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:14:40 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/sisrey/public_html/public/../bootstrap/app.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/sisrey/public_html/public/index.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:14:42 UTC] PHP Warning:  require_once(/home/sisrey/public_html/public/../bootstrap/app.php): Failed to open stream: No such file or directory in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:14:42 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/sisrey/public_html/public/../bootstrap/app.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/sisrey/public_html/public/index.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:14:42 UTC] PHP Warning:  require_once(/home/sisrey/public_html/public/../bootstrap/app.php): Failed to open stream: No such file or directory in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:14:42 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/sisrey/public_html/public/../bootstrap/app.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/sisrey/public_html/public/index.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:14:45 UTC] PHP Warning:  require_once(/home/sisrey/public_html/public/../bootstrap/app.php): Failed to open stream: No such file or directory in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:14:45 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/sisrey/public_html/public/../bootstrap/app.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/sisrey/public_html/public/index.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:14:46 UTC] PHP Warning:  require_once(/home/sisrey/public_html/public/../bootstrap/app.php): Failed to open stream: No such file or directory in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:14:46 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/sisrey/public_html/public/../bootstrap/app.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/sisrey/public_html/public/index.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:14:50 UTC] PHP Warning:  require_once(/home/sisrey/public_html/public/../bootstrap/app.php): Failed to open stream: No such file or directory in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:14:50 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/sisrey/public_html/public/../bootstrap/app.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/sisrey/public_html/public/index.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:14:52 UTC] PHP Warning:  require_once(/home/sisrey/public_html/public/../bootstrap/app.php): Failed to open stream: No such file or directory in /home/sisrey/public_html/public/index.php on line 16
+[02-Sep-2024 14:14:52 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/sisrey/public_html/public/../bootstrap/app.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/sisrey/public_html/public/index.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/sisrey/public_html/public/index.php on line 16

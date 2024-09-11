@@ -30,7 +30,6 @@
                                     <li><a href="{{ route('productos.viewimport') }}" data-key="t-orders">Importar Productos</a></li>
                                     <li><a href="{{ route('products.allproductpdf') }}" target="_blank">Listado de Productos PDF</a></li>
                                     <li><a href="{{ route('products.exportproduct') }}" target="_blank">Listado de Productos Excel</a></li>
-                                    <li><a href="{{ route('products.export') }}" target="_blank">Neumaticos Int.</a></li>
                                 </ul>
                             </li>
                             <li>
@@ -124,7 +123,6 @@
                                     <span data-key="reportes">Reportes</span>
                                 </a>
                                 <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="{{ route('ventas.generateInforme') }}" target="_blank">Informe de Ventas</a></li>
                                     <li><a href="{{ route('reportes.informeVentasxdia') }}">Ventas con Propina</a></li>
                                     <li><a href="{{ route('reportes.informeVentasxdiaxproducto') }}">Productos Vendidos por Dia</a></li>
                                     <li><a href="{{ route('reportes.informeProductosVendidos') }}">Productos Vendidos por Dia (Solo Productos)</a></li>

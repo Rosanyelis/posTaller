@@ -46,8 +46,8 @@ class ProductController extends Controller
                     if ($request->has('search') && $request->get('search')['value'] != '') {
                         $searchValue = $request->get('search')['value'];
                         $query->where(function ($subQuery) use ($searchValue) {
-                            $subQuery->where('products.name', 'like', "%{$searchValue}%")
-                                     ->orWhere('products.code', 'like', "%{$searchValue}%")
+                            $subQuery->where('products.code', 'like', "%{$searchValue}%")
+                                     ->orWhere('products.name', 'like', "%{$searchValue}%")
                                      ->orWhere('products.type', 'like', "%{$searchValue}%");
                         });
                     }

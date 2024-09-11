@@ -379,7 +379,7 @@
     $('#removefilter').on('click', function() {
 
         $('#dateday').val('').trigger('change');
-        $('#vendedor').val('').trigger('change');
+        $('#vendedor').val('Todos').trigger('change');
         table.draw();
         totalSales();
     });
@@ -402,8 +402,6 @@
                 .replace(':id', id),
             type: 'GET',
             success: function(res) {
-                console.table(res);
-
                 $('#name').text(res.customer_name);
                 $('#user').text(res.user.name);
                 $('#totalf').text(numberFormat2.format(res.grand_total));
@@ -449,7 +447,7 @@
     $('#close').on('click', function() {
         $('#myModal').modal('hide');
         $('#name').text('');
-        $('#vendedor').text('');
+        $('#user').text('');
         $('#total').text('');
         $('#date').text('');
         $('#forma_pago').text('');

@@ -444,7 +444,7 @@
     $('#close').on('click', function() {
         $('#myModal').modal('hide');
         $('#name').text('');
-        $('#vendedor').text('');
+        $('#user').text('');
         $('#total').text('');
         $('#date').text('');
         $('#forma_pago').text('');

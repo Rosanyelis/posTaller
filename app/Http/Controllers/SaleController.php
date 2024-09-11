@@ -150,10 +150,10 @@ class SaleController extends Controller
                 ->select('sales.*', 'users.name as user_name')
                 ->where(function ($query) use ($request) {
                     if ($request->has('day') && $request->get('day') != '') {
-                        $query->whereDate('created_at', '=', $request->get('day'));
+                        $query->whereDate('sales.created_at', '=', $request->get('day'));
                     }
                     if ($request->has('user_id') && $request->get('user_id') != 'Todos') {
-                        $query->where('user_id', $request->get('user_id'));
+                        $query->where('sales.user_id', $request->get('user_id'));
                     }
                 })
                 ->get();

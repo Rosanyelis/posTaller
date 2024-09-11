@@ -303,7 +303,7 @@
                                             <select name="methodPay" id="methodPay" class="form-control">
                                                 <option value="seleccione">Seleccione</option>
                                                 <option value="Efectivo">Efectivo</option>
-                                                <option value="Tarjeta de credito">Tarjeta de credito</option>
+                                                <option value="Tarjeta">Tarjeta</option>
                                                 <option value="Cheque">Cheque</option>
                                                 <option value="Transferencia">Transferencia</option>
                                             </select>
@@ -471,7 +471,7 @@
                         </tr>
                         <tr>
                             <th colspan="3" style="text-align: right;">Total</th>
-                            <th>{{ number_format($saleLast->grand_total, 0, ',', '.') }}</th>
+                            <th>{{ number_format($saleLast->grand_total + $saleLast->perquisite, 0, ',', '.') }}</th>
                         </tr>
                         <tr>
                             <th colspan="4" class="text-center pt-5 pb-5">
@@ -1053,6 +1053,9 @@
 
         $('#add_partial').on('click', function() {
             let total = parseFloat($('#totalpay').text());
+            let payment = $('#methodPay').val();
+            let amount = parseFloat($('#importe').val());
+            let details = $('#notePayment').val();
 
             if (total == 0) {
                 Swal.fire({
@@ -1064,23 +1067,38 @@
 
                 return;
             }
-            var payment = $('#methodPay').val();
-            var amount = parseFloat($('#importe').val());
-            var details = $('#notePayment').val();
 
-            let datosFila = {};
-            datosFila.payment = payment;
-            datosFila.amount = amount;
-            datosFila.details = details;
-            dataPartial.push(datosFila);
+            dataPartial.push({
+                'payment': payment,
+                'amount': amount,
+                'details': details
+            });
+
 
             $('#paymentTable #payment_list').append('<tr id="payment-' + payment + '"><td>' + payment + '</td><td>' + amount + '</td><td>' + details + '</td><td><button type="button" class="btn btn-danger btn-sm" id="' + payment + '" onclick="deletePartial(this)"><i class="mdi mdi-delete "></i></button></td></tr>');
-            $('#methodPay').val('');
+            calculatePartial();
+            $('#methodPay').val('seleccione').trigger('change');
             $('#importe').val('');
             $('#notePayment').val('');
 
         });
+
         $('#save_payment').on('click', function() {
+            let customer        = $('#customer').val();
+            let noteRef         = $('#note_ref').val();
+            let tax             = $('#tax').text()
+            let discount        = $('#discount').val();
+            let propina         = $('#propina').val();
+            let subtotal        = parseFloat($('#totalComplete').text());
+            let total           = parseFloat($('#totalpay').text());
+            let totalItems      = parseInt($('#totalItems').text());
+            let note            = $('#note').val();
+            let method          = $('#method').val();
+            let paymentBy       = $('#paymentBy').val();
+            let paymentspartials = JSON.stringify(dataPartial);
+            let notePay         = '';
+            let notePayment      = $('#notepayment').val();
+
             // Variable para almacenar campos incompletos
             var missingFields = [];
             if ($('#customer').val() === 'Seleccione cliente') {
@@ -1092,14 +1110,44 @@
 
                 missingFields.push('Cliente');
             }
-            if ($('#paymentBy').val() === 'seleccione') {
-                Swal.fire({
-                    position: 'top-center',
-                    icon: 'error',
-                    title: 'Seleccione la forma de pago',
-                });
-                missingFields.push('metodo');
 
+            if ($('#method').val() === 'Total') {
+                if ($('#paymentBy').val() === 'seleccione') {
+                    Swal.fire({
+                        position: 'top-center',
+                        icon: 'error',
+                        title: 'Seleccione la forma de pago',
+                    });
+                    missingFields.push('metodo');
+                }
+            }
+
+            if ($('#method').val() === 'Parcial') {
+                let montoActual = parseFloat($('#total_amount').text());
+                let totalPartialCount = 0;
+                for (let i = 0; i < dataPartial.length; i++) {
+                    totalPartialCount += parseFloat(dataPartial[i].amount);
+                }
+
+                if (totalPartialCount > montoActual) {
+                    Swal.fire({
+                        position: 'top-center',
+                        icon: 'error',
+                        title: 'El monto de pago parcial no puede ser mayor al monto total de la venta, verifique',
+                    });
+                    missingFields.push('parcial');
+                    return;
+                }
+
+                if (totalPartialCount < montoActual) {
+                    Swal.fire({
+                        position: 'top-center',
+                        icon: 'error',
+                        title: 'El monto de pago parcial no puede ser menor al monto total de la venta, verifique',
+                    });
+                    missingFields.push('parcial');
+                    return;
+                }
             }
 
             dataProduct.forEach(element => {
@@ -1107,14 +1155,6 @@
                     missingFields.push('producto:' + element.name);
                 }
             });
-
-            var customer = $('#customer').val(), noteRef = $('#note_ref').val(),
-            tax = $('#tax').text(),discount = $('#discount').val(),
-            propina = $('#propina').val(), subtotal = parseFloat($('#totalComplete').text()),
-            total = parseFloat($('#totalpay').text()), totalItems = parseInt($('#totalItems').text()),
-            note = $('#note').val(),method = $('#method').val(),
-            paymentBy = $('#paymentBy').val(), paymentspartials = JSON.stringify(dataPartial),
-            notePay, notePayment = $('#notepayment').val();
 
             if ($('#notepayefecty').val() != '') {
                 notePay = $('#notepayefecty').val();
@@ -1141,7 +1181,6 @@
             $('#notepayh').val(notePay);
             $('#paypartial').val(JSON.stringify(dataPartial));
             $('#note_payment').val(noteRef);
-
 
             if (missingFields.length > 0) {
                 Swal.fire({
@@ -1173,6 +1212,7 @@
             })
         });
     });
+
     function deleteRow(dato) {
         let btnId = "#"+dato.id;
         let codeProduct = $(btnId).data('id');
@@ -1213,7 +1253,7 @@
             total += parseFloat(dataProduct[i].subtotal);
         }
         // resta el descuento
-        let totalWithDiscount = total - discount;
+        let totalWithDiscount = total - discount + propina;
         $('#totalpay').text(totalWithDiscount);
     }
     function calculateQuantity(dato) {
@@ -1249,6 +1289,15 @@
         dataPartial = dataPartial.filter((item) => item.payment != payment.id);
         let idtr = '#payment-' + payment.id;
         $(idtr).remove();
+        console.log(dataPartial);
+        calculatePartial();
+    }
+
+    function calculatePartial() {
+        let total = 0;
+        for (let i = 0; i < dataPartial.length; i++) {
+            total += parseFloat(dataPartial[i].amount);
+        }
     }
 
     function imprimir() {

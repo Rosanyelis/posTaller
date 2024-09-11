@@ -170,7 +170,7 @@ class PosController extends Controller
                 foreach ($workorder as $item) {
 
                     $producto = Product::where('id', $item->product_id)->first();
-                    SaleItems::create([
+                     SaleItems::create([
                         'sale_id'           => $sale->id,
                         'work_order_id'     => $key->id,
                         'product_id'        => $producto->id,
@@ -221,7 +221,7 @@ class PosController extends Controller
                     'user_id' => auth()->user()->id,
                     'customer_id' => $request->customer,
                     'amount' => $key->amount,
-                    'payment_method' => $key->payment,
+                    'payment_method' => ($key->payment == 'Tarjeta') ? 'Tarjeta de credito' : $key->payment,
                     'note' => $request->details,
                     'pos_paid' => $request->amount,
                     'pos_balance' => $request->amount,

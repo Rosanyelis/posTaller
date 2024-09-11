@@ -24,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
         $empresa = DB::table('stores')->first();
         View::share('empresa', $empresa);
 
-        $data = DB::select('SELECT
+       $data = DB::select('SELECT
                             products.id,
                             products.name,
                             products.price,
@@ -33,7 +33,7 @@ class AppServiceProvider extends ServiceProvider
                             products
                         INNER JOIN product_store_qties ON products.id = product_store_qties.product_id
                         WHERE
-                            product_store_qties.quantity <= products.alert_quantity');
+                            product_store_qties.quantity = 0');
 
         View::share('productsQty', $data);
 
