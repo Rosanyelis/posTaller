@@ -162,7 +162,7 @@
                                             <tbody id="details" class="text-center">
                                             </tbody>
                                             <tfoot>
-                                                <tr></tr>
+                                                <tr>
                                                     <td colspan="3" class="text-end">Total</td>
                                                     <td id="total2"></td>
                                                 </tr>

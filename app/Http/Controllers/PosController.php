@@ -144,6 +144,10 @@ class PosController extends Controller
                 # disminuimos el stock del producto
 
                 $productqty = ProductStoreQty::where('product_id', $key->id)->first();
+                $habian = $productqty->quantity;
+                $salieron = $key->quantity;
+                $quedan = $habian - $salieron;
+
                 $productqty->quantity = $productqty->quantity - $key->quantity;
                 $productqty->save();
 
@@ -151,11 +155,17 @@ class PosController extends Controller
                 # ingresamos informacion en kardex del producto
                 Kardex::create([
                     'product_id'    => $key->id,
+                    'ingreso'       => 0,
+                    'habian'        => $habian,
+                    'salieron'      => $salieron,
+                    'quedan'        => $quedan,
                     'quantity'      => $key->quantity,
                     'price'         => $key->price,
                     'total'         => $key->subtotal,
                     'type'          => 2,
-                    'description'   => 'Venta de ' . $product->name
+                    'description'   => 'Venta de ' . $product->name.' facturado en el POS, perteneciente a la venta #00000' . $sale->id . '',
+                    'user_id'       => auth()->user()->id,
+                    'sale_id'       => $sale->id
                 ]);
 
             }
@@ -170,7 +180,11 @@ class PosController extends Controller
                 foreach ($workorder as $item) {
 
                     $producto = Product::where('id', $item->product_id)->first();
-                     SaleItems::create([
+                    $productqty = ProductStoreQty::where('product_id', $producto->id)->first();
+                    $habian = $productqty->quantity;
+                    $salieron = $key->quantity;
+                    $quedan = $habian - $salieron;
+                    SaleItems::create([
                         'sale_id'           => $sale->id,
                         'work_order_id'     => $key->id,
                         'product_id'        => $producto->id,
@@ -186,11 +200,18 @@ class PosController extends Controller
                     # ingresamos informacion en kardex del producto
                     Kardex::create([
                         'product_id'    => $item->product_id,
+                        'ingreso'       => 0,
+                        'habian'        => $habian,
+                        'salieron'      => $salieron,
+                        'quedan'        => $quedan,
                         'quantity'      => $item->quantity,
                         'price'         => $item->price,
                         'total'         => $item->total,
                         'type'          => 2,
-                        'description'   => 'Producto ' . $producto->name.' facturado en el POS, perteneciete de la orden de trabajo ' . $key->name
+                        'description'   => 'Producto ' . $producto->name.' facturado en el POS, perteneciente de la orden de trabajo ' . $key->name,
+                        'user_id'       => auth()->user()->id,
+                        'sale_id'       => $sale->id,
+                        'work_order_id' => $key->id
                     ]);
 
                 }

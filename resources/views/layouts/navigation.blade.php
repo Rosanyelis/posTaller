@@ -33,6 +33,12 @@
                                 </ul>
                             </li>
                             <li>
+                                <a href="{{ route('kardex.index') }}">
+                                    <i data-feather="sliders"></i>
+                                    <span data-key="t-pos">Kardex</span>
+                                </a>
+                            </li>
+                            <li>
                                 <a href="javascript: void(0);" class="has-arrow">
                                     <i data-feather="list"></i>
                                     <span data-key="categorias">Categorías</span>

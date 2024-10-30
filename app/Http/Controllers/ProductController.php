@@ -154,11 +154,16 @@ class ProductController extends Controller
 
         Kardex::create([
             'product_id'    => $producto->id,
+            'ingreso'       => $data['quantity'],
+            'habian'        => 0,
+            'salieron'      => 0,
+            'quedan'        => $data['quantity'],
             'quantity'      => $data['quantity'],
             'price'         => $data['cost'],
             'total'         => $data['cost'],
             'type'          => 1,
-            'description'   => 'Registro del producto ' . $data['name']
+            'description'   => 'Registro del producto ' . $data['name'],
+            'user_id'       => auth()->user()->id
         ]);
 
         return redirect()->route('productos.index')->with('success', 'Producto creado con exito');
@@ -192,6 +197,7 @@ class ProductController extends Controller
         $data = $request->all();
 
         $product = Product::find($product);
+
         $data['image'] = $product->image;
         if ($request->hasFile('image')) {
             $uploadPath = public_path('/storage/productos/');
@@ -226,9 +232,25 @@ class ProductController extends Controller
             'position'          => $data['position'],
         ]);
 
-        ProductStoreQty::where('product_id', $product->id)->update([
+        $productQty = ProductStoreQty::where('product_id', $product->id)->first();
+        $habian = $productQty->quantity;
+        $productQty->update([
             'quantity'   => $data['quantity'],
             'price'      => $data['price'],
+        ]);
+
+        Kardex::create([
+            'product_id'    => $product->id,
+            'ingreso'       => 0,
+            'habian'        => $habian,
+            'salieron'      => 0,
+            'quedan'        => $data['quantity'],
+            'quantity'      => $data['quantity'],
+            'price'         => $data['price'],
+            'total'         => $data['price'],
+            'type'          => 3,
+            'description'   => 'Edición del producto ' . $data['name'],
+            'user_id'       => auth()->user()->id
         ]);
         return redirect()->route('productos.index')->with('success', 'Producto actualizado con exito');
     }
@@ -238,11 +260,26 @@ class ProductController extends Controller
      */
     public function destroy($product)
     {
+        $dato = ProductStoreQty::where('product_id', $product)->first();
+        $data = Product::find($product);
+        Kardex::create([
+            'product_id'    => $product,
+            'ingreso'       => 0,
+            'habian'        => $dato->quantity,
+            'salieron'      => $dato->quantity,
+            'quedan'        => 0,
+            'quantity'      => $dato->quantity,
+            'price'         => $dato->price,
+            'total'         => $dato->price * $dato->quantity,
+            'type'          => 4,
+            'description'   => 'Eliminacion del producto ' . $data->name,
+            'user_id'       => auth()->user()->id
+        ]);
+
         ProductStoreQty::where('product_id', $product)->delete();
 
         $data = Product::find($product);
         $data->delete();
-
         return redirect()->route('productos.index')->with('success', 'Producto eliminado con exito');
     }
 
@@ -286,9 +323,24 @@ class ProductController extends Controller
         $producto = Product::find($product);
         if ($request->ajax()) {
             $data = DB::table('kardexes')
-                ->join('products', 'kardexes.product_id', '=', 'products.id')
-                ->where('kardexes.product_id', $product)
-                ->select('kardexes.*', 'products.name as product_name');
+            ->join('products', 'products.id', '=', 'kardexes.product_id')
+            ->leftjoin('users', 'users.id', '=', 'kardexes.user_id')
+            ->where('kardexes.product_id', $product)
+            ->select('kardexes.*', 'products.name as product_name', 'users.name as user_name')
+            ->groupBy('kardexes.id',
+                    'kardexes.description',
+                    'kardexes.type',
+                    'kardexes.created_at',
+                    'kardexes.product_id',
+                    'kardexes.ingreso',
+                    'kardexes.habian',
+                    'kardexes.salieron',
+                    'kardexes.quedan',
+                    'kardexes.price',
+                    'kardexes.total',
+                    'products.name',
+                    'users.name')
+            ->orderBy('kardexes.id', 'desc');
             return DataTables::of($data)
                 ->filter(function ($query) use ($request) {
                     if ($request->has('start') && $request->has('end') && $request->get('start') != '' && $request->get('end') != '') {

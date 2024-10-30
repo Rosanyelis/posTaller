@@ -202,21 +202,15 @@ class WorkOrderController extends Controller
                 $product = Product::find($key->product_id);
 
                 $productqty = ProductStoreQty::where('product_id', $product->id)->first();
+                $habian = $productqty->quantity;
+                $salieron = $key->quantity;
+                $quedan = $habian - $salieron;
                 if ($productqty->quantity < $key->quantity) {
                     return redirect()->route('ordenes-trabajo.index')->with('error', 'Oops.. Para cambiar el estado a completado, debe haber suficiente stock para los productos de la OT, verifique su inventario.');
                 }
                 $productqty->quantity = $productqty->quantity - $key->quantity;
                 $productqty->save();
 
-                # ingresamos informacion en kardex del producto
-                Kardex::create([
-                    'product_id'    => $product->id,
-                    'quantity'      => $key->quantity,
-                    'price'         => $key->price,
-                    'total'         => $key->total,
-                    'type'          => 2,
-                    'description'   => $product->name.' aplicado en Orden de trabajo ' . $workOrder->correlativo
-                ]);
             }
 
         }

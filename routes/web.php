@@ -6,6 +6,7 @@ use App\Http\Controllers\RolController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\StoreController;
+use App\Http\Controllers\KardexController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
@@ -100,6 +101,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/categorias/importar-categorias', [CategoryController::class, 'view_import'])->name('categorias.viewimport');
     Route::post('/categorias/import-data', [CategoryController::class, 'import'])->name('categorias.import');
     Route::get('/categorias/{category}/productos-por-categoria', [CategoryController::class, 'productcategory'])->name('categories.productcategory');
+
+    #Kardex
+    Route::get('/kardex', [KardexController::class, 'index'])->name('kardex.index');
+    Route::get('/kardex/datatable', [KardexController::class, 'datatable'])->name('kardex.datatable');
+    Route::post('/kardex/generar-informe', [KardexController::class, 'getInforme'])->name('kardex.getInforme');
 
     # Ventas
     Route::get('/ventas-por-caja', [SaleController::class, 'index'])->name('ventas.index');

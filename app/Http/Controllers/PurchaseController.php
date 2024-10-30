@@ -121,6 +121,10 @@ class PurchaseController extends Controller
 
         foreach ($productos as $key) {
             $product = Product::where('name', $key->producto)->first();
+            $pQty = ProductStoreQty::where('product_id', $product->id)->first();
+            $habian = $pQty->quantity;
+            $ingresaron = $key->quantity;
+            $quedan = $habian + $ingresaron;
             PurchaseItem::create([
                 'purchase_id'       => $purchase->id,
                 'product_id'        => $product->id,
@@ -141,11 +145,17 @@ class PurchaseController extends Controller
                 # ingresamos informacion en kardex del producto
                 Kardex::create([
                     'product_id'    => $p->id,
-                    'quantity'      => $key->quantity,
+                    'ingreso'       => $ingresaron,
+                    'habian'        => $habian,
+                    'salieron'      => 0,
+                    'quedan'        => $quedan,
+                    'quantity'      => $quedan,
                     'price'         => $key->cost,
                     'total'         => $key->total,
                     'type'          => 1,
-                    'description'   => 'Compra de ' . $key->producto
+                    'description'   => 'Compra de ' . $key->producto,
+                    'user_id'       => auth()->user()->id,
+                    'purchase_id'   => $purchase->id
                 ]);
             }
         }
@@ -321,16 +331,25 @@ class PurchaseController extends Controller
                 'cost' => $value->cost,
             ]);
             $productqty = ProductStoreQty::where('product_id', $value->product_id)->first();
+            $ingresaron = $value->quantity;
+            $habian = $productqty->quantity;
+            $quedan = $habian + $salieron;
             $productqty->quantity = $productqty->quantity + $value->quantity;
             $productqty->save();
             # ingresamos informacion en kardex del producto
             Kardex::create([
                 'product_id'    => $value->product_id,
-                'quantity'      => $value->quantity,
+                'ingreso'       => $ingresaron,
+                'habian'        => $habian,
+                'salieron'      => 0,
+                'quedan'        => $quedan,
+                'quantity'      => $quedan,
                 'price'         => $value->cost,
                 'total'         => $value->subtotal,
                 'type'          => 1,
-                'description'   => 'Compra de ' . $value->product->name
+                'description'   => 'Compra de ' . $value->product->name,
+                'user_id'       => auth()->user()->id,
+                'purchase_id'   => $request->id
             ]);
         }
 
