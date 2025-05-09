@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Kardex;
+use GuzzleHttp\Client;
 use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\Supplier;
@@ -351,9 +352,85 @@ class PurchaseController extends Controller
                 'user_id'       => auth()->user()->id,
                 'purchase_id'   => $request->id
             ]);
+
+            # Buscamos el id del producto en  wordpress para actualizar su stock
+            $productoWPId = $this->SearchProductByCode($product->code);
+            if ($productoWPId != 'Producto no encontrado') {
+                 # actualizamos el stock en wordpress
+                $this->updateStockWP($productoWPId, $quedan);
+            }
         }
 
 
         return redirect()->route('compras.index')->with('success', 'El estado de Compra se actualizo correctamente');
+    }
+
+    public function SearchProductByCode($sku)
+    {
+        $client = new Client([
+            'base_uri' => env('WOOCOMMERCE_API_URL'),
+        ]);
+
+        $response = $client->request('GET', 'products', [
+            'query' => [
+                'sku' => $sku,
+                'consumer_key' => env('WOOCOMMERCE_CONSUMER_KEY'),
+                'consumer_secret' => env('WOOCOMMERCE_CONSUMER_SECRET'),
+            ],
+        ]);
+
+        if ($response->getStatusCode() === 200) {
+            $products = json_decode($response->getBody(), true);
+            if (!empty($products)) {
+                return response()->json($products[0]['id']);
+            } else {
+                return response()->json('Producto no encontrado');
+            }
+        }
+
+        return response()->json('Error al consultar el producto.', $response->getStatusCode());
+    }
+
+    public function updateStockWP($productId, $newStockQuantity)
+    {
+        // Validación de parámetros
+        if (!is_numeric($productId) || !is_numeric($newStockQuantity) || $newStockQuantity < 0) {
+            return response()->json(['error' => 'Parámetros inválidos.'], 400);
+        }
+
+        $client = new Client([
+            'base_uri' => env('WOOCOMMERCE_API_URL'),
+        ]);
+
+        try {
+            // Realiza la solicitud PUT para actualizar el stock
+            $response = $client->request('PUT', 'products/' . $productId, [
+                'query' => [
+                    'consumer_key' => env('WOOCOMMERCE_CONSUMER_KEY'),
+                    'consumer_secret' => env('WOOCOMMERCE_CONSUMER_SECRET'),
+                ],
+                'json' => [
+                    'stock_quantity' => $newStockQuantity,
+                    'manage_stock' => true, // Asegura que WooCommerce gestione el stock
+                ],
+            ]);
+
+            // Verifica si la solicitud fue exitosa
+            if ($response->getStatusCode() === 200) {
+                return response()->json(['message' => 'Stock actualizado exitosamente.']);
+            } else {
+                // Retorna un mensaje detallado si la solicitud falla
+                return response()->json([
+                    'error' => 'Error al actualizar el stock.',
+                    'details' => json_decode($response->getBody(), true) // Incluye detalles de la respuesta
+                ], $response->getStatusCode());
+            }
+        } catch (\Exception $e) {
+            // Manejo de excepciones
+            return response()->json([
+                'error' => 'Excepción al intentar actualizar el stock.',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 }

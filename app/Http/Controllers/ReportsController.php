@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\NeumaticosInternacionalesExport;
 
 class ReportsController extends Controller
 {
@@ -453,4 +455,56 @@ class ReportsController extends Controller
                 ->stream(''.config('app.name', 'Laravel').' - Listado de neumaticos internacionales vendidos por dia - ' . Carbon::now(). '.pdf');
     }
 
+    public function NeumaticosInternacionalesExcel( Request $request )
+    {
+        $informe = [];
+        $fechaInicio = Carbon::parse($request->get('start'))->format('d/m/Y');
+        $fechaFin = Carbon::parse($request->get('end'))->format('d/m/Y');
+        $data = DB::table('sales')
+                ->join('users', 'sales.user_id', '=', 'users.id')
+                ->join('sale_items', 'sales.id', '=', 'sale_items.sale_id')
+                ->leftjoin('products', 'sale_items.product_id', '=', 'products.id')
+                ->select('sales.*', 'users.name as user_name', 'products.name as product_name',
+                'products.type as type', 'products.weight as weight',
+                'sale_items.unit_price as price', 'sale_items.quantity as quantity',
+                'sale_items.subtotal as subtotal')
+                ->where('products.type', 'NEUMATICOS')
+                ->where('products.nacionality', 'Internacional')
+                ->orderBy('sales.id', 'desc')
+                ->where(function ($query) use ($request) {
+                    if ($request->has('start') && $request->has('end') && $request->get('start') != '' && $request->get('end') != '') {
+                        $query->whereBetween('sales.created_at', [$request->get('start'), $request->get('end')]);
+                    }
+                })
+                ->get();
+
+        $totales = DB::table('sales')
+            ->join('sale_items', 'sales.id', '=', 'sale_items.sale_id')
+            ->join('products', 'sale_items.product_id', '=', 'products.id')
+            ->select(DB::raw('SUM(sale_items.quantity) AS total_neumaticos'),
+                    DB::raw('SUM(products.weight * sale_items.quantity) AS total_peso'))
+            ->where('products.type', 'NEUMATICOS')
+            ->where('products.nacionality', 'Internacional')
+            ->where(function ($query) use ($request) {
+                if ($request->has('start') && $request->has('end') && $request->get('start') != '' && $request->get('end') != '') {
+                    $query->whereBetween('sales.created_at', [$request->get('start'), $request->get('end')]);
+                }
+            })
+            ->first();
+
+        foreach ($data as $key) {
+
+            $informe[] = [
+                'fecha' => Carbon::parse($key->created_at)->format('d/m/Y'),
+                'producto' => $key->product_name,
+                'tipo' => $key->type,
+                'cantidad' => $key->quantity,
+                'costo' => $key->price,
+                'subtotal' => $key->subtotal,
+                'peso' => $key->weight
+            ];
+        }
+
+        return Excel::download(new NeumaticosInternacionalesExport($informe, $fechaInicio, $fechaFin, $totales), 'Neumaticos internacionales vendidos - ' . Carbon::now(). '.xlsx');
+    }
 }

@@ -60,7 +60,7 @@
                     <div class="col-md-2">
                         <input type="date" class="form-control" id="endday" name="endday">
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <button type="button" class="btn btn-primary" id="filter">
                             <i class="mdi mdi-filter"></i> Filtrar
                         </button>
@@ -72,7 +72,21 @@
                             <i class="mdi mdi-file-pdf"></i>
                             Generar Informe
                         </button>
+                        <button type="button" class="btn btn-warning " onclick="generateReportexcel()">
+                            <i class="mdi mdi-file-excel"></i>
+                            Generar Excel
+                        </button>
                         <form id="formfilter" action="{{ route('reportes.pdfNeumaticosInternacionales') }}" method="post" target="_blank">
+                            @csrf
+                            <input type="hidden" name="start" id="startfilter">
+                            <input type="hidden" name="end" id="endfilter">
+                        </form>
+                        <form id="formfilter" action="{{ route('reportes.pdfNeumaticosInternacionales') }}" method="post" target="_blank">
+                            @csrf
+                            <input type="hidden" name="start" id="startfilter">
+                            <input type="hidden" name="end" id="endfilter">
+                        </form>
+                        <form id="formexcelfilter" action="{{ route('reportes.NeumaticosInternacionalesExcel') }}" method="post" target="_blank">
                             @csrf
                             <input type="hidden" name="start" id="startfilter">
                             <input type="hidden" name="end" id="endfilter">
@@ -264,6 +278,12 @@
         $('#formfilter').submit();
 
     });
+
+    generateReportexcel = () => {
+        $('#startfilter').val($('#startday').val());
+        $('#endfilter').val($('#endday').val());
+        $('#formexcelfilter').submit();
+    }
 
 </script>
 @endSection

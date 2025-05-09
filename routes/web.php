@@ -218,6 +218,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/datatable-de-neumaticos-internacionales', [ReportsController::class, 'datatableNeumaticosInternacionales'])->name('reportes.datatableNeumaticosInternacionales');
     Route::post('/total-de-neumaticos-internacionales', [ReportsController::class, 'totalneumaticos'])->name('reportes.totalneumaticos');
     Route::post('/informe-de-neumaticos-internacionales-pdf', [ReportsController::class, 'pdfNeumaticosInternacionales'])->name('reportes.pdfNeumaticosInternacionales');
+    Route::post('/informe-de-neumaticos-internacionales-excel', [ReportsController::class, 'NeumaticosInternacionalesExcel'])->name('reportes.NeumaticosInternacionalesExcel');
 
 
 
